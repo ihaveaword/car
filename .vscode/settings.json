@@ -1,0 +1,30 @@
+{
+    "cortex-debug.armToolchainPath": "/Users/zhy/Tools/xpack-arm-none-eabi-gcc-14.2.1-1.1/bin",
+    "cortex-debug.openocdPath": "/opt/homebrew/bin/openocd",
+     "VsCodeTaskButtons.tasks": [
+        {
+            "label": "$(tools) Build",
+            "task": "Build",
+            "tooltip": "Run CMake Build Task"
+        },
+        {
+            "label": "$(chip) Flash",
+            "task": "Flash with OpenOCD",
+            "tooltip": "Run CMake Configure Task"
+        },
+        {
+            "label": "$(sync) connect",
+            "task": "Start OpenOCD",
+            "tooltip": "Run Flash Task"
+        }
+    ],
+    "cortex-debug.variableUseNaturalFormat": true,
+    "files.associations": {
+        "*.mxproject": "plaintext",
+        "compare": "c"
+    },
+     "gitlens.advanced.ignoreFileNames": [
+        "*.mxproject"
+  ],
+  
+}

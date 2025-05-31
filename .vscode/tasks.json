@@ -1,0 +1,44 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build",
+            "type": "shell",
+            "command": "make",
+            "group": "build",
+            "problemMatcher": [
+                "$gcc"
+            ]
+        },
+        {
+            "label": "Start OpenOCD",
+            "type": "shell",
+            "command": "openocd",
+            "args": [
+                "-f",
+                "interface/stlink.cfg",
+                "-f",
+                "target/stm32h7x.cfg"
+            ],
+           
+        },
+        {
+            "label": "Flash with OpenOCD",
+            "type": "shell",
+            "command": "openocd",
+            "args": [
+                "-f", "interface/stlink.cfg",
+                "-f", "target/stm32h7x.cfg",
+                "-c", "program ./build/car.elf verify reset exit"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "reveal": "always"
+            },
+            "problemMatcher": []
+        }
+    ]
+}

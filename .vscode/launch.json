@@ -1,0 +1,47 @@
+{
+    // 使用 IntelliSense 了解相关属性。 
+    // 悬停以查看现有属性的描述。
+    // 欲了解更多信息，请访问: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Cortex Debug (OpenOCD)",
+            "type": "cortex-debug",
+            "request": "launch",
+            "servertype": "openocd",
+            "cwd": "${workspaceFolder}",
+            "executable": "./build/car.elf",
+            "device": "STM32H743VI",
+            "configFiles": [
+                "interface/stlink.cfg",
+                "target/stm32h7x.cfg"
+            ],
+            "svdFile": "/Users/zhy/Tools/STM32H743.svd",
+            "gdbPath": "/Users/zhy/Tools/xpack-arm-none-eabi-gcc-14.2.1-1.1/bin/arm-none-eabi-gdb",
+            "liveWatch": {
+                "enabled": true,
+                "samplesPerSecond": 4
+            }
+        },
+        {
+            "name": "Cortex Flash Only (OpenOCD)",
+            "type": "cortex-debug",
+            "request": "launch",
+            "servertype": "openocd",
+            "cwd": "${workspaceFolder}",
+            "executable": "./build/car.elf",
+            "device": "STM32H743VI",
+            "configFiles": [
+                "interface/stlink.cfg",
+                "target/stm32h7x.cfg"
+            ],
+            "svdFile": "/Users/zhy/Tools/STM32H743.svd",
+            "gdbPath": "/Users/zhy/Tools/xpack-arm-none-eabi-gcc-14.2.1-1.1/bin/arm-none-eabi-gdb",
+            "runToEntryPoint": "main",
+            "preLaunchTask": "",
+            "postRestartCommands": [
+                "disconnect"
+            ]
+        }
+    ]
+}
