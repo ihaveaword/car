@@ -1,8 +1,7 @@
-#ifndef __MOTO_H__
-#define __MOTO_H__
+#ifndef __MOTOR_H__
+#define __MOTOR_H__
 
-#include "stm32h7xx_hal.h" // 根据你的芯片型号选择合适的HAL头文件
+#include "stm32h7xx_hal.h"
 void load(int moto1 ,int moto2);
 
-
-#endif /*__MOTO_H__*/
+#endif /*__MOTOR_H__*/

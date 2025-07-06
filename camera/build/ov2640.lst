@@ -1,0 +1,1420 @@
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccYXGfH1.s 			page 1
+
+
+   1              		.cpu cortex-m7
+   2              		.arch armv7e-m
+   3              		.fpu fpv5-d16
+   4              		.eabi_attribute 28, 1
+   5              		.eabi_attribute 20, 1
+   6              		.eabi_attribute 21, 1
+   7              		.eabi_attribute 23, 3
+   8              		.eabi_attribute 24, 1
+   9              		.eabi_attribute 25, 1
+  10              		.eabi_attribute 26, 1
+  11              		.eabi_attribute 30, 1
+  12              		.eabi_attribute 34, 1
+  13              		.eabi_attribute 18, 4
+  14              		.file	"ov2640.c"
+  15              		.text
+  16              	.Ltext0:
+  17              		.cfi_sections	.debug_frame
+  18              		.file 1 "BSP/Camera/ov2640.c"
+  19              		.section	.text.OV2640_WR_Reg,"ax",%progbits
+  20              		.align	1
+  21              		.syntax unified
+  22              		.thumb
+  23              		.thumb_func
+  25              	OV2640_WR_Reg:
+  26              	.LVL0:
+  27              	.LFB144:
+   1:BSP/Camera/ov2640.c **** #include "ov2640.h"
+   2:BSP/Camera/ov2640.c **** #include "ov2640_regs.h"
+   3:BSP/Camera/ov2640.c **** 
+   4:BSP/Camera/ov2640.c **** #define OV2640_XCLK_FREQUENCY       (20000000)
+   5:BSP/Camera/ov2640.c **** #define OV2640_NUM_ALLOWED_SIZES    (19)
+   6:BSP/Camera/ov2640.c **** #define NUM_BRIGHTNESS_LEVELS       (5)
+   7:BSP/Camera/ov2640.c **** #define NUM_CONTRAST_LEVELS         (5)
+   8:BSP/Camera/ov2640.c **** #define NUM_SATURATION_LEVELS       (5)
+   9:BSP/Camera/ov2640.c **** #define NUM_EFFECTS                 (9)
+  10:BSP/Camera/ov2640.c **** #define REGLENGTH 8
+  11:BSP/Camera/ov2640.c **** 
+  12:BSP/Camera/ov2640.c **** #define ov2640_delay HAL_Delay
+  13:BSP/Camera/ov2640.c **** 
+  14:BSP/Camera/ov2640.c **** static const uint8_t allowed_sizes[OV2640_NUM_ALLOWED_SIZES] = {
+  15:BSP/Camera/ov2640.c ****         FRAMESIZE_CIF,      // 352x288
+  16:BSP/Camera/ov2640.c ****         FRAMESIZE_SIF,      // 352x240
+  17:BSP/Camera/ov2640.c ****         FRAMESIZE_QQVGA,    // 160x120
+  18:BSP/Camera/ov2640.c ****         FRAMESIZE_128X64,   // 128x64
+  19:BSP/Camera/ov2640.c ****         FRAMESIZE_QVGA,     // 320x240
+  20:BSP/Camera/ov2640.c ****         FRAMESIZE_VGA,      // 640x480
+  21:BSP/Camera/ov2640.c ****         FRAMESIZE_HVGA,     // 480 * 320
+  22:BSP/Camera/ov2640.c ****         FRAMESIZE_WVGA2,    // 752x480
+  23:BSP/Camera/ov2640.c ****         FRAMESIZE_SVGA,     // 800x600
+  24:BSP/Camera/ov2640.c ****         FRAMESIZE_XGA,      // 1024x768
+  25:BSP/Camera/ov2640.c ****         FRAMESIZE_SXGA,     // 1280x1024
+  26:BSP/Camera/ov2640.c ****         FRAMESIZE_UXGA,     // 1600x1200
+  27:BSP/Camera/ov2640.c **** };
+  28:BSP/Camera/ov2640.c **** 
+  29:BSP/Camera/ov2640.c **** //---------------------------------------
+  30:BSP/Camera/ov2640.c **** static const uint8_t rgb565_regs[][2] = {
+  31:BSP/Camera/ov2640.c ****     { BANK_SEL, BANK_SEL_DSP },
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccYXGfH1.s 			page 2
+
+
+  32:BSP/Camera/ov2640.c ****     { REG_RESET,   REG_RESET_DVP},
+  33:BSP/Camera/ov2640.c ****     { IMAGE_MODE, IMAGE_MODE_RGB565 },
+  34:BSP/Camera/ov2640.c ****     { 0xD7,     0x03 },
+  35:BSP/Camera/ov2640.c ****     { 0xE1,     0x77 },
+  36:BSP/Camera/ov2640.c ****     { REG_RESET,    0x00 },
+  37:BSP/Camera/ov2640.c ****     {0, 0},
+  38:BSP/Camera/ov2640.c **** };
+  39:BSP/Camera/ov2640.c **** 
+  40:BSP/Camera/ov2640.c **** //-------------------------------------
+  41:BSP/Camera/ov2640.c **** static const uint8_t jpeg_regs[][2] = {
+  42:BSP/Camera/ov2640.c ****     {BANK_SEL,      BANK_SEL_DSP},
+  43:BSP/Camera/ov2640.c ****     {REG_RESET,         REG_RESET_DVP},
+  44:BSP/Camera/ov2640.c ****     {IMAGE_MODE,    IMAGE_MODE_JPEG_EN | IMAGE_MODE_RGB565}, // | IMAGE_MODE_HREF_VSYNC
+  45:BSP/Camera/ov2640.c ****     {0xd7,          0x03},
+  46:BSP/Camera/ov2640.c ****     {0xe1,          0x77},
+  47:BSP/Camera/ov2640.c ****     //{QS,            0x0c},
+  48:BSP/Camera/ov2640.c ****     {REG_RESET,         0x00},
+  49:BSP/Camera/ov2640.c ****     {0,             0},
+  50:BSP/Camera/ov2640.c **** };
+  51:BSP/Camera/ov2640.c **** 
+  52:BSP/Camera/ov2640.c **** static const uint8_t yuyv_regs[][2] = {
+  53:BSP/Camera/ov2640.c **** 	{BANK_SEL,      BANK_SEL_DSP},
+  54:BSP/Camera/ov2640.c ****   {REG_RESET,     REG_RESET_DVP},
+  55:BSP/Camera/ov2640.c **** 	{ IMAGE_MODE, IMAGE_MODE_YUV422 },
+  56:BSP/Camera/ov2640.c **** 	{ 0xd7, 0x03 },
+  57:BSP/Camera/ov2640.c **** 	{ 0x33, 0xa0 },
+  58:BSP/Camera/ov2640.c **** 	{ 0xe5, 0x1f },
+  59:BSP/Camera/ov2640.c **** 	{ 0xe1, 0x67 },
+  60:BSP/Camera/ov2640.c **** 	{ REG_RESET,  0x00 },
+  61:BSP/Camera/ov2640.c **** 	{0,             0},
+  62:BSP/Camera/ov2640.c **** };
+  63:BSP/Camera/ov2640.c **** 
+  64:BSP/Camera/ov2640.c **** //--------------------------------------------------------------------
+  65:BSP/Camera/ov2640.c **** static const uint8_t brightness_regs[NUM_BRIGHTNESS_LEVELS + 1][5] = {
+  66:BSP/Camera/ov2640.c ****     {BPADDR, BPDATA, BPADDR, BPDATA, BPDATA},
+  67:BSP/Camera/ov2640.c ****     {0x00, 0x04, 0x09, 0x00, 0x00}, /* -2 */
+  68:BSP/Camera/ov2640.c ****     {0x00, 0x04, 0x09, 0x10, 0x00}, /* -1 */
+  69:BSP/Camera/ov2640.c ****     {0x00, 0x04, 0x09, 0x20, 0x00}, /*  0 */
+  70:BSP/Camera/ov2640.c ****     {0x00, 0x04, 0x09, 0x30, 0x00}, /* +1 */
+  71:BSP/Camera/ov2640.c ****     {0x00, 0x04, 0x09, 0x40, 0x00}, /* +2 */
+  72:BSP/Camera/ov2640.c **** };
+  73:BSP/Camera/ov2640.c **** 
+  74:BSP/Camera/ov2640.c **** //----------------------------------------------------------------
+  75:BSP/Camera/ov2640.c **** static const uint8_t contrast_regs[NUM_CONTRAST_LEVELS + 1][7] = {
+  76:BSP/Camera/ov2640.c ****     {BPADDR, BPDATA, BPADDR, BPDATA, BPDATA, BPDATA, BPDATA},
+  77:BSP/Camera/ov2640.c ****     {0x00, 0x04, 0x07, 0x20, 0x18, 0x34, 0x06}, /* -2 */
+  78:BSP/Camera/ov2640.c ****     {0x00, 0x04, 0x07, 0x20, 0x1c, 0x2a, 0x06}, /* -1 */
+  79:BSP/Camera/ov2640.c ****     {0x00, 0x04, 0x07, 0x20, 0x20, 0x20, 0x06}, /*  0 */
+  80:BSP/Camera/ov2640.c ****     {0x00, 0x04, 0x07, 0x20, 0x24, 0x16, 0x06}, /* +1 */
+  81:BSP/Camera/ov2640.c ****     {0x00, 0x04, 0x07, 0x20, 0x28, 0x0c, 0x06}, /* +2 */
+  82:BSP/Camera/ov2640.c **** };
+  83:BSP/Camera/ov2640.c **** 
+  84:BSP/Camera/ov2640.c **** //--------------------------------------------------------------------
+  85:BSP/Camera/ov2640.c **** static const uint8_t saturation_regs[NUM_SATURATION_LEVELS + 1][5] = {
+  86:BSP/Camera/ov2640.c ****     {BPADDR, BPDATA, BPADDR, BPDATA, BPDATA},
+  87:BSP/Camera/ov2640.c ****     {0x00, 0x02, 0x03, 0x28, 0x28}, /* -2 */
+  88:BSP/Camera/ov2640.c ****     {0x00, 0x02, 0x03, 0x38, 0x38}, /* -1 */
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccYXGfH1.s 			page 3
+
+
+  89:BSP/Camera/ov2640.c ****     {0x00, 0x02, 0x03, 0x48, 0x48}, /*  0 */
+  90:BSP/Camera/ov2640.c ****     {0x00, 0x02, 0x03, 0x58, 0x58}, /* +1 */
+  91:BSP/Camera/ov2640.c ****     {0x00, 0x02, 0x03, 0x68, 0x68}, /* +2 */
+  92:BSP/Camera/ov2640.c **** };
+  93:BSP/Camera/ov2640.c **** 
+  94:BSP/Camera/ov2640.c **** //--------------------------------------------------------
+  95:BSP/Camera/ov2640.c **** static const uint8_t OV2640_EFFECTS_TBL[NUM_EFFECTS][3]= {
+  96:BSP/Camera/ov2640.c ****     //00-0 05-0  05-1
+  97:BSP/Camera/ov2640.c ****     {0x00, 0x80, 0x80}, // Normal
+  98:BSP/Camera/ov2640.c ****     {0x18, 0xA0, 0x40}, // Blueish (cool light)
+  99:BSP/Camera/ov2640.c ****     {0x18, 0x40, 0xC0}, // Redish (warm)
+ 100:BSP/Camera/ov2640.c ****     {0x18, 0x80, 0x80}, // Black and white
+ 101:BSP/Camera/ov2640.c ****     {0x18, 0x40, 0xA6}, // Sepia
+ 102:BSP/Camera/ov2640.c ****     {0x40, 0x80, 0x80}, // Negative
+ 103:BSP/Camera/ov2640.c ****     {0x18, 0x50, 0x50}, // Greenish
+ 104:BSP/Camera/ov2640.c ****     {0x58, 0x80, 0x80}, // Black and white negative
+ 105:BSP/Camera/ov2640.c ****     {0x00, 0x80, 0x80}, // Normal
+ 106:BSP/Camera/ov2640.c **** };
+ 107:BSP/Camera/ov2640.c **** 
+ 108:BSP/Camera/ov2640.c **** //-----------------------------------------------------
+ 109:BSP/Camera/ov2640.c **** static uint8_t OV2640_WR_Reg(uint8_t reg, uint8_t data)
+ 110:BSP/Camera/ov2640.c **** {
+  28              		.loc 1 110 1 view -0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 8
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32              		.loc 1 110 1 is_stmt 0 view .LVU1
+  33 0000 00B5     		push	{lr}
+  34              	.LCFI0:
+  35              		.cfi_def_cfa_offset 4
+  36              		.cfi_offset 14, -4
+  37 0002 83B0     		sub	sp, sp, #12
+  38              	.LCFI1:
+  39              		.cfi_def_cfa_offset 16
+  40 0004 8DF80710 		strb	r1, [sp, #7]
+ 111:BSP/Camera/ov2640.c ****     Camera_WriteReg(&hcamera, reg, &data);
+  41              		.loc 1 111 5 is_stmt 1 view .LVU2
+  42 0008 0DF10702 		add	r2, sp, #7
+  43 000c 0146     		mov	r1, r0
+  44              	.LVL1:
+  45              		.loc 1 111 5 is_stmt 0 view .LVU3
+  46 000e 0348     		ldr	r0, .L3
+  47              	.LVL2:
+  48              		.loc 1 111 5 view .LVU4
+  49 0010 FFF7FEFF 		bl	Camera_WriteReg
+  50              	.LVL3:
+ 112:BSP/Camera/ov2640.c ****     return 0;
+  51              		.loc 1 112 5 is_stmt 1 view .LVU5
+ 113:BSP/Camera/ov2640.c **** }
+  52              		.loc 1 113 1 is_stmt 0 view .LVU6
+  53 0014 0020     		movs	r0, #0
+  54 0016 03B0     		add	sp, sp, #12
+  55              	.LCFI2:
+  56              		.cfi_def_cfa_offset 4
+  57              		@ sp needed
+  58 0018 5DF804FB 		ldr	pc, [sp], #4
+  59              	.L4:
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccYXGfH1.s 			page 4
+
+
+  60              		.align	2
+  61              	.L3:
+  62 001c 00000000 		.word	hcamera
+  63              		.cfi_endproc
+  64              	.LFE144:
+  66              		.section	.text.wrSensorRegs,"ax",%progbits
+  67              		.align	1
+  68              		.syntax unified
+  69              		.thumb
+  70              		.thumb_func
+  72              	wrSensorRegs:
+  73              	.LVL4:
+  74              	.LFB146:
+ 114:BSP/Camera/ov2640.c **** 
+ 115:BSP/Camera/ov2640.c **** //---------------------------------------
+ 116:BSP/Camera/ov2640.c **** static uint8_t OV2640_RD_Reg(uint8_t reg)
+ 117:BSP/Camera/ov2640.c **** {
+ 118:BSP/Camera/ov2640.c **** 	uint8_t data;
+ 119:BSP/Camera/ov2640.c ****   Camera_ReadReg(&hcamera,reg,&data);
+ 120:BSP/Camera/ov2640.c ****     return data;
+ 121:BSP/Camera/ov2640.c **** }
+ 122:BSP/Camera/ov2640.c **** 
+ 123:BSP/Camera/ov2640.c **** //------------------------------------------------
+ 124:BSP/Camera/ov2640.c **** static void wrSensorRegs(const uint8_t (*regs)[2])
+ 125:BSP/Camera/ov2640.c **** {
+  75              		.loc 1 125 1 is_stmt 1 view -0
+  76              		.cfi_startproc
+  77              		@ args = 0, pretend = 0, frame = 0
+  78              		@ frame_needed = 0, uses_anonymous_args = 0
+  79              		.loc 1 125 1 is_stmt 0 view .LVU8
+  80 0000 38B5     		push	{r3, r4, r5, lr}
+  81              	.LCFI3:
+  82              		.cfi_def_cfa_offset 16
+  83              		.cfi_offset 3, -16
+  84              		.cfi_offset 4, -12
+  85              		.cfi_offset 5, -8
+  86              		.cfi_offset 14, -4
+  87 0002 0546     		mov	r5, r0
+ 126:BSP/Camera/ov2640.c ****     for (int i = 0; regs[i][0]; i++) {
+  88              		.loc 1 126 5 is_stmt 1 view .LVU9
+  89              	.LBB2:
+  90              		.loc 1 126 10 view .LVU10
+  91              	.LVL5:
+  92              		.loc 1 126 14 is_stmt 0 view .LVU11
+  93 0004 0024     		movs	r4, #0
+  94              		.loc 1 126 5 view .LVU12
+  95 0006 04E0     		b	.L6
+  96              	.LVL6:
+  97              	.L7:
+ 127:BSP/Camera/ov2640.c ****         Camera_WriteReg(&hcamera, regs[i][0], &regs[i][1]);
+  98              		.loc 1 127 9 is_stmt 1 view .LVU13
+  99 0008 0132     		adds	r2, r2, #1
+ 100 000a 0548     		ldr	r0, .L9
+ 101 000c FFF7FEFF 		bl	Camera_WriteReg
+ 102              	.LVL7:
+ 126:BSP/Camera/ov2640.c ****     for (int i = 0; regs[i][0]; i++) {
+ 103              		.loc 1 126 34 discriminator 3 view .LVU14
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccYXGfH1.s 			page 5
+
+
+ 104 0010 0134     		adds	r4, r4, #1
+ 105              	.LVL8:
+ 106              	.L6:
+ 126:BSP/Camera/ov2640.c ****     for (int i = 0; regs[i][0]; i++) {
+ 107              		.loc 1 126 21 discriminator 1 view .LVU15
+ 126:BSP/Camera/ov2640.c ****     for (int i = 0; regs[i][0]; i++) {
+ 108              		.loc 1 126 25 is_stmt 0 discriminator 1 view .LVU16
+ 109 0012 05EB4402 		add	r2, r5, r4, lsl #1
+ 126:BSP/Camera/ov2640.c ****     for (int i = 0; regs[i][0]; i++) {
+ 110              		.loc 1 126 28 discriminator 1 view .LVU17
+ 111 0016 15F81410 		ldrb	r1, [r5, r4, lsl #1]	@ zero_extendqisi2
+ 126:BSP/Camera/ov2640.c ****     for (int i = 0; regs[i][0]; i++) {
+ 112              		.loc 1 126 21 discriminator 1 view .LVU18
+ 113 001a 0029     		cmp	r1, #0
+ 114 001c F4D1     		bne	.L7
+ 115              	.LBE2:
+ 128:BSP/Camera/ov2640.c ****     }
+ 129:BSP/Camera/ov2640.c **** }
+ 116              		.loc 1 129 1 view .LVU19
+ 117 001e 38BD     		pop	{r3, r4, r5, pc}
+ 118              	.LVL9:
+ 119              	.L10:
+ 120              		.loc 1 129 1 view .LVU20
+ 121              		.align	2
+ 122              	.L9:
+ 123 0020 00000000 		.word	hcamera
+ 124              		.cfi_endproc
+ 125              	.LFE146:
+ 127              		.section	.text.reset,"ax",%progbits
+ 128              		.align	1
+ 129              		.syntax unified
+ 130              		.thumb
+ 131              		.thumb_func
+ 133              	reset:
+ 134              	.LFB147:
+ 130:BSP/Camera/ov2640.c **** 
+ 131:BSP/Camera/ov2640.c **** //----------------
+ 132:BSP/Camera/ov2640.c **** static int reset()
+ 133:BSP/Camera/ov2640.c **** {
+ 135              		.loc 1 133 1 is_stmt 1 view -0
+ 136              		.cfi_startproc
+ 137              		@ args = 0, pretend = 0, frame = 0
+ 138              		@ frame_needed = 0, uses_anonymous_args = 0
+ 139 0000 08B5     		push	{r3, lr}
+ 140              	.LCFI4:
+ 141              		.cfi_def_cfa_offset 8
+ 142              		.cfi_offset 3, -8
+ 143              		.cfi_offset 14, -4
+ 134:BSP/Camera/ov2640.c **** 	  ov2640_delay(100);
+ 144              		.loc 1 134 4 view .LVU22
+ 145 0002 6420     		movs	r0, #100
+ 146 0004 FFF7FEFF 		bl	HAL_Delay
+ 147              	.LVL10:
+ 135:BSP/Camera/ov2640.c ****     // Reset all registers
+ 136:BSP/Camera/ov2640.c ****     OV2640_WR_Reg(BANK_SEL, BANK_SEL_SENSOR);
+ 148              		.loc 1 136 5 view .LVU23
+ 149 0008 0121     		movs	r1, #1
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccYXGfH1.s 			page 6
+
+
+ 150 000a FF20     		movs	r0, #255
+ 151 000c FFF7FEFF 		bl	OV2640_WR_Reg
+ 152              	.LVL11:
+ 137:BSP/Camera/ov2640.c ****     OV2640_WR_Reg(COM7, COM7_SRST);
+ 153              		.loc 1 137 5 view .LVU24
+ 154 0010 8021     		movs	r1, #128
+ 155 0012 1220     		movs	r0, #18
+ 156 0014 FFF7FEFF 		bl	OV2640_WR_Reg
+ 157              	.LVL12:
+ 138:BSP/Camera/ov2640.c ****     // Delay 5 ms
+ 139:BSP/Camera/ov2640.c ****     ov2640_delay(5);
+ 158              		.loc 1 139 5 view .LVU25
+ 159 0018 0520     		movs	r0, #5
+ 160 001a FFF7FEFF 		bl	HAL_Delay
+ 161              	.LVL13:
+ 140:BSP/Camera/ov2640.c ****     wrSensorRegs(ov2640_Slow_regs);
+ 162              		.loc 1 140 5 view .LVU26
+ 163 001e 0448     		ldr	r0, .L13
+ 164 0020 FFF7FEFF 		bl	wrSensorRegs
+ 165              	.LVL14:
+ 141:BSP/Camera/ov2640.c ****     // 30 ms
+ 142:BSP/Camera/ov2640.c ****     ov2640_delay(30);
+ 166              		.loc 1 142 5 view .LVU27
+ 167 0024 1E20     		movs	r0, #30
+ 168 0026 FFF7FEFF 		bl	HAL_Delay
+ 169              	.LVL15:
+ 143:BSP/Camera/ov2640.c **** 
+ 144:BSP/Camera/ov2640.c ****     return 0;
+ 170              		.loc 1 144 5 view .LVU28
+ 145:BSP/Camera/ov2640.c **** }
+ 171              		.loc 1 145 1 is_stmt 0 view .LVU29
+ 172 002a 0020     		movs	r0, #0
+ 173 002c 08BD     		pop	{r3, pc}
+ 174              	.L14:
+ 175 002e 00BF     		.align	2
+ 176              	.L13:
+ 177 0030 00000000 		.word	ov2640_Slow_regs
+ 178              		.cfi_endproc
+ 179              	.LFE147:
+ 181              		.section	.text.OV2640_RD_Reg,"ax",%progbits
+ 182              		.align	1
+ 183              		.syntax unified
+ 184              		.thumb
+ 185              		.thumb_func
+ 187              	OV2640_RD_Reg:
+ 188              	.LVL16:
+ 189              	.LFB145:
+ 117:BSP/Camera/ov2640.c **** 	uint8_t data;
+ 190              		.loc 1 117 1 is_stmt 1 view -0
+ 191              		.cfi_startproc
+ 192              		@ args = 0, pretend = 0, frame = 8
+ 193              		@ frame_needed = 0, uses_anonymous_args = 0
+ 117:BSP/Camera/ov2640.c **** 	uint8_t data;
+ 194              		.loc 1 117 1 is_stmt 0 view .LVU31
+ 195 0000 00B5     		push	{lr}
+ 196              	.LCFI5:
+ 197              		.cfi_def_cfa_offset 4
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccYXGfH1.s 			page 7
+
+
+ 198              		.cfi_offset 14, -4
+ 199 0002 83B0     		sub	sp, sp, #12
+ 200              	.LCFI6:
+ 201              		.cfi_def_cfa_offset 16
+ 202 0004 0146     		mov	r1, r0
+ 118:BSP/Camera/ov2640.c ****   Camera_ReadReg(&hcamera,reg,&data);
+ 203              		.loc 1 118 2 is_stmt 1 view .LVU32
+ 119:BSP/Camera/ov2640.c ****     return data;
+ 204              		.loc 1 119 3 view .LVU33
+ 205 0006 0DF10702 		add	r2, sp, #7
+ 206 000a 0448     		ldr	r0, .L17
+ 207              	.LVL17:
+ 119:BSP/Camera/ov2640.c ****     return data;
+ 208              		.loc 1 119 3 is_stmt 0 view .LVU34
+ 209 000c FFF7FEFF 		bl	Camera_ReadReg
+ 210              	.LVL18:
+ 120:BSP/Camera/ov2640.c **** }
+ 211              		.loc 1 120 5 is_stmt 1 view .LVU35
+ 121:BSP/Camera/ov2640.c **** 
+ 212              		.loc 1 121 1 is_stmt 0 view .LVU36
+ 213 0010 9DF80700 		ldrb	r0, [sp, #7]	@ zero_extendqisi2
+ 214 0014 03B0     		add	sp, sp, #12
+ 215              	.LCFI7:
+ 216              		.cfi_def_cfa_offset 4
+ 217              		@ sp needed
+ 218 0016 5DF804FB 		ldr	pc, [sp], #4
+ 219              	.L18:
+ 220 001a 00BF     		.align	2
+ 221              	.L17:
+ 222 001c 00000000 		.word	hcamera
+ 223              		.cfi_endproc
+ 224              	.LFE145:
+ 226              		.section	.text._set_framesize,"ax",%progbits
+ 227              		.align	1
+ 228              		.syntax unified
+ 229              		.thumb
+ 230              		.thumb_func
+ 232              	_set_framesize:
+ 233              	.LVL19:
+ 234              	.LFB150:
+ 146:BSP/Camera/ov2640.c **** 
+ 147:BSP/Camera/ov2640.c **** //----------------------------------------
+ 148:BSP/Camera/ov2640.c **** static int set_special_effect(uint8_t sde)
+ 149:BSP/Camera/ov2640.c **** {
+ 150:BSP/Camera/ov2640.c ****     if (sde >= NUM_EFFECTS) return -1;
+ 151:BSP/Camera/ov2640.c ****     OV2640_WR_Reg(BANK_SEL, BANK_SEL_DSP);
+ 152:BSP/Camera/ov2640.c ****     OV2640_WR_Reg(BPADDR, 0x00);
+ 153:BSP/Camera/ov2640.c ****     OV2640_WR_Reg(BPDATA, OV2640_EFFECTS_TBL[sde][0]);
+ 154:BSP/Camera/ov2640.c ****     OV2640_WR_Reg(BPADDR, 0x05);
+ 155:BSP/Camera/ov2640.c ****     OV2640_WR_Reg(BPDATA, OV2640_EFFECTS_TBL[sde][1]);
+ 156:BSP/Camera/ov2640.c ****     OV2640_WR_Reg(BPDATA, OV2640_EFFECTS_TBL[sde][2]);
+ 157:BSP/Camera/ov2640.c **** 
+ 158:BSP/Camera/ov2640.c ****     return 0;
+ 159:BSP/Camera/ov2640.c **** }
+ 160:BSP/Camera/ov2640.c **** 
+ 161:BSP/Camera/ov2640.c **** //-----------------------------------
+ 162:BSP/Camera/ov2640.c **** static int set_exposure(int exposure)
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccYXGfH1.s 			page 8
+
+
+ 163:BSP/Camera/ov2640.c **** {
+ 164:BSP/Camera/ov2640.c ****     int ret = 0;
+ 165:BSP/Camera/ov2640.c ****     // Disable DSP
+ 166:BSP/Camera/ov2640.c ****     OV2640_WR_Reg(BANK_SEL, BANK_SEL_DSP);
+ 167:BSP/Camera/ov2640.c ****     OV2640_WR_Reg(R_BYPASS, R_BYPASS_DSP_BYPAS);
+ 168:BSP/Camera/ov2640.c **** 
+ 169:BSP/Camera/ov2640.c ****     OV2640_WR_Reg(BANK_SEL, BANK_SEL_SENSOR);
+ 170:BSP/Camera/ov2640.c ****     if (exposure == -1) {
+ 171:BSP/Camera/ov2640.c ****         // get exposure
+ 172:BSP/Camera/ov2640.c ****         uint16_t exp = (uint16_t)(OV2640_RD_Reg(REG45) & 0x3f) << 10;
+ 173:BSP/Camera/ov2640.c ****         exp |= (uint16_t)OV2640_RD_Reg(AEC) << 2;
+ 174:BSP/Camera/ov2640.c ****         exp |= (uint16_t)OV2640_RD_Reg(REG04) & 0x03;
+ 175:BSP/Camera/ov2640.c ****         ret = (int)exp;
+ 176:BSP/Camera/ov2640.c ****     }
+ 177:BSP/Camera/ov2640.c ****     else if (exposure == -2) {
+ 178:BSP/Camera/ov2640.c ****         // disable auto exposure and gain
+ 179:BSP/Camera/ov2640.c ****         OV2640_WR_Reg(COM8, COM8_SET(0));
+ 180:BSP/Camera/ov2640.c ****     }
+ 181:BSP/Camera/ov2640.c ****     else if (exposure > 0) {
+ 182:BSP/Camera/ov2640.c ****         // set manual exposure
+ 183:BSP/Camera/ov2640.c ****         int max_exp = (dvp_cam_resolution[hcamera.framesize][0] <= 800) ? 672 : 1248;
+ 184:BSP/Camera/ov2640.c ****         if (exposure > max_exp) exposure = max_exp;
+ 185:BSP/Camera/ov2640.c ****         OV2640_WR_Reg(COM8, COM8_SET(0));
+ 186:BSP/Camera/ov2640.c ****         OV2640_WR_Reg(REG45, (uint8_t)((exposure >> 10) & 0x3f));
+ 187:BSP/Camera/ov2640.c ****         OV2640_WR_Reg(AEC, (uint8_t)((exposure >> 2) & 0xff));
+ 188:BSP/Camera/ov2640.c ****         OV2640_WR_Reg(REG04, (uint8_t)(exposure & 3));
+ 189:BSP/Camera/ov2640.c ****     }
+ 190:BSP/Camera/ov2640.c ****     else {
+ 191:BSP/Camera/ov2640.c ****         // enable auto exposure and gain
+ 192:BSP/Camera/ov2640.c ****         OV2640_WR_Reg(COM8, COM8_SET(COM8_BNDF_EN | COM8_AGC_EN | COM8_AEC_EN));
+ 193:BSP/Camera/ov2640.c ****     }
+ 194:BSP/Camera/ov2640.c **** 
+ 195:BSP/Camera/ov2640.c ****     // Enable DSP
+ 196:BSP/Camera/ov2640.c ****     OV2640_WR_Reg(BANK_SEL, BANK_SEL_DSP);
+ 197:BSP/Camera/ov2640.c ****     OV2640_WR_Reg(R_BYPASS, R_BYPASS_DSP_EN);
+ 198:BSP/Camera/ov2640.c ****     return ret;
+ 199:BSP/Camera/ov2640.c **** }
+ 200:BSP/Camera/ov2640.c **** 
+ 201:BSP/Camera/ov2640.c **** //-------------------------------------------
+ 202:BSP/Camera/ov2640.c **** static void _set_framesize(uint8_t framesize)
+ 203:BSP/Camera/ov2640.c **** {
+ 235              		.loc 1 203 1 is_stmt 1 view -0
+ 236              		.cfi_startproc
+ 237              		@ args = 0, pretend = 0, frame = 0
+ 238              		@ frame_needed = 0, uses_anonymous_args = 0
+ 239              		.loc 1 203 1 is_stmt 0 view .LVU38
+ 240 0000 2DE9F041 		push	{r4, r5, r6, r7, r8, lr}
+ 241              	.LCFI8:
+ 242              		.cfi_def_cfa_offset 24
+ 243              		.cfi_offset 4, -24
+ 244              		.cfi_offset 5, -20
+ 245              		.cfi_offset 6, -16
+ 246              		.cfi_offset 7, -12
+ 247              		.cfi_offset 8, -8
+ 248              		.cfi_offset 14, -4
+ 249 0004 0446     		mov	r4, r0
+ 204:BSP/Camera/ov2640.c ****     uint8_t cbar, qsreg, com7;
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccYXGfH1.s 			page 9
+
+
+ 250              		.loc 1 204 5 is_stmt 1 view .LVU39
+ 205:BSP/Camera/ov2640.c **** 
+ 206:BSP/Camera/ov2640.c ****     // save color bar status and qs register
+ 207:BSP/Camera/ov2640.c ****     OV2640_WR_Reg(BANK_SEL, BANK_SEL_SENSOR);
+ 251              		.loc 1 207 5 view .LVU40
+ 252 0006 0121     		movs	r1, #1
+ 253 0008 FF20     		movs	r0, #255
+ 254              	.LVL20:
+ 255              		.loc 1 207 5 is_stmt 0 view .LVU41
+ 256 000a FFF7FEFF 		bl	OV2640_WR_Reg
+ 257              	.LVL21:
+ 208:BSP/Camera/ov2640.c ****     cbar = OV2640_RD_Reg(COM7) & COM7_COLOR_BAR;
+ 258              		.loc 1 208 5 is_stmt 1 view .LVU42
+ 259              		.loc 1 208 12 is_stmt 0 view .LVU43
+ 260 000e 1220     		movs	r0, #18
+ 261 0010 FFF7FEFF 		bl	OV2640_RD_Reg
+ 262              	.LVL22:
+ 263              		.loc 1 208 10 discriminator 1 view .LVU44
+ 264 0014 00F00207 		and	r7, r0, #2
+ 265              	.LVL23:
+ 209:BSP/Camera/ov2640.c ****     OV2640_WR_Reg(BANK_SEL, BANK_SEL_DSP);
+ 266              		.loc 1 209 5 is_stmt 1 view .LVU45
+ 267 0018 0021     		movs	r1, #0
+ 268 001a FF20     		movs	r0, #255
+ 269 001c FFF7FEFF 		bl	OV2640_WR_Reg
+ 270              	.LVL24:
+ 210:BSP/Camera/ov2640.c ****     qsreg = OV2640_RD_Reg(QS);
+ 271              		.loc 1 210 5 view .LVU46
+ 272              		.loc 1 210 13 is_stmt 0 view .LVU47
+ 273 0020 4420     		movs	r0, #68
+ 274 0022 FFF7FEFF 		bl	OV2640_RD_Reg
+ 275              	.LVL25:
+ 276 0026 0646     		mov	r6, r0
+ 277              	.LVL26:
+ 211:BSP/Camera/ov2640.c **** 
+ 212:BSP/Camera/ov2640.c ****     uint16_t w = dvp_cam_resolution[framesize][0];
+ 278              		.loc 1 212 5 is_stmt 1 view .LVU48
+ 279              		.loc 1 212 14 is_stmt 0 view .LVU49
+ 280 0028 254B     		ldr	r3, .L23
+ 281 002a 33F82450 		ldrh	r5, [r3, r4, lsl #2]
+ 282              	.LVL27:
+ 213:BSP/Camera/ov2640.c ****     uint16_t h = dvp_cam_resolution[framesize][1];
+ 283              		.loc 1 213 5 is_stmt 1 view .LVU50
+ 284              		.loc 1 213 14 is_stmt 0 view .LVU51
+ 285 002e 03EB8404 		add	r4, r3, r4, lsl #2
+ 286              	.LVL28:
+ 287              		.loc 1 213 14 view .LVU52
+ 288 0032 6488     		ldrh	r4, [r4, #2]
+ 289              	.LVL29:
+ 214:BSP/Camera/ov2640.c ****     const uint8_t (*regs)[2];
+ 290              		.loc 1 214 5 is_stmt 1 view .LVU53
+ 215:BSP/Camera/ov2640.c **** 
+ 216:BSP/Camera/ov2640.c ****     if (w <= dvp_cam_resolution[FRAMESIZE_SVGA][0]) regs = OV2640_svga_regs;
+ 291              		.loc 1 216 5 view .LVU54
+ 292              		.loc 1 216 48 is_stmt 0 view .LVU55
+ 293 0034 B3F86030 		ldrh	r3, [r3, #96]
+ 294              		.loc 1 216 8 view .LVU56
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccYXGfH1.s 			page 10
+
+
+ 295 0038 AB42     		cmp	r3, r5
+ 296 003a 3ED3     		bcc	.L21
+ 297              		.loc 1 216 58 discriminator 1 view .LVU57
+ 298 003c DFF88480 		ldr	r8, .L23+4
+ 299              	.L20:
+ 300              	.LVL30:
+ 217:BSP/Camera/ov2640.c ****     else regs = OV2640_uxga_regs;
+ 218:BSP/Camera/ov2640.c **** 
+ 219:BSP/Camera/ov2640.c ****     // Disable DSP
+ 220:BSP/Camera/ov2640.c ****     OV2640_WR_Reg(BANK_SEL, BANK_SEL_DSP);
+ 301              		.loc 1 220 5 is_stmt 1 view .LVU58
+ 302 0040 0021     		movs	r1, #0
+ 303 0042 FF20     		movs	r0, #255
+ 304 0044 FFF7FEFF 		bl	OV2640_WR_Reg
+ 305              	.LVL31:
+ 221:BSP/Camera/ov2640.c ****     OV2640_WR_Reg(R_BYPASS, R_BYPASS_DSP_BYPAS);
+ 306              		.loc 1 221 5 view .LVU59
+ 307 0048 0121     		movs	r1, #1
+ 308 004a 0520     		movs	r0, #5
+ 309 004c FFF7FEFF 		bl	OV2640_WR_Reg
+ 310              	.LVL32:
+ 222:BSP/Camera/ov2640.c **** 
+ 223:BSP/Camera/ov2640.c ****     // Write output width
+ 224:BSP/Camera/ov2640.c ****     OV2640_WR_Reg(ZMOW, (w>>2)&0xFF); // OUTW[7:0] (real/4)
+ 311              		.loc 1 224 5 view .LVU60
+ 312 0050 C5F38701 		ubfx	r1, r5, #2, #8
+ 313 0054 5A20     		movs	r0, #90
+ 314 0056 FFF7FEFF 		bl	OV2640_WR_Reg
+ 315              	.LVL33:
+ 225:BSP/Camera/ov2640.c ****     OV2640_WR_Reg(ZMOH, (h>>2)&0xFF); // OUTH[7:0] (real/4)
+ 316              		.loc 1 225 5 view .LVU61
+ 317 005a C4F38701 		ubfx	r1, r4, #2, #8
+ 318 005e 5B20     		movs	r0, #91
+ 319 0060 FFF7FEFF 		bl	OV2640_WR_Reg
+ 320              	.LVL34:
+ 226:BSP/Camera/ov2640.c ****     OV2640_WR_Reg(ZMHH, ((h>>8)&0x04)|((w>>10)&0x03)); // OUTH[8]/OUTW[9:8]
+ 321              		.loc 1 226 5 view .LVU62
+ 322              		.loc 1 226 32 is_stmt 0 view .LVU63
+ 323 0064 240A     		lsrs	r4, r4, #8
+ 324              	.LVL35:
+ 325              		.loc 1 226 32 view .LVU64
+ 326 0066 04F00404 		and	r4, r4, #4
+ 327              		.loc 1 226 47 view .LVU65
+ 328 006a C5F38121 		ubfx	r1, r5, #10, #2
+ 329              		.loc 1 226 5 view .LVU66
+ 330 006e 2143     		orrs	r1, r1, r4
+ 331 0070 5C20     		movs	r0, #92
+ 332 0072 FFF7FEFF 		bl	OV2640_WR_Reg
+ 333              	.LVL36:
+ 227:BSP/Camera/ov2640.c **** 
+ 228:BSP/Camera/ov2640.c ****     // Set CLKRC
+ 229:BSP/Camera/ov2640.c ****     OV2640_WR_Reg(BANK_SEL, BANK_SEL_SENSOR);
+ 334              		.loc 1 229 5 is_stmt 1 view .LVU67
+ 335 0076 0121     		movs	r1, #1
+ 336 0078 FF20     		movs	r0, #255
+ 337 007a FFF7FEFF 		bl	OV2640_WR_Reg
+ 338              	.LVL37:
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccYXGfH1.s 			page 11
+
+
+ 230:BSP/Camera/ov2640.c ****     //OV2640_WR_Reg(CLKRC, ov2640_sensor->night_mode);
+ 231:BSP/Camera/ov2640.c **** 
+ 232:BSP/Camera/ov2640.c ****     // Write DSP input regsiters
+ 233:BSP/Camera/ov2640.c ****     wrSensorRegs(regs);
+ 339              		.loc 1 233 5 view .LVU68
+ 340 007e 4046     		mov	r0, r8
+ 341 0080 FFF7FEFF 		bl	wrSensorRegs
+ 342              	.LVL38:
+ 234:BSP/Camera/ov2640.c **** 
+ 235:BSP/Camera/ov2640.c ****     // restore color bar status
+ 236:BSP/Camera/ov2640.c ****     OV2640_WR_Reg(BANK_SEL, BANK_SEL_SENSOR);
+ 343              		.loc 1 236 5 view .LVU69
+ 344 0084 0121     		movs	r1, #1
+ 345 0086 FF20     		movs	r0, #255
+ 346 0088 FFF7FEFF 		bl	OV2640_WR_Reg
+ 347              	.LVL39:
+ 237:BSP/Camera/ov2640.c ****     com7 = OV2640_RD_Reg(COM7) | cbar;
+ 348              		.loc 1 237 5 view .LVU70
+ 349              		.loc 1 237 12 is_stmt 0 view .LVU71
+ 350 008c 1220     		movs	r0, #18
+ 351 008e FFF7FEFF 		bl	OV2640_RD_Reg
+ 352              	.LVL40:
+ 353              		.loc 1 237 10 discriminator 1 view .LVU72
+ 354 0092 40EA0701 		orr	r1, r0, r7
+ 355              	.LVL41:
+ 238:BSP/Camera/ov2640.c ****     OV2640_WR_Reg(COM7, com7);
+ 356              		.loc 1 238 5 is_stmt 1 view .LVU73
+ 357 0096 C9B2     		uxtb	r1, r1
+ 358              		.loc 1 238 5 is_stmt 0 view .LVU74
+ 359 0098 1220     		movs	r0, #18
+ 360 009a FFF7FEFF 		bl	OV2640_WR_Reg
+ 361              	.LVL42:
+ 239:BSP/Camera/ov2640.c **** 
+ 240:BSP/Camera/ov2640.c ****     // restore qs register
+ 241:BSP/Camera/ov2640.c ****     OV2640_WR_Reg(BANK_SEL, BANK_SEL_DSP);
+ 362              		.loc 1 241 5 is_stmt 1 view .LVU75
+ 363 009e 0021     		movs	r1, #0
+ 364 00a0 FF20     		movs	r0, #255
+ 365 00a2 FFF7FEFF 		bl	OV2640_WR_Reg
+ 366              	.LVL43:
+ 242:BSP/Camera/ov2640.c ****     OV2640_WR_Reg(QS, qsreg);
+ 367              		.loc 1 242 5 view .LVU76
+ 368 00a6 3146     		mov	r1, r6
+ 369 00a8 4420     		movs	r0, #68
+ 370 00aa FFF7FEFF 		bl	OV2640_WR_Reg
+ 371              	.LVL44:
+ 243:BSP/Camera/ov2640.c **** 
+ 244:BSP/Camera/ov2640.c ****     // Enable DSP
+ 245:BSP/Camera/ov2640.c ****     OV2640_WR_Reg(R_BYPASS, R_BYPASS_DSP_EN);
+ 372              		.loc 1 245 5 view .LVU77
+ 373 00ae 0021     		movs	r1, #0
+ 374 00b0 0520     		movs	r0, #5
+ 375 00b2 FFF7FEFF 		bl	OV2640_WR_Reg
+ 376              	.LVL45:
+ 246:BSP/Camera/ov2640.c **** }
+ 377              		.loc 1 246 1 is_stmt 0 view .LVU78
+ 378 00b6 BDE8F081 		pop	{r4, r5, r6, r7, r8, pc}
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccYXGfH1.s 			page 12
+
+
+ 379              	.LVL46:
+ 380              	.L21:
+ 217:BSP/Camera/ov2640.c **** 
+ 381              		.loc 1 217 15 view .LVU79
+ 382 00ba DFF80C80 		ldr	r8, .L23+8
+ 383 00be BFE7     		b	.L20
+ 384              	.L24:
+ 385              		.align	2
+ 386              	.L23:
+ 387 00c0 00000000 		.word	dvp_cam_resolution
+ 388 00c4 00000000 		.word	OV2640_svga_regs
+ 389 00c8 00000000 		.word	OV2640_uxga_regs
+ 390              		.cfi_endproc
+ 391              	.LFE150:
+ 393              		.section	.text.set_pixformat,"ax",%progbits
+ 394              		.align	1
+ 395              		.syntax unified
+ 396              		.thumb
+ 397              		.thumb_func
+ 399              	set_pixformat:
+ 400              	.LVL47:
+ 401              	.LFB151:
+ 247:BSP/Camera/ov2640.c **** 
+ 248:BSP/Camera/ov2640.c **** //---------------------------------------------
+ 249:BSP/Camera/ov2640.c **** static int set_pixformat(pixformat_t pixformat)
+ 250:BSP/Camera/ov2640.c **** {
+ 402              		.loc 1 250 1 is_stmt 1 view -0
+ 403              		.cfi_startproc
+ 404              		@ args = 0, pretend = 0, frame = 0
+ 405              		@ frame_needed = 0, uses_anonymous_args = 0
+ 406              		.loc 1 250 1 is_stmt 0 view .LVU81
+ 407 0000 10B5     		push	{r4, lr}
+ 408              	.LCFI9:
+ 409              		.cfi_def_cfa_offset 8
+ 410              		.cfi_offset 4, -8
+ 411              		.cfi_offset 14, -4
+ 412 0002 0446     		mov	r4, r0
+ 251:BSP/Camera/ov2640.c ****     // Disable DSP
+ 252:BSP/Camera/ov2640.c ****     OV2640_WR_Reg(BANK_SEL, BANK_SEL_DSP);
+ 413              		.loc 1 252 5 is_stmt 1 view .LVU82
+ 414 0004 0021     		movs	r1, #0
+ 415 0006 FF20     		movs	r0, #255
+ 416              	.LVL48:
+ 417              		.loc 1 252 5 is_stmt 0 view .LVU83
+ 418 0008 FFF7FEFF 		bl	OV2640_WR_Reg
+ 419              	.LVL49:
+ 253:BSP/Camera/ov2640.c ****     OV2640_WR_Reg(R_BYPASS, R_BYPASS_DSP_BYPAS);
+ 420              		.loc 1 253 5 is_stmt 1 view .LVU84
+ 421 000c 0121     		movs	r1, #1
+ 422 000e 0520     		movs	r0, #5
+ 423 0010 FFF7FEFF 		bl	OV2640_WR_Reg
+ 424              	.LVL50:
+ 254:BSP/Camera/ov2640.c **** 
+ 255:BSP/Camera/ov2640.c ****     switch (pixformat) {
+ 425              		.loc 1 255 5 view .LVU85
+ 426 0014 022C     		cmp	r4, #2
+ 427 0016 0CD0     		beq	.L26
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccYXGfH1.s 			page 13
+
+
+ 428 0018 032C     		cmp	r4, #3
+ 429 001a 0ED0     		beq	.L27
+ 430 001c 012C     		cmp	r4, #1
+ 431 001e 10D1     		bne	.L28
+ 256:BSP/Camera/ov2640.c ****         case PIXFORMAT_RGB565:
+ 257:BSP/Camera/ov2640.c ****             //OV2640_WR_Reg(BANK_SEL, BANK_SEL_SENSOR);
+ 258:BSP/Camera/ov2640.c ****             //OV2640_WR_Reg(COM8, COM8_SET(COM8_BNDF_EN | COM8_AGC_EN | COM8_AEC_EN));
+ 259:BSP/Camera/ov2640.c ****             wrSensorRegs(rgb565_regs);
+ 432              		.loc 1 259 13 view .LVU86
+ 433 0020 0D48     		ldr	r0, .L32
+ 434 0022 FFF7FEFF 		bl	wrSensorRegs
+ 435              	.LVL51:
+ 260:BSP/Camera/ov2640.c ****             break;
+ 436              		.loc 1 260 13 view .LVU87
+ 437              	.L29:
+ 261:BSP/Camera/ov2640.c ****         case PIXFORMAT_JPEG:
+ 262:BSP/Camera/ov2640.c ****             //OV2640_WR_Reg(BANK_SEL, BANK_SEL_SENSOR);
+ 263:BSP/Camera/ov2640.c ****             //OV2640_WR_Reg(COM8, COM8_SET(COM8_BNDF_EN));
+ 264:BSP/Camera/ov2640.c ****             wrSensorRegs(jpeg_regs);
+ 265:BSP/Camera/ov2640.c ****             break;
+ 266:BSP/Camera/ov2640.c **** 				case PIXFORMAT_YUV422:
+ 267:BSP/Camera/ov2640.c **** 					 wrSensorRegs(yuyv_regs);
+ 268:BSP/Camera/ov2640.c **** 						break;
+ 269:BSP/Camera/ov2640.c ****         default:
+ 270:BSP/Camera/ov2640.c ****             // Enable DSP
+ 271:BSP/Camera/ov2640.c ****             OV2640_WR_Reg(BANK_SEL, BANK_SEL_DSP);
+ 272:BSP/Camera/ov2640.c ****             OV2640_WR_Reg(R_BYPASS, R_BYPASS_DSP_EN);
+ 273:BSP/Camera/ov2640.c ****             return -1;
+ 274:BSP/Camera/ov2640.c ****     }
+ 275:BSP/Camera/ov2640.c ****     _set_framesize(hcamera.framesize);
+ 438              		.loc 1 275 5 view .LVU88
+ 439 0026 0D4B     		ldr	r3, .L32+4
+ 440 0028 187C     		ldrb	r0, [r3, #16]	@ zero_extendqisi2
+ 441 002a FFF7FEFF 		bl	_set_framesize
+ 442              	.LVL52:
+ 276:BSP/Camera/ov2640.c ****     // Enable DSP (enabled in '_set_framesize'
+ 277:BSP/Camera/ov2640.c ****     //OV2640_WR_Reg(BANK_SEL, BANK_SEL_DSP);
+ 278:BSP/Camera/ov2640.c ****     //OV2640_WR_Reg(R_BYPASS, R_BYPASS_DSP_EN);
+ 279:BSP/Camera/ov2640.c ****     // Delay 30 ms
+ 280:BSP/Camera/ov2640.c ****     //ov2640_delay(30);
+ 281:BSP/Camera/ov2640.c **** 
+ 282:BSP/Camera/ov2640.c ****     return 0;
+ 443              		.loc 1 282 5 view .LVU89
+ 444              		.loc 1 282 12 is_stmt 0 view .LVU90
+ 445 002e 0020     		movs	r0, #0
+ 446              	.L25:
+ 283:BSP/Camera/ov2640.c **** }
+ 447              		.loc 1 283 1 view .LVU91
+ 448 0030 10BD     		pop	{r4, pc}
+ 449              	.LVL53:
+ 450              	.L26:
+ 264:BSP/Camera/ov2640.c ****             break;
+ 451              		.loc 1 264 13 is_stmt 1 view .LVU92
+ 452 0032 0B48     		ldr	r0, .L32+8
+ 453 0034 FFF7FEFF 		bl	wrSensorRegs
+ 454              	.LVL54:
+ 265:BSP/Camera/ov2640.c **** 				case PIXFORMAT_YUV422:
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccYXGfH1.s 			page 14
+
+
+ 455              		.loc 1 265 13 view .LVU93
+ 456 0038 F5E7     		b	.L29
+ 457              	.L27:
+ 267:BSP/Camera/ov2640.c **** 						break;
+ 458              		.loc 1 267 7 view .LVU94
+ 459 003a 0A48     		ldr	r0, .L32+12
+ 460 003c FFF7FEFF 		bl	wrSensorRegs
+ 461              	.LVL55:
+ 268:BSP/Camera/ov2640.c ****         default:
+ 462              		.loc 1 268 7 view .LVU95
+ 463 0040 F1E7     		b	.L29
+ 464              	.L28:
+ 271:BSP/Camera/ov2640.c ****             OV2640_WR_Reg(R_BYPASS, R_BYPASS_DSP_EN);
+ 465              		.loc 1 271 13 view .LVU96
+ 466 0042 0021     		movs	r1, #0
+ 467 0044 FF20     		movs	r0, #255
+ 468 0046 FFF7FEFF 		bl	OV2640_WR_Reg
+ 469              	.LVL56:
+ 272:BSP/Camera/ov2640.c ****             return -1;
+ 470              		.loc 1 272 13 view .LVU97
+ 471 004a 0021     		movs	r1, #0
+ 472 004c 0520     		movs	r0, #5
+ 473 004e FFF7FEFF 		bl	OV2640_WR_Reg
+ 474              	.LVL57:
+ 273:BSP/Camera/ov2640.c ****     }
+ 475              		.loc 1 273 13 view .LVU98
+ 273:BSP/Camera/ov2640.c ****     }
+ 476              		.loc 1 273 20 is_stmt 0 view .LVU99
+ 477 0052 4FF0FF30 		mov	r0, #-1
+ 478 0056 EBE7     		b	.L25
+ 479              	.L33:
+ 480              		.align	2
+ 481              	.L32:
+ 482 0058 00000000 		.word	rgb565_regs
+ 483 005c 00000000 		.word	hcamera
+ 484 0060 00000000 		.word	jpeg_regs
+ 485 0064 00000000 		.word	yuyv_regs
+ 486              		.cfi_endproc
+ 487              	.LFE151:
+ 489              		.section	.text.set_hmirror,"ax",%progbits
+ 490              		.align	1
+ 491              		.syntax unified
+ 492              		.thumb
+ 493              		.thumb_func
+ 495              	set_hmirror:
+ 496              	.LVL58:
+ 497              	.LFB159:
+ 284:BSP/Camera/ov2640.c **** 
+ 285:BSP/Camera/ov2640.c **** //-----------------------------------------
+ 286:BSP/Camera/ov2640.c **** static int set_framesize(framesize_t framesize)
+ 287:BSP/Camera/ov2640.c **** {
+ 288:BSP/Camera/ov2640.c ****     int i = OV2640_NUM_ALLOWED_SIZES;
+ 289:BSP/Camera/ov2640.c ****     for (i=0; i<OV2640_NUM_ALLOWED_SIZES; i++) {
+ 290:BSP/Camera/ov2640.c ****         if (allowed_sizes[i] == framesize) break;
+ 291:BSP/Camera/ov2640.c ****     }
+ 292:BSP/Camera/ov2640.c ****     if (i >= OV2640_NUM_ALLOWED_SIZES) {
+ 293:BSP/Camera/ov2640.c ****         //LOGW(TAG, "Frame size %d not allowed", framesize);
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccYXGfH1.s 			page 15
+
+
+ 294:BSP/Camera/ov2640.c ****         return -1;
+ 295:BSP/Camera/ov2640.c ****     }
+ 296:BSP/Camera/ov2640.c **** 
+ 297:BSP/Camera/ov2640.c ****     hcamera.framesize = framesize;
+ 298:BSP/Camera/ov2640.c ****     _set_framesize(framesize);
+ 299:BSP/Camera/ov2640.c **** 
+ 300:BSP/Camera/ov2640.c ****     //delay 30 ms
+ 301:BSP/Camera/ov2640.c ****     ov2640_delay(30);
+ 302:BSP/Camera/ov2640.c **** 
+ 303:BSP/Camera/ov2640.c ****     return 0;
+ 304:BSP/Camera/ov2640.c **** }
+ 305:BSP/Camera/ov2640.c **** 
+ 306:BSP/Camera/ov2640.c **** //-------------------------------------------
+ 307:BSP/Camera/ov2640.c **** int ov2640_check_framesize(uint8_t framesize)
+ 308:BSP/Camera/ov2640.c **** {
+ 309:BSP/Camera/ov2640.c ****     int i = OV2640_NUM_ALLOWED_SIZES;
+ 310:BSP/Camera/ov2640.c ****     for (i=0; i<OV2640_NUM_ALLOWED_SIZES; i++) {
+ 311:BSP/Camera/ov2640.c ****         if (allowed_sizes[i] == framesize) break;
+ 312:BSP/Camera/ov2640.c ****     }
+ 313:BSP/Camera/ov2640.c ****     if (i >= OV2640_NUM_ALLOWED_SIZES) return -1;
+ 314:BSP/Camera/ov2640.c ****     return 0;
+ 315:BSP/Camera/ov2640.c **** }
+ 316:BSP/Camera/ov2640.c **** 
+ 317:BSP/Camera/ov2640.c **** //--------------------------------
+ 318:BSP/Camera/ov2640.c **** static int set_contrast(int level)
+ 319:BSP/Camera/ov2640.c **** {
+ 320:BSP/Camera/ov2640.c ****     level += (NUM_CONTRAST_LEVELS / 2) + 1;
+ 321:BSP/Camera/ov2640.c ****     if (level < 0 || level > NUM_CONTRAST_LEVELS) {
+ 322:BSP/Camera/ov2640.c ****         return -1;
+ 323:BSP/Camera/ov2640.c ****     }
+ 324:BSP/Camera/ov2640.c **** 
+ 325:BSP/Camera/ov2640.c ****     OV2640_WR_Reg(BANK_SEL, BANK_SEL_DSP);
+ 326:BSP/Camera/ov2640.c ****     OV2640_WR_Reg(R_BYPASS, R_BYPASS_DSP_BYPAS);
+ 327:BSP/Camera/ov2640.c ****     // Write contrast registers
+ 328:BSP/Camera/ov2640.c ****     for (int i=0; i<sizeof(contrast_regs[0])/sizeof(contrast_regs[0][0]); i++) {
+ 329:BSP/Camera/ov2640.c ****         OV2640_WR_Reg(contrast_regs[0][i], contrast_regs[level][i]);
+ 330:BSP/Camera/ov2640.c ****     }
+ 331:BSP/Camera/ov2640.c ****     OV2640_WR_Reg(R_BYPASS, R_BYPASS_DSP_EN);
+ 332:BSP/Camera/ov2640.c **** 
+ 333:BSP/Camera/ov2640.c ****     return 0;
+ 334:BSP/Camera/ov2640.c **** }
+ 335:BSP/Camera/ov2640.c **** 
+ 336:BSP/Camera/ov2640.c **** //----------------------------------
+ 337:BSP/Camera/ov2640.c **** static int set_brightness(int level)
+ 338:BSP/Camera/ov2640.c **** {
+ 339:BSP/Camera/ov2640.c ****     level += (NUM_BRIGHTNESS_LEVELS / 2) + 1;
+ 340:BSP/Camera/ov2640.c ****     if ((level < 0) || (level > NUM_BRIGHTNESS_LEVELS)) return -1;
+ 341:BSP/Camera/ov2640.c **** 
+ 342:BSP/Camera/ov2640.c ****     OV2640_WR_Reg(BANK_SEL, BANK_SEL_DSP);
+ 343:BSP/Camera/ov2640.c ****     OV2640_WR_Reg(R_BYPASS, R_BYPASS_DSP_BYPAS);
+ 344:BSP/Camera/ov2640.c ****     // Write brightness registers
+ 345:BSP/Camera/ov2640.c ****     for (int i=0; i<sizeof(brightness_regs[0])/sizeof(brightness_regs[0][0]); i++) {
+ 346:BSP/Camera/ov2640.c ****         OV2640_WR_Reg(brightness_regs[0][i], brightness_regs[level][i]);
+ 347:BSP/Camera/ov2640.c ****     }
+ 348:BSP/Camera/ov2640.c ****     OV2640_WR_Reg(R_BYPASS, R_BYPASS_DSP_EN);
+ 349:BSP/Camera/ov2640.c **** 
+ 350:BSP/Camera/ov2640.c ****     return 0;
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccYXGfH1.s 			page 16
+
+
+ 351:BSP/Camera/ov2640.c **** }
+ 352:BSP/Camera/ov2640.c **** 
+ 353:BSP/Camera/ov2640.c **** //----------------------------------
+ 354:BSP/Camera/ov2640.c **** static int set_saturation(int level)
+ 355:BSP/Camera/ov2640.c **** {
+ 356:BSP/Camera/ov2640.c ****     level += (NUM_SATURATION_LEVELS / 2) + 1;
+ 357:BSP/Camera/ov2640.c ****     if ((level < 0) || (level > NUM_SATURATION_LEVELS)) return -1;
+ 358:BSP/Camera/ov2640.c **** 
+ 359:BSP/Camera/ov2640.c ****     OV2640_WR_Reg(BANK_SEL, BANK_SEL_DSP);
+ 360:BSP/Camera/ov2640.c ****     OV2640_WR_Reg(R_BYPASS, R_BYPASS_DSP_BYPAS);
+ 361:BSP/Camera/ov2640.c ****     // Write saturation registers
+ 362:BSP/Camera/ov2640.c ****     for (int i=0; i<sizeof(saturation_regs[0])/sizeof(saturation_regs[0][0]); i++) {
+ 363:BSP/Camera/ov2640.c ****         OV2640_WR_Reg(saturation_regs[0][i], saturation_regs[level][i]);
+ 364:BSP/Camera/ov2640.c ****     }
+ 365:BSP/Camera/ov2640.c ****     OV2640_WR_Reg(R_BYPASS, R_BYPASS_DSP_EN);
+ 366:BSP/Camera/ov2640.c **** 
+ 367:BSP/Camera/ov2640.c ****     return 0;
+ 368:BSP/Camera/ov2640.c **** }
+ 369:BSP/Camera/ov2640.c **** 
+ 370:BSP/Camera/ov2640.c **** //----------------------------
+ 371:BSP/Camera/ov2640.c **** static int set_quality(int qs)
+ 372:BSP/Camera/ov2640.c **** {
+ 373:BSP/Camera/ov2640.c ****     if ((qs < 2) || (qs > 60)) return -1;
+ 374:BSP/Camera/ov2640.c **** 
+ 375:BSP/Camera/ov2640.c ****     OV2640_WR_Reg(BANK_SEL, BANK_SEL_DSP);
+ 376:BSP/Camera/ov2640.c ****     // Write QS register
+ 377:BSP/Camera/ov2640.c ****     OV2640_WR_Reg(QS, qs);
+ 378:BSP/Camera/ov2640.c **** 
+ 379:BSP/Camera/ov2640.c ****     return 0;
+ 380:BSP/Camera/ov2640.c **** }
+ 381:BSP/Camera/ov2640.c **** 
+ 382:BSP/Camera/ov2640.c **** //---------------------------------
+ 383:BSP/Camera/ov2640.c **** static int set_colorbar(int enable)
+ 384:BSP/Camera/ov2640.c **** {
+ 385:BSP/Camera/ov2640.c ****     uint8_t reg;
+ 386:BSP/Camera/ov2640.c ****     OV2640_WR_Reg(BANK_SEL, BANK_SEL_SENSOR);
+ 387:BSP/Camera/ov2640.c ****     reg = OV2640_RD_Reg(COM7);
+ 388:BSP/Camera/ov2640.c **** 
+ 389:BSP/Camera/ov2640.c ****     if (enable) reg |= COM7_COLOR_BAR;
+ 390:BSP/Camera/ov2640.c ****     else reg &= ~COM7_COLOR_BAR;
+ 391:BSP/Camera/ov2640.c **** 
+ 392:BSP/Camera/ov2640.c ****     return OV2640_WR_Reg(COM7, reg);
+ 393:BSP/Camera/ov2640.c **** }
+ 394:BSP/Camera/ov2640.c **** 
+ 395:BSP/Camera/ov2640.c **** //--------------------------------
+ 396:BSP/Camera/ov2640.c **** static int set_hmirror(int enable)
+ 397:BSP/Camera/ov2640.c **** {
+ 498              		.loc 1 397 1 is_stmt 1 view -0
+ 499              		.cfi_startproc
+ 500              		@ args = 0, pretend = 0, frame = 0
+ 501              		@ frame_needed = 0, uses_anonymous_args = 0
+ 502              		.loc 1 397 1 is_stmt 0 view .LVU101
+ 503 0000 10B5     		push	{r4, lr}
+ 504              	.LCFI10:
+ 505              		.cfi_def_cfa_offset 8
+ 506              		.cfi_offset 4, -8
+ 507              		.cfi_offset 14, -4
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccYXGfH1.s 			page 17
+
+
+ 508 0002 0446     		mov	r4, r0
+ 398:BSP/Camera/ov2640.c ****     uint8_t reg;
+ 509              		.loc 1 398 5 is_stmt 1 view .LVU102
+ 399:BSP/Camera/ov2640.c ****     OV2640_WR_Reg(BANK_SEL, BANK_SEL_SENSOR);
+ 510              		.loc 1 399 5 view .LVU103
+ 511 0004 0121     		movs	r1, #1
+ 512 0006 FF20     		movs	r0, #255
+ 513              	.LVL59:
+ 514              		.loc 1 399 5 is_stmt 0 view .LVU104
+ 515 0008 FFF7FEFF 		bl	OV2640_WR_Reg
+ 516              	.LVL60:
+ 400:BSP/Camera/ov2640.c ****     reg = OV2640_RD_Reg(REG04);
+ 517              		.loc 1 400 5 is_stmt 1 view .LVU105
+ 518              		.loc 1 400 11 is_stmt 0 view .LVU106
+ 519 000c 0420     		movs	r0, #4
+ 520 000e FFF7FEFF 		bl	OV2640_RD_Reg
+ 521              	.LVL61:
+ 401:BSP/Camera/ov2640.c **** 
+ 402:BSP/Camera/ov2640.c ****     if (!enable) { // Already mirrored.
+ 522              		.loc 1 402 5 is_stmt 1 view .LVU107
+ 523              		.loc 1 402 8 is_stmt 0 view .LVU108
+ 524 0012 34B9     		cbnz	r4, .L35
+ 403:BSP/Camera/ov2640.c ****         reg |= REG04_HFLIP_IMG;
+ 525              		.loc 1 403 9 is_stmt 1 view .LVU109
+ 526              		.loc 1 403 13 is_stmt 0 view .LVU110
+ 527 0014 60F07F01 		orn	r1, r0, #127
+ 528 0018 C9B2     		uxtb	r1, r1
+ 529              	.LVL62:
+ 530              	.L36:
+ 404:BSP/Camera/ov2640.c ****     }
+ 405:BSP/Camera/ov2640.c ****     else {
+ 406:BSP/Camera/ov2640.c ****         reg &= ~REG04_HFLIP_IMG;
+ 407:BSP/Camera/ov2640.c ****     }
+ 408:BSP/Camera/ov2640.c **** 
+ 409:BSP/Camera/ov2640.c ****     return OV2640_WR_Reg(REG04, reg);
+ 531              		.loc 1 409 5 is_stmt 1 view .LVU111
+ 532              		.loc 1 409 12 is_stmt 0 view .LVU112
+ 533 001a 0420     		movs	r0, #4
+ 534 001c FFF7FEFF 		bl	OV2640_WR_Reg
+ 535              	.LVL63:
+ 410:BSP/Camera/ov2640.c **** }
+ 536              		.loc 1 410 1 view .LVU113
+ 537 0020 10BD     		pop	{r4, pc}
+ 538              	.LVL64:
+ 539              	.L35:
+ 406:BSP/Camera/ov2640.c ****     }
+ 540              		.loc 1 406 9 is_stmt 1 view .LVU114
+ 406:BSP/Camera/ov2640.c ****     }
+ 541              		.loc 1 406 13 is_stmt 0 view .LVU115
+ 542 0022 00F07F01 		and	r1, r0, #127
+ 543 0026 F8E7     		b	.L36
+ 544              		.cfi_endproc
+ 545              	.LFE159:
+ 547              		.section	.text.set_vflip,"ax",%progbits
+ 548              		.align	1
+ 549              		.syntax unified
+ 550              		.thumb
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccYXGfH1.s 			page 18
+
+
+ 551              		.thumb_func
+ 553              	set_vflip:
+ 554              	.LVL65:
+ 555              	.LFB160:
+ 411:BSP/Camera/ov2640.c **** 
+ 412:BSP/Camera/ov2640.c **** //------------------------------
+ 413:BSP/Camera/ov2640.c **** static int set_vflip(int enable)
+ 414:BSP/Camera/ov2640.c **** {
+ 556              		.loc 1 414 1 is_stmt 1 view -0
+ 557              		.cfi_startproc
+ 558              		@ args = 0, pretend = 0, frame = 0
+ 559              		@ frame_needed = 0, uses_anonymous_args = 0
+ 560              		.loc 1 414 1 is_stmt 0 view .LVU117
+ 561 0000 10B5     		push	{r4, lr}
+ 562              	.LCFI11:
+ 563              		.cfi_def_cfa_offset 8
+ 564              		.cfi_offset 4, -8
+ 565              		.cfi_offset 14, -4
+ 566 0002 0446     		mov	r4, r0
+ 415:BSP/Camera/ov2640.c ****     uint8_t reg;
+ 567              		.loc 1 415 5 is_stmt 1 view .LVU118
+ 416:BSP/Camera/ov2640.c ****     OV2640_WR_Reg(BANK_SEL, BANK_SEL_SENSOR);
+ 568              		.loc 1 416 5 view .LVU119
+ 569 0004 0121     		movs	r1, #1
+ 570 0006 FF20     		movs	r0, #255
+ 571              	.LVL66:
+ 572              		.loc 1 416 5 is_stmt 0 view .LVU120
+ 573 0008 FFF7FEFF 		bl	OV2640_WR_Reg
+ 574              	.LVL67:
+ 417:BSP/Camera/ov2640.c ****     reg = OV2640_RD_Reg(REG04);
+ 575              		.loc 1 417 5 is_stmt 1 view .LVU121
+ 576              		.loc 1 417 11 is_stmt 0 view .LVU122
+ 577 000c 0420     		movs	r0, #4
+ 578 000e FFF7FEFF 		bl	OV2640_RD_Reg
+ 579              	.LVL68:
+ 418:BSP/Camera/ov2640.c **** 
+ 419:BSP/Camera/ov2640.c ****     if (!enable) { // Already flipped.
+ 580              		.loc 1 419 5 is_stmt 1 view .LVU123
+ 581              		.loc 1 419 8 is_stmt 0 view .LVU124
+ 582 0012 34B9     		cbnz	r4, .L39
+ 420:BSP/Camera/ov2640.c ****         reg |= REG04_VFLIP_IMG | REG04_VREF_EN;
+ 583              		.loc 1 420 9 is_stmt 1 view .LVU125
+ 584              		.loc 1 420 13 is_stmt 0 view .LVU126
+ 585 0014 40F05001 		orr	r1, r0, #80
+ 586 0018 C9B2     		uxtb	r1, r1
+ 587              	.LVL69:
+ 588              	.L40:
+ 421:BSP/Camera/ov2640.c ****     }
+ 422:BSP/Camera/ov2640.c ****     else {
+ 423:BSP/Camera/ov2640.c ****         reg &= ~(REG04_VFLIP_IMG | REG04_VREF_EN);
+ 424:BSP/Camera/ov2640.c ****     }
+ 425:BSP/Camera/ov2640.c **** 
+ 426:BSP/Camera/ov2640.c ****     return OV2640_WR_Reg(REG04, reg);
+ 589              		.loc 1 426 5 is_stmt 1 view .LVU127
+ 590              		.loc 1 426 12 is_stmt 0 view .LVU128
+ 591 001a 0420     		movs	r0, #4
+ 592 001c FFF7FEFF 		bl	OV2640_WR_Reg
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccYXGfH1.s 			page 19
+
+
+ 593              	.LVL70:
+ 427:BSP/Camera/ov2640.c **** }
+ 594              		.loc 1 427 1 view .LVU129
+ 595 0020 10BD     		pop	{r4, pc}
+ 596              	.LVL71:
+ 597              	.L39:
+ 423:BSP/Camera/ov2640.c ****     }
+ 598              		.loc 1 423 9 is_stmt 1 view .LVU130
+ 423:BSP/Camera/ov2640.c ****     }
+ 599              		.loc 1 423 13 is_stmt 0 view .LVU131
+ 600 0022 00F0AF01 		and	r1, r0, #175
+ 601 0026 F8E7     		b	.L40
+ 602              		.cfi_endproc
+ 603              	.LFE160:
+ 605              		.section	.text.ov2640_check_framesize,"ax",%progbits
+ 606              		.align	1
+ 607              		.global	ov2640_check_framesize
+ 608              		.syntax unified
+ 609              		.thumb
+ 610              		.thumb_func
+ 612              	ov2640_check_framesize:
+ 613              	.LVL72:
+ 614              	.LFB153:
+ 308:BSP/Camera/ov2640.c ****     int i = OV2640_NUM_ALLOWED_SIZES;
+ 615              		.loc 1 308 1 is_stmt 1 view -0
+ 616              		.cfi_startproc
+ 617              		@ args = 0, pretend = 0, frame = 0
+ 618              		@ frame_needed = 0, uses_anonymous_args = 0
+ 619              		@ link register save eliminated.
+ 309:BSP/Camera/ov2640.c ****     for (i=0; i<OV2640_NUM_ALLOWED_SIZES; i++) {
+ 620              		.loc 1 309 5 view .LVU133
+ 310:BSP/Camera/ov2640.c ****         if (allowed_sizes[i] == framesize) break;
+ 621              		.loc 1 310 5 view .LVU134
+ 310:BSP/Camera/ov2640.c ****         if (allowed_sizes[i] == framesize) break;
+ 622              		.loc 1 310 11 is_stmt 0 view .LVU135
+ 623 0000 0023     		movs	r3, #0
+ 624              	.LVL73:
+ 625              	.L43:
+ 310:BSP/Camera/ov2640.c ****         if (allowed_sizes[i] == framesize) break;
+ 626              		.loc 1 310 16 is_stmt 1 discriminator 1 view .LVU136
+ 627 0002 122B     		cmp	r3, #18
+ 628 0004 05DC     		bgt	.L44
+ 311:BSP/Camera/ov2640.c ****     }
+ 629              		.loc 1 311 9 view .LVU137
+ 311:BSP/Camera/ov2640.c ****     }
+ 630              		.loc 1 311 26 is_stmt 0 view .LVU138
+ 631 0006 064A     		ldr	r2, .L48
+ 632 0008 D25C     		ldrb	r2, [r2, r3]	@ zero_extendqisi2
+ 311:BSP/Camera/ov2640.c ****     }
+ 633              		.loc 1 311 12 view .LVU139
+ 634 000a 8242     		cmp	r2, r0
+ 635 000c 01D0     		beq	.L44
+ 310:BSP/Camera/ov2640.c ****         if (allowed_sizes[i] == framesize) break;
+ 636              		.loc 1 310 44 is_stmt 1 discriminator 2 view .LVU140
+ 637 000e 0133     		adds	r3, r3, #1
+ 638              	.LVL74:
+ 310:BSP/Camera/ov2640.c ****         if (allowed_sizes[i] == framesize) break;
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccYXGfH1.s 			page 20
+
+
+ 639              		.loc 1 310 44 is_stmt 0 discriminator 2 view .LVU141
+ 640 0010 F7E7     		b	.L43
+ 641              	.LVL75:
+ 642              	.L44:
+ 313:BSP/Camera/ov2640.c ****     return 0;
+ 643              		.loc 1 313 5 is_stmt 1 view .LVU142
+ 313:BSP/Camera/ov2640.c ****     return 0;
+ 644              		.loc 1 313 8 is_stmt 0 view .LVU143
+ 645 0012 122B     		cmp	r3, #18
+ 646 0014 01DC     		bgt	.L47
+ 314:BSP/Camera/ov2640.c **** }
+ 647              		.loc 1 314 12 view .LVU144
+ 648 0016 0020     		movs	r0, #0
+ 649              	.LVL76:
+ 314:BSP/Camera/ov2640.c **** }
+ 650              		.loc 1 314 12 view .LVU145
+ 651 0018 7047     		bx	lr
+ 652              	.LVL77:
+ 653              	.L47:
+ 313:BSP/Camera/ov2640.c ****     return 0;
+ 654              		.loc 1 313 47 discriminator 1 view .LVU146
+ 655 001a 4FF0FF30 		mov	r0, #-1
+ 656              	.LVL78:
+ 315:BSP/Camera/ov2640.c **** 
+ 657              		.loc 1 315 1 view .LVU147
+ 658 001e 7047     		bx	lr
+ 659              	.L49:
+ 660              		.align	2
+ 661              	.L48:
+ 662 0020 00000000 		.word	allowed_sizes
+ 663              		.cfi_endproc
+ 664              	.LFE153:
+ 666              		.section	.text.ov2640_init,"ax",%progbits
+ 667              		.align	1
+ 668              		.global	ov2640_init
+ 669              		.syntax unified
+ 670              		.thumb
+ 671              		.thumb_func
+ 673              	ov2640_init:
+ 674              	.LVL79:
+ 675              	.LFB166:
+ 428:BSP/Camera/ov2640.c **** 
+ 429:BSP/Camera/ov2640.c **** //---------------------------------------------------------
+ 430:BSP/Camera/ov2640.c **** static int read_id(uint16_t *manuf_id, uint16_t *device_id)
+ 431:BSP/Camera/ov2640.c **** {
+ 432:BSP/Camera/ov2640.c ****     OV2640_WR_Reg(BANK_SEL, BANK_SEL_SENSOR);
+ 433:BSP/Camera/ov2640.c ****     *manuf_id = ((uint16_t)OV2640_RD_Reg(0x1C) << 8) | OV2640_RD_Reg(0x1D);
+ 434:BSP/Camera/ov2640.c ****     *device_id = ((uint16_t)OV2640_RD_Reg(0x0A) << 8) | OV2640_RD_Reg(0x0B);
+ 435:BSP/Camera/ov2640.c ****     return 0;
+ 436:BSP/Camera/ov2640.c **** }
+ 437:BSP/Camera/ov2640.c **** 
+ 438:BSP/Camera/ov2640.c **** //------------------------------------
+ 439:BSP/Camera/ov2640.c **** static int read_reg(uint16_t reg_addr)
+ 440:BSP/Camera/ov2640.c **** {
+ 441:BSP/Camera/ov2640.c ****     return (int)OV2640_RD_Reg((uint8_t) reg_addr);
+ 442:BSP/Camera/ov2640.c **** }
+ 443:BSP/Camera/ov2640.c **** 
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccYXGfH1.s 			page 21
+
+
+ 444:BSP/Camera/ov2640.c **** //--------------------------------------------------------
+ 445:BSP/Camera/ov2640.c **** static int write_reg(uint16_t reg_addr, uint16_t reg_data)
+ 446:BSP/Camera/ov2640.c **** {
+ 447:BSP/Camera/ov2640.c ****     return (int)OV2640_WR_Reg((uint8_t)reg_addr, (uint8_t)reg_data);
+ 448:BSP/Camera/ov2640.c **** }
+ 449:BSP/Camera/ov2640.c **** 
+ 450:BSP/Camera/ov2640.c **** static const uint8_t OV2640_LIGHTMODE_TBL[5][3]=
+ 451:BSP/Camera/ov2640.c **** {
+ 452:BSP/Camera/ov2640.c ****     {0x5e, 0x41, 0x54}, //Auto, NOT used
+ 453:BSP/Camera/ov2640.c ****     {0x5e, 0x41, 0x54}, //Sunny
+ 454:BSP/Camera/ov2640.c ****     {0x52, 0x41, 0x66}, //Office
+ 455:BSP/Camera/ov2640.c ****     {0x65, 0x41, 0x4f}, //Cloudy
+ 456:BSP/Camera/ov2640.c ****     {0x42, 0x3f, 0x71}, //Home
+ 457:BSP/Camera/ov2640.c **** };
+ 458:BSP/Camera/ov2640.c **** 
+ 459:BSP/Camera/ov2640.c **** 
+ 460:BSP/Camera/ov2640.c **** //-------------------------------------
+ 461:BSP/Camera/ov2640.c **** static int set_light_mode(uint8_t mode)
+ 462:BSP/Camera/ov2640.c **** {
+ 463:BSP/Camera/ov2640.c ****     if (mode > 4) return -1;
+ 464:BSP/Camera/ov2640.c **** 
+ 465:BSP/Camera/ov2640.c ****     OV2640_WR_Reg(BANK_SEL, BANK_SEL_DSP);
+ 466:BSP/Camera/ov2640.c ****     if (mode == 0) {
+ 467:BSP/Camera/ov2640.c ****         OV2640_WR_Reg(0xc7, 0x00); // AWB on
+ 468:BSP/Camera/ov2640.c ****     }
+ 469:BSP/Camera/ov2640.c ****     else {
+ 470:BSP/Camera/ov2640.c ****         OV2640_WR_Reg(0xc7, 0x40); // AWB off
+ 471:BSP/Camera/ov2640.c ****         OV2640_WR_Reg(0xcc, OV2640_LIGHTMODE_TBL[mode][0]);
+ 472:BSP/Camera/ov2640.c ****         OV2640_WR_Reg(0xcd, OV2640_LIGHTMODE_TBL[mode][1]);
+ 473:BSP/Camera/ov2640.c ****         OV2640_WR_Reg(0xce, OV2640_LIGHTMODE_TBL[mode][2]);
+ 474:BSP/Camera/ov2640.c ****     }
+ 475:BSP/Camera/ov2640.c ****     return 0;
+ 476:BSP/Camera/ov2640.c **** }
+ 477:BSP/Camera/ov2640.c **** 
+ 478:BSP/Camera/ov2640.c **** //-----------------------------------
+ 479:BSP/Camera/ov2640.c **** static int set_night_mode(int enable)
+ 480:BSP/Camera/ov2640.c **** {
+ 481:BSP/Camera/ov2640.c ****     // Disable DSP
+ 482:BSP/Camera/ov2640.c ****     OV2640_WR_Reg(BANK_SEL, BANK_SEL_DSP);
+ 483:BSP/Camera/ov2640.c ****     OV2640_WR_Reg(R_BYPASS, R_BYPASS_DSP_BYPAS);
+ 484:BSP/Camera/ov2640.c ****     // Set CLKRC
+ 485:BSP/Camera/ov2640.c ****     OV2640_WR_Reg(BANK_SEL, BANK_SEL_SENSOR);
+ 486:BSP/Camera/ov2640.c ****     OV2640_WR_Reg(CLKRC, (enable) ? 0 : CLKRC_DOUBLE);
+ 487:BSP/Camera/ov2640.c ****     // Enable DSP
+ 488:BSP/Camera/ov2640.c ****     OV2640_WR_Reg(BANK_SEL, BANK_SEL_DSP);
+ 489:BSP/Camera/ov2640.c ****     OV2640_WR_Reg(R_BYPASS, R_BYPASS_DSP_EN);
+ 490:BSP/Camera/ov2640.c ****     //delay 30 ms
+ 491:BSP/Camera/ov2640.c ****     ov2640_delay(30);
+ 492:BSP/Camera/ov2640.c ****     return 0;
+ 493:BSP/Camera/ov2640.c **** }
+ 494:BSP/Camera/ov2640.c **** 
+ 495:BSP/Camera/ov2640.c **** //===============================
+ 496:BSP/Camera/ov2640.c **** int ov2640_init(framesize_t framesize)
+ 497:BSP/Camera/ov2640.c **** {
+ 676              		.loc 1 497 1 is_stmt 1 view -0
+ 677              		.cfi_startproc
+ 678              		@ args = 0, pretend = 0, frame = 0
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccYXGfH1.s 			page 22
+
+
+ 679              		@ frame_needed = 0, uses_anonymous_args = 0
+ 680              		.loc 1 497 1 is_stmt 0 view .LVU149
+ 681 0000 10B5     		push	{r4, lr}
+ 682              	.LCFI12:
+ 683              		.cfi_def_cfa_offset 8
+ 684              		.cfi_offset 4, -8
+ 685              		.cfi_offset 14, -4
+ 686 0002 0446     		mov	r4, r0
+ 498:BSP/Camera/ov2640.c **** 	reset();
+ 687              		.loc 1 498 2 is_stmt 1 view .LVU150
+ 688 0004 FFF7FEFF 		bl	reset
+ 689              	.LVL80:
+ 499:BSP/Camera/ov2640.c **** 	hcamera.framesize = framesize;
+ 690              		.loc 1 499 2 view .LVU151
+ 691              		.loc 1 499 20 is_stmt 0 view .LVU152
+ 692 0008 064B     		ldr	r3, .L52
+ 693 000a 1C74     		strb	r4, [r3, #16]
+ 500:BSP/Camera/ov2640.c **** 	hcamera.pixformat = PIXFORMAT_RGB565;
+ 694              		.loc 1 500 2 is_stmt 1 view .LVU153
+ 695              		.loc 1 500 20 is_stmt 0 view .LVU154
+ 696 000c 0120     		movs	r0, #1
+ 697 000e 5874     		strb	r0, [r3, #17]
+ 501:BSP/Camera/ov2640.c **** 	//set_framesize(FRAMESIZE_QQVGA);
+ 502:BSP/Camera/ov2640.c **** 	set_pixformat(hcamera.pixformat);
+ 698              		.loc 1 502 2 is_stmt 1 view .LVU155
+ 699 0010 FFF7FEFF 		bl	set_pixformat
+ 700              	.LVL81:
+ 503:BSP/Camera/ov2640.c **** 	set_hmirror(0);
+ 701              		.loc 1 503 2 view .LVU156
+ 702 0014 0020     		movs	r0, #0
+ 703 0016 FFF7FEFF 		bl	set_hmirror
+ 704              	.LVL82:
+ 504:BSP/Camera/ov2640.c **** 	set_vflip(0);
+ 705              		.loc 1 504 2 view .LVU157
+ 706 001a 0020     		movs	r0, #0
+ 707 001c FFF7FEFF 		bl	set_vflip
+ 708              	.LVL83:
+ 505:BSP/Camera/ov2640.c ****   return 0;
+ 709              		.loc 1 505 3 view .LVU158
+ 506:BSP/Camera/ov2640.c **** }
+ 710              		.loc 1 506 1 is_stmt 0 view .LVU159
+ 711 0020 0020     		movs	r0, #0
+ 712 0022 10BD     		pop	{r4, pc}
+ 713              	.LVL84:
+ 714              	.L53:
+ 715              		.loc 1 506 1 view .LVU160
+ 716              		.align	2
+ 717              	.L52:
+ 718 0024 00000000 		.word	hcamera
+ 719              		.cfi_endproc
+ 720              	.LFE166:
+ 722              		.section	.rodata.yuyv_regs,"a"
+ 723              		.align	2
+ 726              	yuyv_regs:
+ 727 0000 FF00     		.ascii	"\377\000"
+ 728 0002 E004     		.ascii	"\340\004"
+ 729 0004 DA00     		.ascii	"\332\000"
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccYXGfH1.s 			page 23
+
+
+ 730 0006 D703     		.ascii	"\327\003"
+ 731 0008 33A0     		.ascii	"3\240"
+ 732 000a E51F     		.ascii	"\345\037"
+ 733 000c E167     		.ascii	"\341g"
+ 734 000e E000     		.ascii	"\340\000"
+ 735 0010 0000     		.ascii	"\000\000"
+ 736              		.section	.rodata.jpeg_regs,"a"
+ 737              		.align	2
+ 740              	jpeg_regs:
+ 741 0000 FF00     		.ascii	"\377\000"
+ 742 0002 E004     		.ascii	"\340\004"
+ 743 0004 DA18     		.ascii	"\332\030"
+ 744 0006 D703     		.ascii	"\327\003"
+ 745 0008 E177     		.ascii	"\341w"
+ 746 000a E000     		.ascii	"\340\000"
+ 747 000c 0000     		.ascii	"\000\000"
+ 748              		.section	.rodata.rgb565_regs,"a"
+ 749              		.align	2
+ 752              	rgb565_regs:
+ 753 0000 FF00     		.ascii	"\377\000"
+ 754 0002 E004     		.ascii	"\340\004"
+ 755 0004 DA08     		.ascii	"\332\010"
+ 756 0006 D703     		.ascii	"\327\003"
+ 757 0008 E177     		.ascii	"\341w"
+ 758 000a E000     		.ascii	"\340\000"
+ 759 000c 0000     		.ascii	"\000\000"
+ 760              		.section	.rodata.allowed_sizes,"a"
+ 761              		.align	2
+ 764              	allowed_sizes:
+ 765 0000 03060912 		.ascii	"\003\006\011\022\012\013\017\027\030\031\032\033\000"
+ 765      0A0B0F17 
+ 765      18191A1B 
+ 765      00
+ 766 000d 00000000 		.space	6
+ 766      0000
+ 767              		.text
+ 768              	.Letext0:
+ 769              		.file 2 "/Users/zhy/Tools/xpack-arm-none-eabi-gcc-14.2.1-1.1/arm-none-eabi/include/machine/_defaul
+ 770              		.file 3 "/Users/zhy/Tools/xpack-arm-none-eabi-gcc-14.2.1-1.1/arm-none-eabi/include/sys/_stdint.h"
+ 771              		.file 4 "Drivers/CMSIS/Device/ST/STM32H7xx/Include/stm32h743xx.h"
+ 772              		.file 5 "Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_def.h"
+ 773              		.file 6 "Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_dma.h"
+ 774              		.file 7 "Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_i2c.h"
+ 775              		.file 8 "BSP/Camera/camera.h"
+ 776              		.file 9 "BSP/Camera/ov2640_regs.h"
+ 777              		.file 10 "Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal.h"
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccYXGfH1.s 			page 24
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 ov2640.c
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccYXGfH1.s:20     .text.OV2640_WR_Reg:00000000 $t
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccYXGfH1.s:25     .text.OV2640_WR_Reg:00000000 OV2640_WR_Reg
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccYXGfH1.s:62     .text.OV2640_WR_Reg:0000001c $d
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccYXGfH1.s:67     .text.wrSensorRegs:00000000 $t
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccYXGfH1.s:72     .text.wrSensorRegs:00000000 wrSensorRegs
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccYXGfH1.s:123    .text.wrSensorRegs:00000020 $d
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccYXGfH1.s:128    .text.reset:00000000 $t
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccYXGfH1.s:133    .text.reset:00000000 reset
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccYXGfH1.s:177    .text.reset:00000030 $d
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccYXGfH1.s:182    .text.OV2640_RD_Reg:00000000 $t
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccYXGfH1.s:187    .text.OV2640_RD_Reg:00000000 OV2640_RD_Reg
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccYXGfH1.s:222    .text.OV2640_RD_Reg:0000001c $d
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccYXGfH1.s:227    .text._set_framesize:00000000 $t
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccYXGfH1.s:232    .text._set_framesize:00000000 _set_framesize
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccYXGfH1.s:387    .text._set_framesize:000000c0 $d
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccYXGfH1.s:394    .text.set_pixformat:00000000 $t
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccYXGfH1.s:399    .text.set_pixformat:00000000 set_pixformat
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccYXGfH1.s:482    .text.set_pixformat:00000058 $d
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccYXGfH1.s:752    .rodata.rgb565_regs:00000000 rgb565_regs
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccYXGfH1.s:740    .rodata.jpeg_regs:00000000 jpeg_regs
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccYXGfH1.s:726    .rodata.yuyv_regs:00000000 yuyv_regs
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccYXGfH1.s:490    .text.set_hmirror:00000000 $t
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccYXGfH1.s:495    .text.set_hmirror:00000000 set_hmirror
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccYXGfH1.s:548    .text.set_vflip:00000000 $t
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccYXGfH1.s:553    .text.set_vflip:00000000 set_vflip
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccYXGfH1.s:606    .text.ov2640_check_framesize:00000000 $t
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccYXGfH1.s:612    .text.ov2640_check_framesize:00000000 ov2640_check_framesize
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccYXGfH1.s:662    .text.ov2640_check_framesize:00000020 $d
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccYXGfH1.s:764    .rodata.allowed_sizes:00000000 allowed_sizes
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccYXGfH1.s:667    .text.ov2640_init:00000000 $t
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccYXGfH1.s:673    .text.ov2640_init:00000000 ov2640_init
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccYXGfH1.s:718    .text.ov2640_init:00000024 $d
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccYXGfH1.s:723    .rodata.yuyv_regs:00000000 $d
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccYXGfH1.s:737    .rodata.jpeg_regs:00000000 $d
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccYXGfH1.s:749    .rodata.rgb565_regs:00000000 $d
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccYXGfH1.s:761    .rodata.allowed_sizes:00000000 $d
+
+UNDEFINED SYMBOLS
+Camera_WriteReg
+hcamera
+HAL_Delay
+ov2640_Slow_regs
+Camera_ReadReg
+dvp_cam_resolution
+OV2640_svga_regs
+OV2640_uxga_regs

@@ -1,0 +1,2588 @@
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccpsKaNv.s 			page 1
+
+
+   1              		.cpu cortex-m7
+   2              		.arch armv7e-m
+   3              		.fpu fpv5-d16
+   4              		.eabi_attribute 28, 1
+   5              		.eabi_attribute 20, 1
+   6              		.eabi_attribute 21, 1
+   7              		.eabi_attribute 23, 3
+   8              		.eabi_attribute 24, 1
+   9              		.eabi_attribute 25, 1
+  10              		.eabi_attribute 26, 1
+  11              		.eabi_attribute 30, 1
+  12              		.eabi_attribute 34, 1
+  13              		.eabi_attribute 18, 4
+  14              		.file	"lcd_core.c"
+  15              		.text
+  16              	.Ltext0:
+  17              		.cfi_sections	.debug_frame
+  18              		.file 1 "BSP/LCD_ST7789/lcd_core.c"
+  19              		.section	.text.lcd_write_reg_data,"ax",%progbits
+  20              		.align	1
+  21              		.global	lcd_write_reg_data
+  22              		.syntax unified
+  23              		.thumb
+  24              		.thumb_func
+  26              	lcd_write_reg_data:
+  27              	.LVL0:
+  28              	.LFB5:
+   1:BSP/LCD_ST7789/lcd_core.c **** #include "stdio.h"
+   2:BSP/LCD_ST7789/lcd_core.c **** #include "stdarg.h"
+   3:BSP/LCD_ST7789/lcd_core.c ****  
+   4:BSP/LCD_ST7789/lcd_core.c **** #include "lcd.h"
+   5:BSP/LCD_ST7789/lcd_core.c **** 
+   6:BSP/LCD_ST7789/lcd_core.c **** lcd_hw lcd_hw_0_96 = {
+   7:BSP/LCD_ST7789/lcd_core.c ****     .name   = "0.96 inch",
+   8:BSP/LCD_ST7789/lcd_core.c ****     .type   = LCD_0_96_INCH,
+   9:BSP/LCD_ST7789/lcd_core.c ****     .rotate = LCD_ROTATE_270,
+  10:BSP/LCD_ST7789/lcd_core.c ****     .width  = 160,
+  11:BSP/LCD_ST7789/lcd_core.c ****     .height = 80,
+  12:BSP/LCD_ST7789/lcd_core.c **** };
+  13:BSP/LCD_ST7789/lcd_core.c **** 
+  14:BSP/LCD_ST7789/lcd_core.c **** lcd_hw lcd_hw_1_14 = {
+  15:BSP/LCD_ST7789/lcd_core.c ****     .name   = "1.14 inch",
+  16:BSP/LCD_ST7789/lcd_core.c ****     .type   = LCD_1_14_INCH,
+  17:BSP/LCD_ST7789/lcd_core.c ****     .rotate = LCD_ROTATE_270,
+  18:BSP/LCD_ST7789/lcd_core.c ****     .width  = 240,
+  19:BSP/LCD_ST7789/lcd_core.c ****     .height = 135,
+  20:BSP/LCD_ST7789/lcd_core.c **** };
+  21:BSP/LCD_ST7789/lcd_core.c **** 
+  22:BSP/LCD_ST7789/lcd_core.c **** lcd_hw lcd_hw_1_47 = {
+  23:BSP/LCD_ST7789/lcd_core.c ****     .name   = "1.47 inch",
+  24:BSP/LCD_ST7789/lcd_core.c ****     .type   = LCD_1_47_INCH,
+  25:BSP/LCD_ST7789/lcd_core.c ****     .rotate = LCD_ROTATE_270,
+  26:BSP/LCD_ST7789/lcd_core.c ****     .width  = 320,
+  27:BSP/LCD_ST7789/lcd_core.c ****     .height = 172,
+  28:BSP/LCD_ST7789/lcd_core.c **** };
+  29:BSP/LCD_ST7789/lcd_core.c **** 
+  30:BSP/LCD_ST7789/lcd_core.c **** lcd_hw* lcd_hw_desc[] = {
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccpsKaNv.s 			page 2
+
+
+  31:BSP/LCD_ST7789/lcd_core.c ****     &lcd_hw_0_96,
+  32:BSP/LCD_ST7789/lcd_core.c ****     &lcd_hw_1_14,
+  33:BSP/LCD_ST7789/lcd_core.c ****     &lcd_hw_1_47,
+  34:BSP/LCD_ST7789/lcd_core.c **** };
+  35:BSP/LCD_ST7789/lcd_core.c **** 
+  36:BSP/LCD_ST7789/lcd_core.c **** uint8_t lcd_cfg_order[][4] = {
+  37:BSP/LCD_ST7789/lcd_core.c ****     /* 0.96 inch */
+  38:BSP/LCD_ST7789/lcd_core.c ****     {0x08, 0xC8, 0x78, 0xA8},
+  39:BSP/LCD_ST7789/lcd_core.c ****     /* 1.14 inch */
+  40:BSP/LCD_ST7789/lcd_core.c ****     {0x00, 0xC0, 0x70, 0xA0},
+  41:BSP/LCD_ST7789/lcd_core.c ****     /* 1.47 inch */
+  42:BSP/LCD_ST7789/lcd_core.c ****     {0x00, 0xC0, 0x70, 0xA0}
+  43:BSP/LCD_ST7789/lcd_core.c **** };
+  44:BSP/LCD_ST7789/lcd_core.c **** 
+  45:BSP/LCD_ST7789/lcd_core.c **** uint8_t lcd_cfg_address[][4][4] = {
+  46:BSP/LCD_ST7789/lcd_core.c ****     /* 0.96 inch */
+  47:BSP/LCD_ST7789/lcd_core.c ****     { {26, 26,  1,  1}, {26, 26,  1,  1}, { 1,  1, 26, 26}, { 1,  1, 26, 26} },
+  48:BSP/LCD_ST7789/lcd_core.c ****     /* 1.14 inch */
+  49:BSP/LCD_ST7789/lcd_core.c ****     { {52, 52, 40, 40}, {53, 53, 40, 40}, {40, 40, 53, 53}, {40, 40, 52, 52} },
+  50:BSP/LCD_ST7789/lcd_core.c ****     /* 1.47 inch */
+  51:BSP/LCD_ST7789/lcd_core.c ****     { {34, 34,  0,  0}, {34, 34,  0,  0}, { 0,  0, 34, 34}, { 0,  0, 34, 34} },
+  52:BSP/LCD_ST7789/lcd_core.c **** };
+  53:BSP/LCD_ST7789/lcd_core.c **** 
+  54:BSP/LCD_ST7789/lcd_core.c **** /******************************************************************************
+  55:BSP/LCD_ST7789/lcd_core.c ****       函数说明：设置起始和结束地址
+  56:BSP/LCD_ST7789/lcd_core.c ****       入口数据：x1,x2 设置列的起始和结束地址
+  57:BSP/LCD_ST7789/lcd_core.c ****                 y1,y2 设置行的起始和结束地址
+  58:BSP/LCD_ST7789/lcd_core.c ****       返回值：  无
+  59:BSP/LCD_ST7789/lcd_core.c **** ******************************************************************************/
+  60:BSP/LCD_ST7789/lcd_core.c **** void lcd_set_address(lcd* plcd, uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2)
+  61:BSP/LCD_ST7789/lcd_core.c **** {
+  62:BSP/LCD_ST7789/lcd_core.c ****     /* 列地址设置 */
+  63:BSP/LCD_ST7789/lcd_core.c ****     lcd_config_reg(plcd->io, 0x2a);
+  64:BSP/LCD_ST7789/lcd_core.c ****     lcd_write_halfword(plcd->io, x1 + lcd_cfg_address[plcd->hw->type][plcd->hw->rotate][0]);
+  65:BSP/LCD_ST7789/lcd_core.c ****     lcd_write_halfword(plcd->io, x2 + lcd_cfg_address[plcd->hw->type][plcd->hw->rotate][1]);
+  66:BSP/LCD_ST7789/lcd_core.c ****     /* 行地址设置 */
+  67:BSP/LCD_ST7789/lcd_core.c ****     lcd_config_reg(plcd->io, 0x2b);
+  68:BSP/LCD_ST7789/lcd_core.c ****     lcd_write_halfword(plcd->io, y1 + lcd_cfg_address[plcd->hw->type][plcd->hw->rotate][2]);
+  69:BSP/LCD_ST7789/lcd_core.c ****     lcd_write_halfword(plcd->io, y2 + lcd_cfg_address[plcd->hw->type][plcd->hw->rotate][3]);
+  70:BSP/LCD_ST7789/lcd_core.c ****     /* 储存器写 */
+  71:BSP/LCD_ST7789/lcd_core.c ****     lcd_config_reg(plcd->io, 0x2c);
+  72:BSP/LCD_ST7789/lcd_core.c **** }
+  73:BSP/LCD_ST7789/lcd_core.c **** 
+  74:BSP/LCD_ST7789/lcd_core.c **** void lcd_init_hw(lcd* plcd)
+  75:BSP/LCD_ST7789/lcd_core.c **** {
+  76:BSP/LCD_ST7789/lcd_core.c ****     lcd_io_rst(plcd->io, 0);
+  77:BSP/LCD_ST7789/lcd_core.c **** 	lcd_delay(100);
+  78:BSP/LCD_ST7789/lcd_core.c ****     lcd_io_rst(plcd->io, 1);
+  79:BSP/LCD_ST7789/lcd_core.c **** 	lcd_delay(100);
+  80:BSP/LCD_ST7789/lcd_core.c **** 	
+  81:BSP/LCD_ST7789/lcd_core.c **** 	/* 打开背光 */
+  82:BSP/LCD_ST7789/lcd_core.c ****     lcd_io_bl(plcd->io, 1);
+  83:BSP/LCD_ST7789/lcd_core.c ****     lcd_delay(100);
+  84:BSP/LCD_ST7789/lcd_core.c **** 	
+  85:BSP/LCD_ST7789/lcd_core.c ****     // sleep out
+  86:BSP/LCD_ST7789/lcd_core.c ****     lcd_config_reg(plcd->io, 0x11);
+  87:BSP/LCD_ST7789/lcd_core.c **** 	lcd_delay(5);
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccpsKaNv.s 			page 3
+
+
+  88:BSP/LCD_ST7789/lcd_core.c **** 
+  89:BSP/LCD_ST7789/lcd_core.c ****     /* 设置显示方向 */
+  90:BSP/LCD_ST7789/lcd_core.c ****     lcd_config_reg(plcd->io, 0x36, lcd_cfg_order[plcd->hw->type][plcd->hw->rotate]);
+  91:BSP/LCD_ST7789/lcd_core.c **** 
+  92:BSP/LCD_ST7789/lcd_core.c ****     /* 16bit/pixel */
+  93:BSP/LCD_ST7789/lcd_core.c ****     lcd_config_reg(plcd->io, 0x3A, 0x05);
+  94:BSP/LCD_ST7789/lcd_core.c **** 
+  95:BSP/LCD_ST7789/lcd_core.c ****     /* Porch Setting */
+  96:BSP/LCD_ST7789/lcd_core.c ****     lcd_config_reg(plcd->io, 0xB2, 0x0C, 0x0C, 0x00, 0x33, 0x33);
+  97:BSP/LCD_ST7789/lcd_core.c ****     
+  98:BSP/LCD_ST7789/lcd_core.c ****     /*  Gate Control */
+  99:BSP/LCD_ST7789/lcd_core.c ****     lcd_config_reg(plcd->io, 0xB7, 0x35);
+ 100:BSP/LCD_ST7789/lcd_core.c **** 
+ 101:BSP/LCD_ST7789/lcd_core.c ****     /* VCOM Setting */   
+ 102:BSP/LCD_ST7789/lcd_core.c ****     lcd_config_reg(plcd->io, 0xBB, 0x19);
+ 103:BSP/LCD_ST7789/lcd_core.c ****     
+ 104:BSP/LCD_ST7789/lcd_core.c ****     /* LCM Control */
+ 105:BSP/LCD_ST7789/lcd_core.c ****     lcd_config_reg(plcd->io, 0xC0, 0x2C);
+ 106:BSP/LCD_ST7789/lcd_core.c ****     
+ 107:BSP/LCD_ST7789/lcd_core.c ****     /* VDV and VRH Command Enable */
+ 108:BSP/LCD_ST7789/lcd_core.c ****     lcd_config_reg(plcd->io, 0xC2, 0x01);
+ 109:BSP/LCD_ST7789/lcd_core.c ****     
+ 110:BSP/LCD_ST7789/lcd_core.c ****     /* VRH Set */ 
+ 111:BSP/LCD_ST7789/lcd_core.c ****     lcd_config_reg(plcd->io, 0xC3, 0x12);
+ 112:BSP/LCD_ST7789/lcd_core.c ****     
+ 113:BSP/LCD_ST7789/lcd_core.c ****     /* VDV Set */
+ 114:BSP/LCD_ST7789/lcd_core.c ****     lcd_config_reg(plcd->io, 0xC4, 0x20);
+ 115:BSP/LCD_ST7789/lcd_core.c **** 
+ 116:BSP/LCD_ST7789/lcd_core.c ****     /* Frame Rate Control in Normal Mode */
+ 117:BSP/LCD_ST7789/lcd_core.c ****     lcd_config_reg(plcd->io, 0xC6, 0x0F);
+ 118:BSP/LCD_ST7789/lcd_core.c **** 
+ 119:BSP/LCD_ST7789/lcd_core.c ****     /* Power Control 1 */
+ 120:BSP/LCD_ST7789/lcd_core.c ****     lcd_config_reg(plcd->io, 0xD0, 0xA4, 0xA1);
+ 121:BSP/LCD_ST7789/lcd_core.c **** 
+ 122:BSP/LCD_ST7789/lcd_core.c ****     switch(plcd->hw->type) {
+ 123:BSP/LCD_ST7789/lcd_core.c ****         case LCD_0_96_INCH:
+ 124:BSP/LCD_ST7789/lcd_core.c ****             /* Positive Voltage Gamma Control */
+ 125:BSP/LCD_ST7789/lcd_core.c ****             lcd_config_reg(plcd->io, 0xE0, 0x07, 0x0E, 0x08, 0x07, 0x10, 0x07, 0x02, 0x07, 0x09, 0x
+ 126:BSP/LCD_ST7789/lcd_core.c ****             /* Negative Voltage Gamma Control */
+ 127:BSP/LCD_ST7789/lcd_core.c ****             lcd_config_reg(plcd->io, 0xE1, 0x0A, 0x0D, 0x08, 0x07, 0x0F, 0x07, 0x02, 0x07, 0x09, 0x
+ 128:BSP/LCD_ST7789/lcd_core.c ****             break;
+ 129:BSP/LCD_ST7789/lcd_core.c ****         case LCD_1_14_INCH:
+ 130:BSP/LCD_ST7789/lcd_core.c ****             /* Positive Voltage Gamma Control */
+ 131:BSP/LCD_ST7789/lcd_core.c ****             lcd_config_reg(plcd->io, 0xE0, 0xD0, 0x04, 0x0D, 0x11, 0x13, 0x2B, 0x3F, 0x54, 0x4C, 0x
+ 132:BSP/LCD_ST7789/lcd_core.c ****             /* Negative Voltage Gamma Control */
+ 133:BSP/LCD_ST7789/lcd_core.c ****             lcd_config_reg(plcd->io, 0xE1, 0xD0, 0x04, 0x0C, 0x11, 0x13, 0x2C, 0x3F, 0x44, 0x51, 0x
+ 134:BSP/LCD_ST7789/lcd_core.c ****             break;
+ 135:BSP/LCD_ST7789/lcd_core.c ****         case LCD_1_47_INCH:
+ 136:BSP/LCD_ST7789/lcd_core.c ****             /* Positive Voltage Gamma Control */
+ 137:BSP/LCD_ST7789/lcd_core.c ****             lcd_config_reg(plcd->io, 0xE0, 0xF0, 0x00, 0x04, 0x04, 0x04, 0x05, 0x29, 0x33, 0x3E, 0x
+ 138:BSP/LCD_ST7789/lcd_core.c ****             /* Negative Voltage Gamma Control */
+ 139:BSP/LCD_ST7789/lcd_core.c ****             lcd_config_reg(plcd->io, 0xE1, 0xF0, 0x07, 0x0A, 0x0D, 0x0B, 0x07, 0x28, 0x33, 0x3E, 0x
+ 140:BSP/LCD_ST7789/lcd_core.c ****             break;
+ 141:BSP/LCD_ST7789/lcd_core.c ****     }
+ 142:BSP/LCD_ST7789/lcd_core.c **** 
+ 143:BSP/LCD_ST7789/lcd_core.c ****     /* Display inversion */
+ 144:BSP/LCD_ST7789/lcd_core.c ****     lcd_config_reg(plcd->io, 0x21);
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccpsKaNv.s 			page 4
+
+
+ 145:BSP/LCD_ST7789/lcd_core.c ****     
+ 146:BSP/LCD_ST7789/lcd_core.c ****     /* Display on */
+ 147:BSP/LCD_ST7789/lcd_core.c ****     lcd_config_reg(plcd->io, 0x29);
+ 148:BSP/LCD_ST7789/lcd_core.c **** }
+ 149:BSP/LCD_ST7789/lcd_core.c **** 
+ 150:BSP/LCD_ST7789/lcd_core.c **** void lcd_write_reg_data(lcd_io* lcdio, int len, ...)
+ 151:BSP/LCD_ST7789/lcd_core.c **** {
+  29              		.loc 1 151 1 view -0
+  30              		.cfi_startproc
+  31              		@ args = 4, pretend = 12, frame = 8
+  32              		@ frame_needed = 0, uses_anonymous_args = 1
+  33              		.loc 1 151 1 is_stmt 0 view .LVU1
+  34 0000 0EB4     		push	{r1, r2, r3}
+  35              	.LCFI0:
+  36              		.cfi_def_cfa_offset 12
+  37              		.cfi_offset 1, -12
+  38              		.cfi_offset 2, -8
+  39              		.cfi_offset 3, -4
+  40 0002 70B5     		push	{r4, r5, r6, lr}
+  41              	.LCFI1:
+  42              		.cfi_def_cfa_offset 28
+  43              		.cfi_offset 4, -28
+  44              		.cfi_offset 5, -24
+  45              		.cfi_offset 6, -20
+  46              		.cfi_offset 14, -16
+  47 0004 83B0     		sub	sp, sp, #12
+  48              	.LCFI2:
+  49              		.cfi_def_cfa_offset 40
+  50 0006 0546     		mov	r5, r0
+  51 0008 07AB     		add	r3, sp, #28
+  52 000a 53F8046B 		ldr	r6, [r3], #4
+ 152:BSP/LCD_ST7789/lcd_core.c ****     va_list args;
+  53              		.loc 1 152 5 is_stmt 1 view .LVU2
+ 153:BSP/LCD_ST7789/lcd_core.c ****     va_start(args, len);
+  54              		.loc 1 153 5 view .LVU3
+  55 000e 0193     		str	r3, [sp, #4]
+ 154:BSP/LCD_ST7789/lcd_core.c ****     
+ 155:BSP/LCD_ST7789/lcd_core.c ****     lcd_write_reg(lcdio, (uint8_t)va_arg(args, unsigned int));
+  56              		.loc 1 155 5 view .LVU4
+  57              		.loc 1 155 35 is_stmt 0 view .LVU5
+  58 0010 0433     		adds	r3, r3, #4
+  59 0012 0193     		str	r3, [sp, #4]
+  60              		.loc 1 155 5 discriminator 1 view .LVU6
+  61 0014 9DF82010 		ldrb	r1, [sp, #32]	@ zero_extendqisi2
+  62 0018 FFF7FEFF 		bl	lcd_write_reg
+  63              	.LVL1:
+ 156:BSP/LCD_ST7789/lcd_core.c ****     
+ 157:BSP/LCD_ST7789/lcd_core.c ****     for (int i = 1; i < len; i++) {
+  64              		.loc 1 157 5 is_stmt 1 view .LVU7
+  65              	.LBB2:
+  66              		.loc 1 157 10 view .LVU8
+  67              		.loc 1 157 14 is_stmt 0 view .LVU9
+  68 001c 0124     		movs	r4, #1
+  69              		.loc 1 157 5 view .LVU10
+  70 001e 07E0     		b	.L2
+  71              	.LVL2:
+  72              	.L3:
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccpsKaNv.s 			page 5
+
+
+ 158:BSP/LCD_ST7789/lcd_core.c ****         lcd_write_byte(lcdio, (uint8_t)va_arg(args, unsigned int));
+  73              		.loc 1 158 9 is_stmt 1 view .LVU11
+  74              		.loc 1 158 40 is_stmt 0 view .LVU12
+  75 0020 019B     		ldr	r3, [sp, #4]
+  76 0022 1A1D     		adds	r2, r3, #4
+  77 0024 0192     		str	r2, [sp, #4]
+  78              		.loc 1 158 9 discriminator 1 view .LVU13
+  79 0026 1978     		ldrb	r1, [r3]	@ zero_extendqisi2
+  80 0028 2846     		mov	r0, r5
+  81 002a FFF7FEFF 		bl	lcd_write_byte
+  82              	.LVL3:
+ 157:BSP/LCD_ST7789/lcd_core.c ****         lcd_write_byte(lcdio, (uint8_t)va_arg(args, unsigned int));
+  83              		.loc 1 157 31 is_stmt 1 discriminator 3 view .LVU14
+  84 002e 0134     		adds	r4, r4, #1
+  85              	.LVL4:
+  86              	.L2:
+ 157:BSP/LCD_ST7789/lcd_core.c ****         lcd_write_byte(lcdio, (uint8_t)va_arg(args, unsigned int));
+  87              		.loc 1 157 23 discriminator 1 view .LVU15
+  88 0030 B442     		cmp	r4, r6
+  89 0032 F5DB     		blt	.L3
+  90              	.LBE2:
+ 159:BSP/LCD_ST7789/lcd_core.c ****     }
+ 160:BSP/LCD_ST7789/lcd_core.c **** 
+ 161:BSP/LCD_ST7789/lcd_core.c **** 	va_end(args);     
+ 162:BSP/LCD_ST7789/lcd_core.c **** }
+  91              		.loc 1 162 1 is_stmt 0 view .LVU16
+  92 0034 03B0     		add	sp, sp, #12
+  93              	.LCFI3:
+  94              		.cfi_def_cfa_offset 28
+  95              		@ sp needed
+  96 0036 BDE87040 		pop	{r4, r5, r6, lr}
+  97              	.LCFI4:
+  98              		.cfi_restore 14
+  99              		.cfi_restore 6
+ 100              		.cfi_restore 5
+ 101              		.cfi_restore 4
+ 102              		.cfi_def_cfa_offset 12
+ 103              	.LVL5:
+ 104              		.loc 1 162 1 view .LVU17
+ 105 003a 03B0     		add	sp, sp, #12
+ 106              	.LCFI5:
+ 107              		.cfi_restore 3
+ 108              		.cfi_restore 2
+ 109              		.cfi_restore 1
+ 110              		.cfi_def_cfa_offset 0
+ 111 003c 7047     		bx	lr
+ 112              		.cfi_endproc
+ 113              	.LFE5:
+ 115              		.section	.text.lcd_set_address,"ax",%progbits
+ 116              		.align	1
+ 117              		.global	lcd_set_address
+ 118              		.syntax unified
+ 119              		.thumb
+ 120              		.thumb_func
+ 122              	lcd_set_address:
+ 123              	.LVL6:
+ 124              	.LFB3:
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccpsKaNv.s 			page 6
+
+
+  61:BSP/LCD_ST7789/lcd_core.c ****     /* 列地址设置 */
+ 125              		.loc 1 61 1 is_stmt 1 view -0
+ 126              		.cfi_startproc
+ 127              		@ args = 4, pretend = 0, frame = 0
+ 128              		@ frame_needed = 0, uses_anonymous_args = 0
+  61:BSP/LCD_ST7789/lcd_core.c ****     /* 列地址设置 */
+ 129              		.loc 1 61 1 is_stmt 0 view .LVU19
+ 130 0000 2DE9F041 		push	{r4, r5, r6, r7, r8, lr}
+ 131              	.LCFI6:
+ 132              		.cfi_def_cfa_offset 24
+ 133              		.cfi_offset 4, -24
+ 134              		.cfi_offset 5, -20
+ 135              		.cfi_offset 6, -16
+ 136              		.cfi_offset 7, -12
+ 137              		.cfi_offset 8, -8
+ 138              		.cfi_offset 14, -4
+ 139 0004 0446     		mov	r4, r0
+ 140 0006 8846     		mov	r8, r1
+ 141 0008 1646     		mov	r6, r2
+ 142 000a 1F46     		mov	r7, r3
+  63:BSP/LCD_ST7789/lcd_core.c ****     lcd_write_halfword(plcd->io, x1 + lcd_cfg_address[plcd->hw->type][plcd->hw->rotate][0]);
+ 143              		.loc 1 63 5 is_stmt 1 view .LVU20
+ 144 000c 2A22     		movs	r2, #42
+ 145              	.LVL7:
+  63:BSP/LCD_ST7789/lcd_core.c ****     lcd_write_halfword(plcd->io, x1 + lcd_cfg_address[plcd->hw->type][plcd->hw->rotate][0]);
+ 146              		.loc 1 63 5 is_stmt 0 view .LVU21
+ 147 000e 0121     		movs	r1, #1
+ 148              	.LVL8:
+  63:BSP/LCD_ST7789/lcd_core.c ****     lcd_write_halfword(plcd->io, x1 + lcd_cfg_address[plcd->hw->type][plcd->hw->rotate][0]);
+ 149              		.loc 1 63 5 view .LVU22
+ 150 0010 0068     		ldr	r0, [r0]
+ 151              	.LVL9:
+  63:BSP/LCD_ST7789/lcd_core.c ****     lcd_write_halfword(plcd->io, x1 + lcd_cfg_address[plcd->hw->type][plcd->hw->rotate][0]);
+ 152              		.loc 1 63 5 view .LVU23
+ 153 0012 FFF7FEFF 		bl	lcd_write_reg_data
+ 154              	.LVL10:
+  64:BSP/LCD_ST7789/lcd_core.c ****     lcd_write_halfword(plcd->io, x2 + lcd_cfg_address[plcd->hw->type][plcd->hw->rotate][1]);
+ 155              		.loc 1 64 5 is_stmt 1 view .LVU24
+  64:BSP/LCD_ST7789/lcd_core.c ****     lcd_write_halfword(plcd->io, x2 + lcd_cfg_address[plcd->hw->type][plcd->hw->rotate][1]);
+ 156              		.loc 1 64 59 is_stmt 0 view .LVU25
+ 157 0016 6368     		ldr	r3, [r4, #4]
+  64:BSP/LCD_ST7789/lcd_core.c ****     lcd_write_halfword(plcd->io, x2 + lcd_cfg_address[plcd->hw->type][plcd->hw->rotate][1]);
+ 158              		.loc 1 64 63 view .LVU26
+ 159 0018 1A79     		ldrb	r2, [r3, #4]	@ zero_extendqisi2
+  64:BSP/LCD_ST7789/lcd_core.c ****     lcd_write_halfword(plcd->io, x2 + lcd_cfg_address[plcd->hw->type][plcd->hw->rotate][1]);
+ 160              		.loc 1 64 79 view .LVU27
+ 161 001a 5B79     		ldrb	r3, [r3, #5]	@ zero_extendqisi2
+  64:BSP/LCD_ST7789/lcd_core.c ****     lcd_write_halfword(plcd->io, x2 + lcd_cfg_address[plcd->hw->type][plcd->hw->rotate][1]);
+ 162              		.loc 1 64 88 view .LVU28
+ 163 001c 1F4D     		ldr	r5, .L7
+ 164 001e 03EB8203 		add	r3, r3, r2, lsl #2
+ 165 0022 15F82330 		ldrb	r3, [r5, r3, lsl #2]	@ zero_extendqisi2
+  64:BSP/LCD_ST7789/lcd_core.c ****     lcd_write_halfword(plcd->io, x2 + lcd_cfg_address[plcd->hw->type][plcd->hw->rotate][1]);
+ 166              		.loc 1 64 5 view .LVU29
+ 167 0026 03EB0801 		add	r1, r3, r8
+ 168 002a 89B2     		uxth	r1, r1
+ 169 002c 2068     		ldr	r0, [r4]
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccpsKaNv.s 			page 7
+
+
+ 170 002e FFF7FEFF 		bl	lcd_write_halfword
+ 171              	.LVL11:
+  65:BSP/LCD_ST7789/lcd_core.c ****     /* 行地址设置 */
+ 172              		.loc 1 65 5 is_stmt 1 view .LVU30
+  65:BSP/LCD_ST7789/lcd_core.c ****     /* 行地址设置 */
+ 173              		.loc 1 65 59 is_stmt 0 view .LVU31
+ 174 0032 6368     		ldr	r3, [r4, #4]
+  65:BSP/LCD_ST7789/lcd_core.c ****     /* 行地址设置 */
+ 175              		.loc 1 65 63 view .LVU32
+ 176 0034 1A79     		ldrb	r2, [r3, #4]	@ zero_extendqisi2
+  65:BSP/LCD_ST7789/lcd_core.c ****     /* 行地址设置 */
+ 177              		.loc 1 65 79 view .LVU33
+ 178 0036 5879     		ldrb	r0, [r3, #5]	@ zero_extendqisi2
+  65:BSP/LCD_ST7789/lcd_core.c ****     /* 行地址设置 */
+ 179              		.loc 1 65 88 view .LVU34
+ 180 0038 00EB8200 		add	r0, r0, r2, lsl #2
+ 181 003c 05EB8000 		add	r0, r5, r0, lsl #2
+ 182 0040 4178     		ldrb	r1, [r0, #1]	@ zero_extendqisi2
+  65:BSP/LCD_ST7789/lcd_core.c ****     /* 行地址设置 */
+ 183              		.loc 1 65 5 view .LVU35
+ 184 0042 3944     		add	r1, r1, r7
+ 185 0044 89B2     		uxth	r1, r1
+ 186 0046 2068     		ldr	r0, [r4]
+ 187 0048 FFF7FEFF 		bl	lcd_write_halfword
+ 188              	.LVL12:
+  67:BSP/LCD_ST7789/lcd_core.c ****     lcd_write_halfword(plcd->io, y1 + lcd_cfg_address[plcd->hw->type][plcd->hw->rotate][2]);
+ 189              		.loc 1 67 5 is_stmt 1 view .LVU36
+ 190 004c 2B22     		movs	r2, #43
+ 191 004e 0121     		movs	r1, #1
+ 192 0050 2068     		ldr	r0, [r4]
+ 193 0052 FFF7FEFF 		bl	lcd_write_reg_data
+ 194              	.LVL13:
+  68:BSP/LCD_ST7789/lcd_core.c ****     lcd_write_halfword(plcd->io, y2 + lcd_cfg_address[plcd->hw->type][plcd->hw->rotate][3]);
+ 195              		.loc 1 68 5 view .LVU37
+  68:BSP/LCD_ST7789/lcd_core.c ****     lcd_write_halfword(plcd->io, y2 + lcd_cfg_address[plcd->hw->type][plcd->hw->rotate][3]);
+ 196              		.loc 1 68 59 is_stmt 0 view .LVU38
+ 197 0056 6368     		ldr	r3, [r4, #4]
+  68:BSP/LCD_ST7789/lcd_core.c ****     lcd_write_halfword(plcd->io, y2 + lcd_cfg_address[plcd->hw->type][plcd->hw->rotate][3]);
+ 198              		.loc 1 68 63 view .LVU39
+ 199 0058 1A79     		ldrb	r2, [r3, #4]	@ zero_extendqisi2
+  68:BSP/LCD_ST7789/lcd_core.c ****     lcd_write_halfword(plcd->io, y2 + lcd_cfg_address[plcd->hw->type][plcd->hw->rotate][3]);
+ 200              		.loc 1 68 79 view .LVU40
+ 201 005a 5B79     		ldrb	r3, [r3, #5]	@ zero_extendqisi2
+  68:BSP/LCD_ST7789/lcd_core.c ****     lcd_write_halfword(plcd->io, y2 + lcd_cfg_address[plcd->hw->type][plcd->hw->rotate][3]);
+ 202              		.loc 1 68 88 view .LVU41
+ 203 005c 03EB8203 		add	r3, r3, r2, lsl #2
+ 204 0060 05EB8303 		add	r3, r5, r3, lsl #2
+ 205 0064 9978     		ldrb	r1, [r3, #2]	@ zero_extendqisi2
+  68:BSP/LCD_ST7789/lcd_core.c ****     lcd_write_halfword(plcd->io, y2 + lcd_cfg_address[plcd->hw->type][plcd->hw->rotate][3]);
+ 206              		.loc 1 68 5 view .LVU42
+ 207 0066 3144     		add	r1, r1, r6
+ 208 0068 89B2     		uxth	r1, r1
+ 209 006a 2068     		ldr	r0, [r4]
+ 210 006c FFF7FEFF 		bl	lcd_write_halfword
+ 211              	.LVL14:
+  69:BSP/LCD_ST7789/lcd_core.c ****     /* 储存器写 */
+ 212              		.loc 1 69 5 is_stmt 1 view .LVU43
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccpsKaNv.s 			page 8
+
+
+  69:BSP/LCD_ST7789/lcd_core.c ****     /* 储存器写 */
+ 213              		.loc 1 69 59 is_stmt 0 view .LVU44
+ 214 0070 6368     		ldr	r3, [r4, #4]
+  69:BSP/LCD_ST7789/lcd_core.c ****     /* 储存器写 */
+ 215              		.loc 1 69 63 view .LVU45
+ 216 0072 1A79     		ldrb	r2, [r3, #4]	@ zero_extendqisi2
+  69:BSP/LCD_ST7789/lcd_core.c ****     /* 储存器写 */
+ 217              		.loc 1 69 79 view .LVU46
+ 218 0074 5B79     		ldrb	r3, [r3, #5]	@ zero_extendqisi2
+  69:BSP/LCD_ST7789/lcd_core.c ****     /* 储存器写 */
+ 219              		.loc 1 69 88 view .LVU47
+ 220 0076 03EB8203 		add	r3, r3, r2, lsl #2
+ 221 007a 05EB8305 		add	r5, r5, r3, lsl #2
+ 222 007e E978     		ldrb	r1, [r5, #3]	@ zero_extendqisi2
+  69:BSP/LCD_ST7789/lcd_core.c ****     /* 储存器写 */
+ 223              		.loc 1 69 5 view .LVU48
+ 224 0080 BDF81830 		ldrh	r3, [sp, #24]
+ 225 0084 1944     		add	r1, r1, r3
+ 226 0086 89B2     		uxth	r1, r1
+ 227 0088 2068     		ldr	r0, [r4]
+ 228 008a FFF7FEFF 		bl	lcd_write_halfword
+ 229              	.LVL15:
+  71:BSP/LCD_ST7789/lcd_core.c **** }
+ 230              		.loc 1 71 5 is_stmt 1 view .LVU49
+ 231 008e 2C22     		movs	r2, #44
+ 232 0090 0121     		movs	r1, #1
+ 233 0092 2068     		ldr	r0, [r4]
+ 234 0094 FFF7FEFF 		bl	lcd_write_reg_data
+ 235              	.LVL16:
+  72:BSP/LCD_ST7789/lcd_core.c **** 
+ 236              		.loc 1 72 1 is_stmt 0 view .LVU50
+ 237 0098 BDE8F081 		pop	{r4, r5, r6, r7, r8, pc}
+ 238              	.LVL17:
+ 239              	.L8:
+  72:BSP/LCD_ST7789/lcd_core.c **** 
+ 240              		.loc 1 72 1 view .LVU51
+ 241              		.align	2
+ 242              	.L7:
+ 243 009c 00000000 		.word	lcd_cfg_address
+ 244              		.cfi_endproc
+ 245              	.LFE3:
+ 247              		.section	.text.lcd_init_hw,"ax",%progbits
+ 248              		.align	1
+ 249              		.global	lcd_init_hw
+ 250              		.syntax unified
+ 251              		.thumb
+ 252              		.thumb_func
+ 254              	lcd_init_hw:
+ 255              	.LVL18:
+ 256              	.LFB4:
+  75:BSP/LCD_ST7789/lcd_core.c ****     lcd_io_rst(plcd->io, 0);
+ 257              		.loc 1 75 1 is_stmt 1 view -0
+ 258              		.cfi_startproc
+ 259              		@ args = 0, pretend = 0, frame = 0
+ 260              		@ frame_needed = 0, uses_anonymous_args = 0
+  75:BSP/LCD_ST7789/lcd_core.c ****     lcd_io_rst(plcd->io, 0);
+ 261              		.loc 1 75 1 is_stmt 0 view .LVU53
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccpsKaNv.s 			page 9
+
+
+ 262 0000 2DE9F04F 		push	{r4, r5, r6, r7, r8, r9, r10, fp, lr}
+ 263              	.LCFI7:
+ 264              		.cfi_def_cfa_offset 36
+ 265              		.cfi_offset 4, -36
+ 266              		.cfi_offset 5, -32
+ 267              		.cfi_offset 6, -28
+ 268              		.cfi_offset 7, -24
+ 269              		.cfi_offset 8, -20
+ 270              		.cfi_offset 9, -16
+ 271              		.cfi_offset 10, -12
+ 272              		.cfi_offset 11, -8
+ 273              		.cfi_offset 14, -4
+ 274 0004 91B0     		sub	sp, sp, #68
+ 275              	.LCFI8:
+ 276              		.cfi_def_cfa_offset 104
+ 277 0006 0446     		mov	r4, r0
+  76:BSP/LCD_ST7789/lcd_core.c **** 	lcd_delay(100);
+ 278              		.loc 1 76 5 is_stmt 1 view .LVU54
+ 279 0008 0021     		movs	r1, #0
+ 280 000a 0068     		ldr	r0, [r0]
+ 281              	.LVL19:
+  76:BSP/LCD_ST7789/lcd_core.c **** 	lcd_delay(100);
+ 282              		.loc 1 76 5 is_stmt 0 view .LVU55
+ 283 000c FFF7FEFF 		bl	lcd_io_rst
+ 284              	.LVL20:
+  77:BSP/LCD_ST7789/lcd_core.c ****     lcd_io_rst(plcd->io, 1);
+ 285              		.loc 1 77 2 is_stmt 1 view .LVU56
+ 286 0010 6420     		movs	r0, #100
+ 287 0012 FFF7FEFF 		bl	lcd_delay
+ 288              	.LVL21:
+  78:BSP/LCD_ST7789/lcd_core.c **** 	lcd_delay(100);
+ 289              		.loc 1 78 5 view .LVU57
+ 290 0016 0121     		movs	r1, #1
+ 291 0018 2068     		ldr	r0, [r4]
+ 292 001a FFF7FEFF 		bl	lcd_io_rst
+ 293              	.LVL22:
+  79:BSP/LCD_ST7789/lcd_core.c **** 	
+ 294              		.loc 1 79 2 view .LVU58
+ 295 001e 6420     		movs	r0, #100
+ 296 0020 FFF7FEFF 		bl	lcd_delay
+ 297              	.LVL23:
+  82:BSP/LCD_ST7789/lcd_core.c ****     lcd_delay(100);
+ 298              		.loc 1 82 5 view .LVU59
+ 299 0024 0121     		movs	r1, #1
+ 300 0026 2068     		ldr	r0, [r4]
+ 301 0028 FFF7FEFF 		bl	lcd_io_bl
+ 302              	.LVL24:
+  83:BSP/LCD_ST7789/lcd_core.c **** 	
+ 303              		.loc 1 83 5 view .LVU60
+ 304 002c 6420     		movs	r0, #100
+ 305 002e FFF7FEFF 		bl	lcd_delay
+ 306              	.LVL25:
+  86:BSP/LCD_ST7789/lcd_core.c **** 	lcd_delay(5);
+ 307              		.loc 1 86 5 view .LVU61
+ 308 0032 1122     		movs	r2, #17
+ 309 0034 0121     		movs	r1, #1
+ 310 0036 2068     		ldr	r0, [r4]
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccpsKaNv.s 			page 10
+
+
+ 311 0038 FFF7FEFF 		bl	lcd_write_reg_data
+ 312              	.LVL26:
+  87:BSP/LCD_ST7789/lcd_core.c **** 
+ 313              		.loc 1 87 2 view .LVU62
+ 314 003c 0520     		movs	r0, #5
+ 315 003e FFF7FEFF 		bl	lcd_delay
+ 316              	.LVL27:
+  90:BSP/LCD_ST7789/lcd_core.c **** 
+ 317              		.loc 1 90 5 view .LVU63
+ 318 0042 6368     		ldr	r3, [r4, #4]
+ 319 0044 1979     		ldrb	r1, [r3, #4]	@ zero_extendqisi2
+ 320 0046 5A79     		ldrb	r2, [r3, #5]	@ zero_extendqisi2
+ 321 0048 934B     		ldr	r3, .L14
+ 322 004a 03EB8103 		add	r3, r3, r1, lsl #2
+ 323 004e 9B5C     		ldrb	r3, [r3, r2]	@ zero_extendqisi2
+ 324 0050 3622     		movs	r2, #54
+ 325 0052 0221     		movs	r1, #2
+ 326 0054 2068     		ldr	r0, [r4]
+ 327 0056 FFF7FEFF 		bl	lcd_write_reg_data
+ 328              	.LVL28:
+  93:BSP/LCD_ST7789/lcd_core.c **** 
+ 329              		.loc 1 93 5 view .LVU64
+ 330 005a 0523     		movs	r3, #5
+ 331 005c 3A22     		movs	r2, #58
+ 332 005e 0221     		movs	r1, #2
+ 333 0060 2068     		ldr	r0, [r4]
+ 334 0062 FFF7FEFF 		bl	lcd_write_reg_data
+ 335              	.LVL29:
+  96:BSP/LCD_ST7789/lcd_core.c ****     
+ 336              		.loc 1 96 5 view .LVU65
+ 337 0066 3323     		movs	r3, #51
+ 338 0068 0393     		str	r3, [sp, #12]
+ 339 006a 0293     		str	r3, [sp, #8]
+ 340 006c 0023     		movs	r3, #0
+ 341 006e 0193     		str	r3, [sp, #4]
+ 342 0070 0C23     		movs	r3, #12
+ 343 0072 0093     		str	r3, [sp]
+ 344 0074 B222     		movs	r2, #178
+ 345 0076 0621     		movs	r1, #6
+ 346 0078 2068     		ldr	r0, [r4]
+ 347 007a FFF7FEFF 		bl	lcd_write_reg_data
+ 348              	.LVL30:
+  99:BSP/LCD_ST7789/lcd_core.c **** 
+ 349              		.loc 1 99 5 view .LVU66
+ 350 007e 3523     		movs	r3, #53
+ 351 0080 B722     		movs	r2, #183
+ 352 0082 0221     		movs	r1, #2
+ 353 0084 2068     		ldr	r0, [r4]
+ 354 0086 FFF7FEFF 		bl	lcd_write_reg_data
+ 355              	.LVL31:
+ 102:BSP/LCD_ST7789/lcd_core.c ****     
+ 356              		.loc 1 102 5 view .LVU67
+ 357 008a 1923     		movs	r3, #25
+ 358 008c BB22     		movs	r2, #187
+ 359 008e 0221     		movs	r1, #2
+ 360 0090 2068     		ldr	r0, [r4]
+ 361 0092 FFF7FEFF 		bl	lcd_write_reg_data
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccpsKaNv.s 			page 11
+
+
+ 362              	.LVL32:
+ 105:BSP/LCD_ST7789/lcd_core.c ****     
+ 363              		.loc 1 105 5 view .LVU68
+ 364 0096 2C23     		movs	r3, #44
+ 365 0098 C022     		movs	r2, #192
+ 366 009a 0221     		movs	r1, #2
+ 367 009c 2068     		ldr	r0, [r4]
+ 368 009e FFF7FEFF 		bl	lcd_write_reg_data
+ 369              	.LVL33:
+ 108:BSP/LCD_ST7789/lcd_core.c ****     
+ 370              		.loc 1 108 5 view .LVU69
+ 371 00a2 0123     		movs	r3, #1
+ 372 00a4 C222     		movs	r2, #194
+ 373 00a6 0221     		movs	r1, #2
+ 374 00a8 2068     		ldr	r0, [r4]
+ 375 00aa FFF7FEFF 		bl	lcd_write_reg_data
+ 376              	.LVL34:
+ 111:BSP/LCD_ST7789/lcd_core.c ****     
+ 377              		.loc 1 111 5 view .LVU70
+ 378 00ae 1223     		movs	r3, #18
+ 379 00b0 C322     		movs	r2, #195
+ 380 00b2 0221     		movs	r1, #2
+ 381 00b4 2068     		ldr	r0, [r4]
+ 382 00b6 FFF7FEFF 		bl	lcd_write_reg_data
+ 383              	.LVL35:
+ 114:BSP/LCD_ST7789/lcd_core.c **** 
+ 384              		.loc 1 114 5 view .LVU71
+ 385 00ba 2023     		movs	r3, #32
+ 386 00bc C422     		movs	r2, #196
+ 387 00be 0221     		movs	r1, #2
+ 388 00c0 2068     		ldr	r0, [r4]
+ 389 00c2 FFF7FEFF 		bl	lcd_write_reg_data
+ 390              	.LVL36:
+ 117:BSP/LCD_ST7789/lcd_core.c **** 
+ 391              		.loc 1 117 5 view .LVU72
+ 392 00c6 0F23     		movs	r3, #15
+ 393 00c8 C622     		movs	r2, #198
+ 394 00ca 0221     		movs	r1, #2
+ 395 00cc 2068     		ldr	r0, [r4]
+ 396 00ce FFF7FEFF 		bl	lcd_write_reg_data
+ 397              	.LVL37:
+ 120:BSP/LCD_ST7789/lcd_core.c **** 
+ 398              		.loc 1 120 5 view .LVU73
+ 399 00d2 A123     		movs	r3, #161
+ 400 00d4 0093     		str	r3, [sp]
+ 401 00d6 A423     		movs	r3, #164
+ 402 00d8 D022     		movs	r2, #208
+ 403 00da 0321     		movs	r1, #3
+ 404 00dc 2068     		ldr	r0, [r4]
+ 405 00de FFF7FEFF 		bl	lcd_write_reg_data
+ 406              	.LVL38:
+ 122:BSP/LCD_ST7789/lcd_core.c ****         case LCD_0_96_INCH:
+ 407              		.loc 1 122 5 view .LVU74
+ 122:BSP/LCD_ST7789/lcd_core.c ****         case LCD_0_96_INCH:
+ 408              		.loc 1 122 16 is_stmt 0 view .LVU75
+ 409 00e2 6368     		ldr	r3, [r4, #4]
+ 122:BSP/LCD_ST7789/lcd_core.c ****         case LCD_0_96_INCH:
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccpsKaNv.s 			page 12
+
+
+ 410              		.loc 1 122 20 view .LVU76
+ 411 00e4 1B79     		ldrb	r3, [r3, #4]	@ zero_extendqisi2
+ 122:BSP/LCD_ST7789/lcd_core.c ****         case LCD_0_96_INCH:
+ 412              		.loc 1 122 5 view .LVU77
+ 413 00e6 012B     		cmp	r3, #1
+ 414 00e8 58D0     		beq	.L10
+ 415 00ea 022B     		cmp	r3, #2
+ 416 00ec 00F09880 		beq	.L11
+ 417 00f0 002B     		cmp	r3, #0
+ 418 00f2 46D1     		bne	.L12
+ 419              	.LBB3:
+ 125:BSP/LCD_ST7789/lcd_core.c ****             /* Negative Voltage Gamma Control */
+ 420              		.loc 1 125 13 is_stmt 1 view .LVU78
+ 421 00f4 4FF01009 		mov	r9, #16
+ 422 00f8 CDF83890 		str	r9, [sp, #56]
+ 423 00fc 4FF0040B 		mov	fp, #4
+ 424 0100 CDF834B0 		str	fp, [sp, #52]
+ 425 0104 0826     		movs	r6, #8
+ 426 0106 0C96     		str	r6, [sp, #48]
+ 427 0108 4FF0000A 		mov	r10, #0
+ 428 010c CDF82CA0 		str	r10, [sp, #44]
+ 429 0110 3623     		movs	r3, #54
+ 430 0112 0A93     		str	r3, [sp, #40]
+ 431 0114 2523     		movs	r3, #37
+ 432 0116 0993     		str	r3, [sp, #36]
+ 433 0118 0F27     		movs	r7, #15
+ 434 011a 0897     		str	r7, [sp, #32]
+ 435 011c 4FF00908 		mov	r8, #9
+ 436 0120 CDF81C80 		str	r8, [sp, #28]
+ 437 0124 0725     		movs	r5, #7
+ 438 0126 0695     		str	r5, [sp, #24]
+ 439 0128 0222     		movs	r2, #2
+ 440 012a 0592     		str	r2, [sp, #20]
+ 441 012c 0495     		str	r5, [sp, #16]
+ 442 012e CDF80C90 		str	r9, [sp, #12]
+ 443 0132 0295     		str	r5, [sp, #8]
+ 444 0134 0196     		str	r6, [sp, #4]
+ 445 0136 0E23     		movs	r3, #14
+ 446 0138 0093     		str	r3, [sp]
+ 447 013a 2B46     		mov	r3, r5
+ 448 013c E022     		movs	r2, #224
+ 449 013e 1121     		movs	r1, #17
+ 450 0140 2068     		ldr	r0, [r4]
+ 451 0142 FFF7FEFF 		bl	lcd_write_reg_data
+ 452              	.LVL39:
+ 127:BSP/LCD_ST7789/lcd_core.c ****             break;
+ 453              		.loc 1 127 13 view .LVU79
+ 454 0146 CDF83890 		str	r9, [sp, #56]
+ 455 014a CDF834B0 		str	fp, [sp, #52]
+ 456 014e CDF83080 		str	r8, [sp, #48]
+ 457 0152 CDF82CA0 		str	r10, [sp, #44]
+ 458 0156 3523     		movs	r3, #53
+ 459 0158 0A93     		str	r3, [sp, #40]
+ 460 015a 2523     		movs	r3, #37
+ 461 015c 0993     		str	r3, [sp, #36]
+ 462 015e 0897     		str	r7, [sp, #32]
+ 463 0160 CDF81C80 		str	r8, [sp, #28]
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccpsKaNv.s 			page 13
+
+
+ 464 0164 0695     		str	r5, [sp, #24]
+ 465 0166 0222     		movs	r2, #2
+ 466 0168 0592     		str	r2, [sp, #20]
+ 467 016a 0495     		str	r5, [sp, #16]
+ 468 016c 0397     		str	r7, [sp, #12]
+ 469 016e 0295     		str	r5, [sp, #8]
+ 470 0170 0196     		str	r6, [sp, #4]
+ 471 0172 0D23     		movs	r3, #13
+ 472 0174 0093     		str	r3, [sp]
+ 473 0176 0A23     		movs	r3, #10
+ 474 0178 E122     		movs	r2, #225
+ 475 017a 1121     		movs	r1, #17
+ 476 017c 2068     		ldr	r0, [r4]
+ 477 017e FFF7FEFF 		bl	lcd_write_reg_data
+ 478              	.LVL40:
+ 128:BSP/LCD_ST7789/lcd_core.c ****         case LCD_1_14_INCH:
+ 479              		.loc 1 128 13 view .LVU80
+ 480              	.L12:
+ 481              	.LBE3:
+ 144:BSP/LCD_ST7789/lcd_core.c ****     
+ 482              		.loc 1 144 5 view .LVU81
+ 483 0182 2122     		movs	r2, #33
+ 484 0184 0121     		movs	r1, #1
+ 485 0186 2068     		ldr	r0, [r4]
+ 486 0188 FFF7FEFF 		bl	lcd_write_reg_data
+ 487              	.LVL41:
+ 147:BSP/LCD_ST7789/lcd_core.c **** }
+ 488              		.loc 1 147 5 view .LVU82
+ 489 018c 2922     		movs	r2, #41
+ 490 018e 0121     		movs	r1, #1
+ 491 0190 2068     		ldr	r0, [r4]
+ 492 0192 FFF7FEFF 		bl	lcd_write_reg_data
+ 493              	.LVL42:
+ 148:BSP/LCD_ST7789/lcd_core.c **** 
+ 494              		.loc 1 148 1 is_stmt 0 view .LVU83
+ 495 0196 11B0     		add	sp, sp, #68
+ 496              	.LCFI9:
+ 497              		.cfi_remember_state
+ 498              		.cfi_def_cfa_offset 36
+ 499              		@ sp needed
+ 500 0198 BDE8F08F 		pop	{r4, r5, r6, r7, r8, r9, r10, fp, pc}
+ 501              	.LVL43:
+ 502              	.L10:
+ 503              	.LCFI10:
+ 504              		.cfi_restore_state
+ 505              	.LBB4:
+ 131:BSP/LCD_ST7789/lcd_core.c ****             /* Negative Voltage Gamma Control */
+ 506              		.loc 1 131 13 is_stmt 1 view .LVU84
+ 507 019c 4FF0230A 		mov	r10, #35
+ 508 01a0 CDF830A0 		str	r10, [sp, #48]
+ 509 01a4 1F25     		movs	r5, #31
+ 510 01a6 0B95     		str	r5, [sp, #44]
+ 511 01a8 0B23     		movs	r3, #11
+ 512 01aa 0A93     		str	r3, [sp, #40]
+ 513 01ac 0D23     		movs	r3, #13
+ 514 01ae 0993     		str	r3, [sp, #36]
+ 515 01b0 1822     		movs	r2, #24
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccpsKaNv.s 			page 14
+
+
+ 516 01b2 0892     		str	r2, [sp, #32]
+ 517 01b4 4C22     		movs	r2, #76
+ 518 01b6 0792     		str	r2, [sp, #28]
+ 519 01b8 5422     		movs	r2, #84
+ 520 01ba 0692     		str	r2, [sp, #24]
+ 521 01bc 4FF03F09 		mov	r9, #63
+ 522 01c0 CDF81490 		str	r9, [sp, #20]
+ 523 01c4 2B22     		movs	r2, #43
+ 524 01c6 0492     		str	r2, [sp, #16]
+ 525 01c8 4FF01308 		mov	r8, #19
+ 526 01cc CDF80C80 		str	r8, [sp, #12]
+ 527 01d0 1127     		movs	r7, #17
+ 528 01d2 0297     		str	r7, [sp, #8]
+ 529 01d4 0193     		str	r3, [sp, #4]
+ 530 01d6 0426     		movs	r6, #4
+ 531 01d8 0096     		str	r6, [sp]
+ 532 01da D023     		movs	r3, #208
+ 533 01dc E022     		movs	r2, #224
+ 534 01de 0F21     		movs	r1, #15
+ 535 01e0 2068     		ldr	r0, [r4]
+ 536 01e2 FFF7FEFF 		bl	lcd_write_reg_data
+ 537              	.LVL44:
+ 133:BSP/LCD_ST7789/lcd_core.c ****             break;
+ 538              		.loc 1 133 13 view .LVU85
+ 539 01e6 CDF830A0 		str	r10, [sp, #48]
+ 540 01ea 2023     		movs	r3, #32
+ 541 01ec 0B93     		str	r3, [sp, #44]
+ 542 01ee 0A95     		str	r5, [sp, #40]
+ 543 01f0 0995     		str	r5, [sp, #36]
+ 544 01f2 2F23     		movs	r3, #47
+ 545 01f4 0893     		str	r3, [sp, #32]
+ 546 01f6 5123     		movs	r3, #81
+ 547 01f8 0793     		str	r3, [sp, #28]
+ 548 01fa 4423     		movs	r3, #68
+ 549 01fc 0693     		str	r3, [sp, #24]
+ 550 01fe CDF81490 		str	r9, [sp, #20]
+ 551 0202 2C23     		movs	r3, #44
+ 552 0204 0493     		str	r3, [sp, #16]
+ 553 0206 CDF80C80 		str	r8, [sp, #12]
+ 554 020a 0297     		str	r7, [sp, #8]
+ 555 020c 0C23     		movs	r3, #12
+ 556 020e 0193     		str	r3, [sp, #4]
+ 557 0210 0096     		str	r6, [sp]
+ 558 0212 D023     		movs	r3, #208
+ 559 0214 E122     		movs	r2, #225
+ 560 0216 0F21     		movs	r1, #15
+ 561 0218 2068     		ldr	r0, [r4]
+ 562 021a FFF7FEFF 		bl	lcd_write_reg_data
+ 563              	.LVL45:
+ 134:BSP/LCD_ST7789/lcd_core.c ****         case LCD_1_47_INCH:
+ 564              		.loc 1 134 13 view .LVU86
+ 565 021e B0E7     		b	.L12
+ 566              	.L11:
+ 137:BSP/LCD_ST7789/lcd_core.c ****             /* Negative Voltage Gamma Control */
+ 567              		.loc 1 137 13 view .LVU87
+ 568 0220 3023     		movs	r3, #48
+ 569 0222 0C93     		str	r3, [sp, #48]
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccpsKaNv.s 			page 15
+
+
+ 570 0224 2825     		movs	r5, #40
+ 571 0226 0B95     		str	r5, [sp, #44]
+ 572 0228 1223     		movs	r3, #18
+ 573 022a 0A93     		str	r3, [sp, #40]
+ 574 022c 0993     		str	r3, [sp, #36]
+ 575 022e 3823     		movs	r3, #56
+ 576 0230 0893     		str	r3, [sp, #32]
+ 577 0232 3E27     		movs	r7, #62
+ 578 0234 0797     		str	r7, [sp, #28]
+ 579 0236 3326     		movs	r6, #51
+ 580 0238 0696     		str	r6, [sp, #24]
+ 581 023a 4FF02908 		mov	r8, #41
+ 582 023e CDF81480 		str	r8, [sp, #20]
+ 583 0242 0523     		movs	r3, #5
+ 584 0244 0493     		str	r3, [sp, #16]
+ 585 0246 0423     		movs	r3, #4
+ 586 0248 0393     		str	r3, [sp, #12]
+ 587 024a 0293     		str	r3, [sp, #8]
+ 588 024c 0193     		str	r3, [sp, #4]
+ 589 024e 0023     		movs	r3, #0
+ 590 0250 0093     		str	r3, [sp]
+ 591 0252 F023     		movs	r3, #240
+ 592 0254 E022     		movs	r2, #224
+ 593 0256 0F21     		movs	r1, #15
+ 594 0258 2068     		ldr	r0, [r4]
+ 595 025a FFF7FEFF 		bl	lcd_write_reg_data
+ 596              	.LVL46:
+ 139:BSP/LCD_ST7789/lcd_core.c ****             break;
+ 597              		.loc 1 139 13 view .LVU88
+ 598 025e 3223     		movs	r3, #50
+ 599 0260 0C93     		str	r3, [sp, #48]
+ 600 0262 CDF82C80 		str	r8, [sp, #44]
+ 601 0266 1423     		movs	r3, #20
+ 602 0268 0A93     		str	r3, [sp, #40]
+ 603 026a 0993     		str	r3, [sp, #36]
+ 604 026c 3623     		movs	r3, #54
+ 605 026e 0893     		str	r3, [sp, #32]
+ 606 0270 0797     		str	r7, [sp, #28]
+ 607 0272 0696     		str	r6, [sp, #24]
+ 608 0274 0595     		str	r5, [sp, #20]
+ 609 0276 0723     		movs	r3, #7
+ 610 0278 0493     		str	r3, [sp, #16]
+ 611 027a 0B22     		movs	r2, #11
+ 612 027c 0392     		str	r2, [sp, #12]
+ 613 027e 0D22     		movs	r2, #13
+ 614 0280 0292     		str	r2, [sp, #8]
+ 615 0282 0A22     		movs	r2, #10
+ 616 0284 0192     		str	r2, [sp, #4]
+ 617 0286 0093     		str	r3, [sp]
+ 618 0288 F023     		movs	r3, #240
+ 619 028a E122     		movs	r2, #225
+ 620 028c 0F21     		movs	r1, #15
+ 621 028e 2068     		ldr	r0, [r4]
+ 622 0290 FFF7FEFF 		bl	lcd_write_reg_data
+ 623              	.LVL47:
+ 140:BSP/LCD_ST7789/lcd_core.c ****     }
+ 624              		.loc 1 140 13 view .LVU89
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccpsKaNv.s 			page 16
+
+
+ 625 0294 75E7     		b	.L12
+ 626              	.L15:
+ 627 0296 00BF     		.align	2
+ 628              	.L14:
+ 629 0298 00000000 		.word	lcd_cfg_order
+ 630              	.LBE4:
+ 631              		.cfi_endproc
+ 632              	.LFE4:
+ 634              		.section	.text.lcd_draw_point,"ax",%progbits
+ 635              		.align	1
+ 636              		.global	lcd_draw_point
+ 637              		.syntax unified
+ 638              		.thumb
+ 639              		.thumb_func
+ 641              	lcd_draw_point:
+ 642              	.LVL48:
+ 643              	.LFB8:
+ 163:BSP/LCD_ST7789/lcd_core.c **** 
+ 164:BSP/LCD_ST7789/lcd_core.c **** void lcd_init_dev(lcd* plcd, lcd_type type, lcd_rotate rotate)
+ 165:BSP/LCD_ST7789/lcd_core.c **** {
+ 166:BSP/LCD_ST7789/lcd_core.c ****     uint16_t width;
+ 167:BSP/LCD_ST7789/lcd_core.c ****     uint16_t height;
+ 168:BSP/LCD_ST7789/lcd_core.c ****     
+ 169:BSP/LCD_ST7789/lcd_core.c ****     plcd->hw = lcd_hw_desc[type];
+ 170:BSP/LCD_ST7789/lcd_core.c ****     
+ 171:BSP/LCD_ST7789/lcd_core.c ****     switch (rotate) {
+ 172:BSP/LCD_ST7789/lcd_core.c **** 	case LCD_ROTATE_0:
+ 173:BSP/LCD_ST7789/lcd_core.c **** 	case LCD_ROTATE_180:
+ 174:BSP/LCD_ST7789/lcd_core.c **** 		width =  plcd->hw->height;
+ 175:BSP/LCD_ST7789/lcd_core.c **** 		height = plcd->hw->width;
+ 176:BSP/LCD_ST7789/lcd_core.c **** 		break;
+ 177:BSP/LCD_ST7789/lcd_core.c **** 	default:
+ 178:BSP/LCD_ST7789/lcd_core.c **** 		width =  plcd->hw->width;
+ 179:BSP/LCD_ST7789/lcd_core.c **** 		height = plcd->hw->height;
+ 180:BSP/LCD_ST7789/lcd_core.c **** 	}
+ 181:BSP/LCD_ST7789/lcd_core.c ****     
+ 182:BSP/LCD_ST7789/lcd_core.c ****     plcd->hw->width  = width;
+ 183:BSP/LCD_ST7789/lcd_core.c ****     plcd->hw->height = height;
+ 184:BSP/LCD_ST7789/lcd_core.c ****     plcd->hw->rotate = rotate;
+ 185:BSP/LCD_ST7789/lcd_core.c ****     lcd_set_font(plcd, FONT_DEFAULT, LIGHTBLUE, BLACK);
+ 186:BSP/LCD_ST7789/lcd_core.c **** 
+ 187:BSP/LCD_ST7789/lcd_core.c ****     lcd_init_hw(plcd);
+ 188:BSP/LCD_ST7789/lcd_core.c ****     lcd_clear(plcd, BLACK);
+ 189:BSP/LCD_ST7789/lcd_core.c **** }
+ 190:BSP/LCD_ST7789/lcd_core.c **** 
+ 191:BSP/LCD_ST7789/lcd_core.c **** void lcd_clear(lcd* plcd, uint16_t color)
+ 192:BSP/LCD_ST7789/lcd_core.c **** {
+ 193:BSP/LCD_ST7789/lcd_core.c ****     lcd_fill(plcd, 0, 0, plcd->hw->width - 1, plcd->hw->height - 1, color);
+ 194:BSP/LCD_ST7789/lcd_core.c **** }
+ 195:BSP/LCD_ST7789/lcd_core.c **** 
+ 196:BSP/LCD_ST7789/lcd_core.c **** void lcd_draw_point(lcd* plcd, uint16_t x, uint16_t y, uint16_t color)
+ 197:BSP/LCD_ST7789/lcd_core.c **** {
+ 644              		.loc 1 197 1 view -0
+ 645              		.cfi_startproc
+ 646              		@ args = 0, pretend = 0, frame = 0
+ 647              		@ frame_needed = 0, uses_anonymous_args = 0
+ 648              		.loc 1 197 1 is_stmt 0 view .LVU91
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccpsKaNv.s 			page 17
+
+
+ 649 0000 30B5     		push	{r4, r5, lr}
+ 650              	.LCFI11:
+ 651              		.cfi_def_cfa_offset 12
+ 652              		.cfi_offset 4, -12
+ 653              		.cfi_offset 5, -8
+ 654              		.cfi_offset 14, -4
+ 655 0002 83B0     		sub	sp, sp, #12
+ 656              	.LCFI12:
+ 657              		.cfi_def_cfa_offset 24
+ 658 0004 0446     		mov	r4, r0
+ 659 0006 1D46     		mov	r5, r3
+ 198:BSP/LCD_ST7789/lcd_core.c ****     lcd_set_address(plcd, x, y, x, y);
+ 660              		.loc 1 198 5 is_stmt 1 view .LVU92
+ 661 0008 0092     		str	r2, [sp]
+ 662 000a 0B46     		mov	r3, r1
+ 663              	.LVL49:
+ 664              		.loc 1 198 5 is_stmt 0 view .LVU93
+ 665 000c FFF7FEFF 		bl	lcd_set_address
+ 666              	.LVL50:
+ 199:BSP/LCD_ST7789/lcd_core.c ****     lcd_write_halfword(plcd->io, color);
+ 667              		.loc 1 199 5 is_stmt 1 view .LVU94
+ 668 0010 2946     		mov	r1, r5
+ 669 0012 2068     		ldr	r0, [r4]
+ 670 0014 FFF7FEFF 		bl	lcd_write_halfword
+ 671              	.LVL51:
+ 200:BSP/LCD_ST7789/lcd_core.c **** }
+ 672              		.loc 1 200 1 is_stmt 0 view .LVU95
+ 673 0018 03B0     		add	sp, sp, #12
+ 674              	.LCFI13:
+ 675              		.cfi_def_cfa_offset 12
+ 676              		@ sp needed
+ 677 001a 30BD     		pop	{r4, r5, pc}
+ 678              		.loc 1 200 1 view .LVU96
+ 679              		.cfi_endproc
+ 680              	.LFE8:
+ 682              		.section	.text.lcd_fill,"ax",%progbits
+ 683              		.align	1
+ 684              		.global	lcd_fill
+ 685              		.syntax unified
+ 686              		.thumb
+ 687              		.thumb_func
+ 689              	lcd_fill:
+ 690              	.LVL52:
+ 691              	.LFB9:
+ 201:BSP/LCD_ST7789/lcd_core.c **** 
+ 202:BSP/LCD_ST7789/lcd_core.c **** void lcd_fill(lcd* plcd, uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t color)
+ 203:BSP/LCD_ST7789/lcd_core.c **** {
+ 692              		.loc 1 203 1 is_stmt 1 view -0
+ 693              		.cfi_startproc
+ 694              		@ args = 8, pretend = 0, frame = 0
+ 695              		@ frame_needed = 0, uses_anonymous_args = 0
+ 696              		.loc 1 203 1 is_stmt 0 view .LVU98
+ 697 0000 2DE9F04F 		push	{r4, r5, r6, r7, r8, r9, r10, fp, lr}
+ 698              	.LCFI14:
+ 699              		.cfi_def_cfa_offset 36
+ 700              		.cfi_offset 4, -36
+ 701              		.cfi_offset 5, -32
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccpsKaNv.s 			page 18
+
+
+ 702              		.cfi_offset 6, -28
+ 703              		.cfi_offset 7, -24
+ 704              		.cfi_offset 8, -20
+ 705              		.cfi_offset 9, -16
+ 706              		.cfi_offset 10, -12
+ 707              		.cfi_offset 11, -8
+ 708              		.cfi_offset 14, -4
+ 709 0004 83B0     		sub	sp, sp, #12
+ 710              	.LCFI15:
+ 711              		.cfi_def_cfa_offset 48
+ 712 0006 0546     		mov	r5, r0
+ 713 0008 8946     		mov	r9, r1
+ 714 000a 9246     		mov	r10, r2
+ 715 000c BDF83000 		ldrh	r0, [sp, #48]
+ 716              	.LVL53:
+ 717              		.loc 1 203 1 view .LVU99
+ 718 0010 BDF83420 		ldrh	r2, [sp, #52]
+ 719              	.LVL54:
+ 204:BSP/LCD_ST7789/lcd_core.c ****     uint16_t width, height;
+ 720              		.loc 1 204 5 is_stmt 1 view .LVU100
+ 205:BSP/LCD_ST7789/lcd_core.c ****     width  = x2 - x1 + 1;
+ 721              		.loc 1 205 5 view .LVU101
+ 722              		.loc 1 205 17 is_stmt 0 view .LVU102
+ 723 0014 5E1A     		subs	r6, r3, r1
+ 724 0016 B6B2     		uxth	r6, r6
+ 725              		.loc 1 205 12 view .LVU103
+ 726 0018 0136     		adds	r6, r6, #1
+ 727 001a B6B2     		uxth	r6, r6
+ 728              	.LVL55:
+ 206:BSP/LCD_ST7789/lcd_core.c ****     height = y2 - y1 + 1;
+ 729              		.loc 1 206 5 is_stmt 1 view .LVU104
+ 730              		.loc 1 206 17 is_stmt 0 view .LVU105
+ 731 001c A0EB0A0B 		sub	fp, r0, r10
+ 732 0020 1FFA8BFB 		uxth	fp, fp
+ 733              		.loc 1 206 12 view .LVU106
+ 734 0024 0BF1010B 		add	fp, fp, #1
+ 735 0028 1FFA8BFB 		uxth	fp, fp
+ 736              	.LVL56:
+ 207:BSP/LCD_ST7789/lcd_core.c ****     
+ 208:BSP/LCD_ST7789/lcd_core.c ****     color = (color << 8) | (color >> 8);
+ 737              		.loc 1 208 5 is_stmt 1 view .LVU107
+ 738 002c 1702     		lsls	r7, r2, #8
+ 739 002e BFB2     		uxth	r7, r7
+ 740              		.loc 1 208 11 is_stmt 0 view .LVU108
+ 741 0030 47EA1227 		orr	r7, r7, r2, lsr #8
+ 742              	.LVL57:
+ 209:BSP/LCD_ST7789/lcd_core.c **** 
+ 210:BSP/LCD_ST7789/lcd_core.c ****     if(!plcd->line_buffer) {
+ 743              		.loc 1 210 5 is_stmt 1 view .LVU109
+ 744              		.loc 1 210 13 is_stmt 0 view .LVU110
+ 745 0034 2A6A     		ldr	r2, [r5, #32]
+ 746              		.loc 1 210 7 view .LVU111
+ 747 0036 A2B1     		cbz	r2, .L27
+ 748              	.LBB5:
+ 211:BSP/LCD_ST7789/lcd_core.c ****         for(int i = 0; i < height; i++) {
+ 212:BSP/LCD_ST7789/lcd_core.c ****             for(int j = 0; j < width; j++) {
+ 213:BSP/LCD_ST7789/lcd_core.c ****                 lcd_draw_point(plcd, x1 + j, y1 + i, color);
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccpsKaNv.s 			page 19
+
+
+ 214:BSP/LCD_ST7789/lcd_core.c ****             }
+ 215:BSP/LCD_ST7789/lcd_core.c ****         }
+ 216:BSP/LCD_ST7789/lcd_core.c ****     } else {
+ 217:BSP/LCD_ST7789/lcd_core.c ****         for(int i = 0; i < width; i++)
+ 749              		.loc 1 217 17 view .LVU112
+ 750 0038 0022     		movs	r2, #0
+ 751 003a 19E0     		b	.L20
+ 752              	.LVL58:
+ 753              	.L21:
+ 754              		.loc 1 217 17 view .LVU113
+ 755              	.LBE5:
+ 756              	.LBB6:
+ 757              	.LBB7:
+ 213:BSP/LCD_ST7789/lcd_core.c ****             }
+ 758              		.loc 1 213 17 is_stmt 1 view .LVU114
+ 759 003c 0AEB0802 		add	r2, r10, r8
+ 760 0040 09EB0401 		add	r1, r9, r4
+ 761 0044 3B46     		mov	r3, r7
+ 762 0046 92B2     		uxth	r2, r2
+ 763 0048 89B2     		uxth	r1, r1
+ 764 004a 2846     		mov	r0, r5
+ 765 004c FFF7FEFF 		bl	lcd_draw_point
+ 766              	.LVL59:
+ 212:BSP/LCD_ST7789/lcd_core.c ****                 lcd_draw_point(plcd, x1 + j, y1 + i, color);
+ 767              		.loc 1 212 40 discriminator 3 view .LVU115
+ 768 0050 0134     		adds	r4, r4, #1
+ 769              	.LVL60:
+ 770              	.L22:
+ 212:BSP/LCD_ST7789/lcd_core.c ****                 lcd_draw_point(plcd, x1 + j, y1 + i, color);
+ 771              		.loc 1 212 30 discriminator 1 view .LVU116
+ 772 0052 A642     		cmp	r6, r4
+ 773 0054 F2DC     		bgt	.L21
+ 774              	.LBE7:
+ 211:BSP/LCD_ST7789/lcd_core.c ****         for(int i = 0; i < height; i++) {
+ 775              		.loc 1 211 37 discriminator 2 view .LVU117
+ 776 0056 08F10108 		add	r8, r8, #1
+ 777              	.LVL61:
+ 778              	.L19:
+ 211:BSP/LCD_ST7789/lcd_core.c ****         for(int i = 0; i < height; i++) {
+ 779              		.loc 1 211 26 discriminator 1 view .LVU118
+ 780 005a C345     		cmp	fp, r8
+ 781 005c 1ADD     		ble	.L18
+ 782              	.LBB8:
+ 212:BSP/LCD_ST7789/lcd_core.c ****                 lcd_draw_point(plcd, x1 + j, y1 + i, color);
+ 783              		.loc 1 212 21 is_stmt 0 view .LVU119
+ 784 005e 0024     		movs	r4, #0
+ 785 0060 F7E7     		b	.L22
+ 786              	.LVL62:
+ 787              	.L27:
+ 212:BSP/LCD_ST7789/lcd_core.c ****                 lcd_draw_point(plcd, x1 + j, y1 + i, color);
+ 788              		.loc 1 212 21 view .LVU120
+ 789              	.LBE8:
+ 211:BSP/LCD_ST7789/lcd_core.c ****         for(int i = 0; i < height; i++) {
+ 790              		.loc 1 211 17 view .LVU121
+ 791 0062 4FF00008 		mov	r8, #0
+ 792 0066 F8E7     		b	.L19
+ 793              	.LVL63:
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccpsKaNv.s 			page 20
+
+
+ 794              	.L24:
+ 211:BSP/LCD_ST7789/lcd_core.c ****         for(int i = 0; i < height; i++) {
+ 795              		.loc 1 211 17 view .LVU122
+ 796              	.LBE6:
+ 797              	.LBB9:
+ 218:BSP/LCD_ST7789/lcd_core.c ****             plcd->line_buffer[i] = color;
+ 798              		.loc 1 218 13 is_stmt 1 view .LVU123
+ 799              		.loc 1 218 17 is_stmt 0 view .LVU124
+ 800 0068 296A     		ldr	r1, [r5, #32]
+ 801              		.loc 1 218 34 view .LVU125
+ 802 006a 21F81270 		strh	r7, [r1, r2, lsl #1]	@ movhi
+ 217:BSP/LCD_ST7789/lcd_core.c ****             plcd->line_buffer[i] = color;
+ 803              		.loc 1 217 36 is_stmt 1 discriminator 3 view .LVU126
+ 804 006e 0132     		adds	r2, r2, #1
+ 805              	.LVL64:
+ 806              	.L20:
+ 217:BSP/LCD_ST7789/lcd_core.c ****             plcd->line_buffer[i] = color;
+ 807              		.loc 1 217 26 discriminator 1 view .LVU127
+ 808 0070 9642     		cmp	r6, r2
+ 809 0072 F9DC     		bgt	.L24
+ 810              	.LBE9:
+ 219:BSP/LCD_ST7789/lcd_core.c **** 
+ 220:BSP/LCD_ST7789/lcd_core.c ****         lcd_set_address(plcd, x1, y1, x2, y2);
+ 811              		.loc 1 220 9 view .LVU128
+ 812 0074 0090     		str	r0, [sp]
+ 813 0076 5246     		mov	r2, r10
+ 814              	.LVL65:
+ 815              		.loc 1 220 9 is_stmt 0 view .LVU129
+ 816 0078 4946     		mov	r1, r9
+ 817 007a 2846     		mov	r0, r5
+ 818 007c FFF7FEFF 		bl	lcd_set_address
+ 819              	.LVL66:
+ 221:BSP/LCD_ST7789/lcd_core.c ****         for(int i = 0; i < height; i++)
+ 820              		.loc 1 221 9 is_stmt 1 view .LVU130
+ 821              	.LBB10:
+ 822              		.loc 1 221 13 view .LVU131
+ 823              		.loc 1 221 17 is_stmt 0 view .LVU132
+ 824 0080 0024     		movs	r4, #0
+ 825              		.loc 1 221 9 view .LVU133
+ 826 0082 05E0     		b	.L25
+ 827              	.LVL67:
+ 828              	.L26:
+ 222:BSP/LCD_ST7789/lcd_core.c ****             lcd_write_bulk(plcd->io, (uint8_t *)&plcd->line_buffer[0], width * 2);
+ 829              		.loc 1 222 13 is_stmt 1 view .LVU134
+ 830 0084 7200     		lsls	r2, r6, #1
+ 831 0086 296A     		ldr	r1, [r5, #32]
+ 832 0088 2868     		ldr	r0, [r5]
+ 833 008a FFF7FEFF 		bl	lcd_write_bulk
+ 834              	.LVL68:
+ 221:BSP/LCD_ST7789/lcd_core.c ****         for(int i = 0; i < height; i++)
+ 835              		.loc 1 221 37 discriminator 3 view .LVU135
+ 836 008e 0134     		adds	r4, r4, #1
+ 837              	.LVL69:
+ 838              	.L25:
+ 221:BSP/LCD_ST7789/lcd_core.c ****         for(int i = 0; i < height; i++)
+ 839              		.loc 1 221 26 discriminator 1 view .LVU136
+ 840 0090 A345     		cmp	fp, r4
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccpsKaNv.s 			page 21
+
+
+ 841 0092 F7DC     		bgt	.L26
+ 842              	.LVL70:
+ 843              	.L18:
+ 221:BSP/LCD_ST7789/lcd_core.c ****         for(int i = 0; i < height; i++)
+ 844              		.loc 1 221 26 is_stmt 0 discriminator 1 view .LVU137
+ 845              	.LBE10:
+ 223:BSP/LCD_ST7789/lcd_core.c ****     }
+ 224:BSP/LCD_ST7789/lcd_core.c **** }
+ 846              		.loc 1 224 1 view .LVU138
+ 847 0094 03B0     		add	sp, sp, #12
+ 848              	.LCFI16:
+ 849              		.cfi_def_cfa_offset 36
+ 850              		@ sp needed
+ 851 0096 BDE8F08F 		pop	{r4, r5, r6, r7, r8, r9, r10, fp, pc}
+ 852              		.loc 1 224 1 view .LVU139
+ 853              		.cfi_endproc
+ 854              	.LFE9:
+ 856              		.section	.text.lcd_clear,"ax",%progbits
+ 857              		.align	1
+ 858              		.global	lcd_clear
+ 859              		.syntax unified
+ 860              		.thumb
+ 861              		.thumb_func
+ 863              	lcd_clear:
+ 864              	.LVL71:
+ 865              	.LFB7:
+ 192:BSP/LCD_ST7789/lcd_core.c ****     lcd_fill(plcd, 0, 0, plcd->hw->width - 1, plcd->hw->height - 1, color);
+ 866              		.loc 1 192 1 is_stmt 1 view -0
+ 867              		.cfi_startproc
+ 868              		@ args = 0, pretend = 0, frame = 0
+ 869              		@ frame_needed = 0, uses_anonymous_args = 0
+ 192:BSP/LCD_ST7789/lcd_core.c ****     lcd_fill(plcd, 0, 0, plcd->hw->width - 1, plcd->hw->height - 1, color);
+ 870              		.loc 1 192 1 is_stmt 0 view .LVU141
+ 871 0000 00B5     		push	{lr}
+ 872              	.LCFI17:
+ 873              		.cfi_def_cfa_offset 4
+ 874              		.cfi_offset 14, -4
+ 875 0002 83B0     		sub	sp, sp, #12
+ 876              	.LCFI18:
+ 877              		.cfi_def_cfa_offset 16
+ 193:BSP/LCD_ST7789/lcd_core.c **** }
+ 878              		.loc 1 193 5 is_stmt 1 view .LVU142
+ 193:BSP/LCD_ST7789/lcd_core.c **** }
+ 879              		.loc 1 193 30 is_stmt 0 view .LVU143
+ 880 0004 4268     		ldr	r2, [r0, #4]
+ 193:BSP/LCD_ST7789/lcd_core.c **** }
+ 881              		.loc 1 193 34 view .LVU144
+ 882 0006 D388     		ldrh	r3, [r2, #6]
+ 193:BSP/LCD_ST7789/lcd_core.c **** }
+ 883              		.loc 1 193 55 view .LVU145
+ 884 0008 1289     		ldrh	r2, [r2, #8]
+ 193:BSP/LCD_ST7789/lcd_core.c **** }
+ 885              		.loc 1 193 5 view .LVU146
+ 886 000a 013B     		subs	r3, r3, #1
+ 887 000c 0191     		str	r1, [sp, #4]
+ 888 000e 013A     		subs	r2, r2, #1
+ 889 0010 92B2     		uxth	r2, r2
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccpsKaNv.s 			page 22
+
+
+ 890 0012 0092     		str	r2, [sp]
+ 891 0014 9BB2     		uxth	r3, r3
+ 892 0016 0022     		movs	r2, #0
+ 893 0018 1146     		mov	r1, r2
+ 894              	.LVL72:
+ 193:BSP/LCD_ST7789/lcd_core.c **** }
+ 895              		.loc 1 193 5 view .LVU147
+ 896 001a FFF7FEFF 		bl	lcd_fill
+ 897              	.LVL73:
+ 194:BSP/LCD_ST7789/lcd_core.c **** 
+ 898              		.loc 1 194 1 view .LVU148
+ 899 001e 03B0     		add	sp, sp, #12
+ 900              	.LCFI19:
+ 901              		.cfi_def_cfa_offset 4
+ 902              		@ sp needed
+ 903 0020 5DF804FB 		ldr	pc, [sp], #4
+ 904              		.cfi_endproc
+ 905              	.LFE7:
+ 907              		.section	.text.lcd_draw_line,"ax",%progbits
+ 908              		.align	1
+ 909              		.global	lcd_draw_line
+ 910              		.syntax unified
+ 911              		.thumb
+ 912              		.thumb_func
+ 914              	lcd_draw_line:
+ 915              	.LVL74:
+ 916              	.LFB10:
+ 225:BSP/LCD_ST7789/lcd_core.c **** 
+ 226:BSP/LCD_ST7789/lcd_core.c **** /* x1,y1:起点坐标 x2,y2:终点坐标*/
+ 227:BSP/LCD_ST7789/lcd_core.c **** void lcd_draw_line(lcd* plcd, uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t color)
+ 228:BSP/LCD_ST7789/lcd_core.c **** {
+ 917              		.loc 1 228 1 is_stmt 1 view -0
+ 918              		.cfi_startproc
+ 919              		@ args = 8, pretend = 0, frame = 16
+ 920              		@ frame_needed = 0, uses_anonymous_args = 0
+ 921              		.loc 1 228 1 is_stmt 0 view .LVU150
+ 922 0000 2DE9F04F 		push	{r4, r5, r6, r7, r8, r9, r10, fp, lr}
+ 923              	.LCFI20:
+ 924              		.cfi_def_cfa_offset 36
+ 925              		.cfi_offset 4, -36
+ 926              		.cfi_offset 5, -32
+ 927              		.cfi_offset 6, -28
+ 928              		.cfi_offset 7, -24
+ 929              		.cfi_offset 8, -20
+ 930              		.cfi_offset 9, -16
+ 931              		.cfi_offset 10, -12
+ 932              		.cfi_offset 11, -8
+ 933              		.cfi_offset 14, -4
+ 934 0004 85B0     		sub	sp, sp, #20
+ 935              	.LCFI21:
+ 936              		.cfi_def_cfa_offset 56
+ 937 0006 0090     		str	r0, [sp]
+ 938 0008 BDF83840 		ldrh	r4, [sp, #56]
+ 939 000c BDF83C00 		ldrh	r0, [sp, #60]
+ 940              	.LVL75:
+ 941              		.loc 1 228 1 view .LVU151
+ 942 0010 0190     		str	r0, [sp, #4]
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccpsKaNv.s 			page 23
+
+
+ 229:BSP/LCD_ST7789/lcd_core.c ****     int xerr = 0, yerr = 0;
+ 943              		.loc 1 229 5 is_stmt 1 view .LVU152
+ 944              	.LVL76:
+ 230:BSP/LCD_ST7789/lcd_core.c ****     int delta_x, delta_y, distance; 
+ 945              		.loc 1 230 5 view .LVU153
+ 231:BSP/LCD_ST7789/lcd_core.c ****     int incx, incy, pos_x, pos_y; 
+ 946              		.loc 1 231 5 view .LVU154
+ 232:BSP/LCD_ST7789/lcd_core.c **** 
+ 233:BSP/LCD_ST7789/lcd_core.c ****     delta_x = x2 - x1; //计算坐标增量 
+ 947              		.loc 1 233 5 view .LVU155
+ 948              		.loc 1 233 18 is_stmt 0 view .LVU156
+ 949 0012 8846     		mov	r8, r1
+ 950              		.loc 1 233 13 view .LVU157
+ 951 0014 A3EB010B 		sub	fp, r3, r1
+ 952              	.LVL77:
+ 234:BSP/LCD_ST7789/lcd_core.c ****     delta_y = y2 - y1; 
+ 953              		.loc 1 234 5 is_stmt 1 view .LVU158
+ 954              		.loc 1 234 18 is_stmt 0 view .LVU159
+ 955 0018 9146     		mov	r9, r2
+ 956              		.loc 1 234 13 view .LVU160
+ 957 001a A4EB020A 		sub	r10, r4, r2
+ 958              	.LVL78:
+ 235:BSP/LCD_ST7789/lcd_core.c ****     pos_x = x1;
+ 959              		.loc 1 235 5 is_stmt 1 view .LVU161
+ 236:BSP/LCD_ST7789/lcd_core.c ****     pos_y = y1; 
+ 960              		.loc 1 236 5 view .LVU162
+ 237:BSP/LCD_ST7789/lcd_core.c **** 
+ 238:BSP/LCD_ST7789/lcd_core.c ****     if(delta_x > 0)
+ 961              		.loc 1 238 5 view .LVU163
+ 962              		.loc 1 238 7 is_stmt 0 view .LVU164
+ 963 001e BBF1000F 		cmp	fp, #0
+ 964 0022 0EDD     		ble	.L44
+ 239:BSP/LCD_ST7789/lcd_core.c ****         incx = 1; //设置单步方向 
+ 965              		.loc 1 239 14 view .LVU165
+ 966 0024 0123     		movs	r3, #1
+ 967              	.LVL79:
+ 968              		.loc 1 239 14 view .LVU166
+ 969 0026 0293     		str	r3, [sp, #8]
+ 970              	.L33:
+ 971              	.LVL80:
+ 240:BSP/LCD_ST7789/lcd_core.c ****     else if(delta_x == 0)
+ 241:BSP/LCD_ST7789/lcd_core.c ****         incx = 0;//垂直线 
+ 242:BSP/LCD_ST7789/lcd_core.c ****     else {
+ 243:BSP/LCD_ST7789/lcd_core.c ****         incx = -1;
+ 244:BSP/LCD_ST7789/lcd_core.c ****         delta_x = -delta_x;
+ 245:BSP/LCD_ST7789/lcd_core.c ****     }
+ 246:BSP/LCD_ST7789/lcd_core.c **** 
+ 247:BSP/LCD_ST7789/lcd_core.c ****     if(delta_y > 0)
+ 972              		.loc 1 247 5 is_stmt 1 view .LVU167
+ 973              		.loc 1 247 7 is_stmt 0 view .LVU168
+ 974 0028 BAF1000F 		cmp	r10, #0
+ 975 002c 15DD     		ble	.L45
+ 248:BSP/LCD_ST7789/lcd_core.c ****         incy = 1; 
+ 976              		.loc 1 248 14 view .LVU169
+ 977 002e 0123     		movs	r3, #1
+ 978 0030 0393     		str	r3, [sp, #12]
+ 979              	.L34:
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccpsKaNv.s 			page 24
+
+
+ 980              	.LVL81:
+ 249:BSP/LCD_ST7789/lcd_core.c ****     else if(delta_y == 0)
+ 250:BSP/LCD_ST7789/lcd_core.c ****         incy = 0;//水平线 
+ 251:BSP/LCD_ST7789/lcd_core.c ****     else {
+ 252:BSP/LCD_ST7789/lcd_core.c ****         incy = -1;
+ 253:BSP/LCD_ST7789/lcd_core.c ****         delta_y = -delta_y;
+ 254:BSP/LCD_ST7789/lcd_core.c ****     } 
+ 255:BSP/LCD_ST7789/lcd_core.c **** 
+ 256:BSP/LCD_ST7789/lcd_core.c ****     distance = delta_x > delta_y ? delta_x : delta_y;   //选取基本增量坐标轴 
+ 981              		.loc 1 256 5 is_stmt 1 view .LVU170
+ 982              		.loc 1 256 14 is_stmt 0 view .LVU171
+ 983 0032 5C46     		mov	r4, fp
+ 984 0034 D345     		cmp	fp, r10
+ 985 0036 B8BF     		it	lt
+ 986 0038 5446     		movlt	r4, r10
+ 987              	.LVL82:
+ 257:BSP/LCD_ST7789/lcd_core.c **** 
+ 258:BSP/LCD_ST7789/lcd_core.c ****     for(int i = 0; i <= distance + 1; i++ ) {
+ 988              		.loc 1 258 5 is_stmt 1 view .LVU172
+ 989              	.LBB11:
+ 990              		.loc 1 258 9 view .LVU173
+ 991              		.loc 1 258 13 is_stmt 0 view .LVU174
+ 992 003a 0027     		movs	r7, #0
+ 993              	.LBE11:
+ 229:BSP/LCD_ST7789/lcd_core.c ****     int delta_x, delta_y, distance; 
+ 994              		.loc 1 229 19 view .LVU175
+ 995 003c 3E46     		mov	r6, r7
+ 229:BSP/LCD_ST7789/lcd_core.c ****     int delta_x, delta_y, distance; 
+ 996              		.loc 1 229 9 view .LVU176
+ 997 003e 3D46     		mov	r5, r7
+ 998              	.LBB12:
+ 999              		.loc 1 258 5 view .LVU177
+ 1000 0040 18E0     		b	.L35
+ 1001              	.LVL83:
+ 1002              	.L44:
+ 1003              		.loc 1 258 5 view .LVU178
+ 1004              	.LBE12:
+ 240:BSP/LCD_ST7789/lcd_core.c ****         incx = 0;//垂直线 
+ 1005              		.loc 1 240 10 is_stmt 1 view .LVU179
+ 240:BSP/LCD_ST7789/lcd_core.c ****         incx = 0;//垂直线 
+ 1006              		.loc 1 240 12 is_stmt 0 view .LVU180
+ 1007 0042 BBF1000F 		cmp	fp, #0
+ 1008 0046 05D0     		beq	.L40
+ 243:BSP/LCD_ST7789/lcd_core.c ****         delta_x = -delta_x;
+ 1009              		.loc 1 243 9 is_stmt 1 view .LVU181
+ 1010              	.LVL84:
+ 244:BSP/LCD_ST7789/lcd_core.c ****     }
+ 1011              		.loc 1 244 9 view .LVU182
+ 244:BSP/LCD_ST7789/lcd_core.c ****     }
+ 1012              		.loc 1 244 17 is_stmt 0 view .LVU183
+ 1013 0048 A1EB030B 		sub	fp, r1, r3
+ 1014              	.LVL85:
+ 243:BSP/LCD_ST7789/lcd_core.c ****         delta_x = -delta_x;
+ 1015              		.loc 1 243 14 view .LVU184
+ 1016 004c 4FF0FF33 		mov	r3, #-1
+ 1017              	.LVL86:
+ 243:BSP/LCD_ST7789/lcd_core.c ****         delta_x = -delta_x;
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccpsKaNv.s 			page 25
+
+
+ 1018              		.loc 1 243 14 view .LVU185
+ 1019 0050 0293     		str	r3, [sp, #8]
+ 1020 0052 E9E7     		b	.L33
+ 1021              	.LVL87:
+ 1022              	.L40:
+ 241:BSP/LCD_ST7789/lcd_core.c ****     else {
+ 1023              		.loc 1 241 14 view .LVU186
+ 1024 0054 CDF808B0 		str	fp, [sp, #8]
+ 1025 0058 E6E7     		b	.L33
+ 1026              	.LVL88:
+ 1027              	.L45:
+ 249:BSP/LCD_ST7789/lcd_core.c ****         incy = 0;//水平线 
+ 1028              		.loc 1 249 10 is_stmt 1 view .LVU187
+ 249:BSP/LCD_ST7789/lcd_core.c ****         incy = 0;//水平线 
+ 1029              		.loc 1 249 12 is_stmt 0 view .LVU188
+ 1030 005a BAF1000F 		cmp	r10, #0
+ 1031 005e 05D0     		beq	.L42
+ 252:BSP/LCD_ST7789/lcd_core.c ****         delta_y = -delta_y;
+ 1032              		.loc 1 252 9 is_stmt 1 view .LVU189
+ 1033              	.LVL89:
+ 253:BSP/LCD_ST7789/lcd_core.c ****     } 
+ 1034              		.loc 1 253 9 view .LVU190
+ 253:BSP/LCD_ST7789/lcd_core.c ****     } 
+ 1035              		.loc 1 253 17 is_stmt 0 view .LVU191
+ 1036 0060 A2EB040A 		sub	r10, r2, r4
+ 1037              	.LVL90:
+ 252:BSP/LCD_ST7789/lcd_core.c ****         delta_y = -delta_y;
+ 1038              		.loc 1 252 14 view .LVU192
+ 1039 0064 4FF0FF33 		mov	r3, #-1
+ 1040 0068 0393     		str	r3, [sp, #12]
+ 1041 006a E2E7     		b	.L34
+ 1042              	.LVL91:
+ 1043              	.L42:
+ 250:BSP/LCD_ST7789/lcd_core.c ****     else {
+ 1044              		.loc 1 250 14 view .LVU193
+ 1045 006c CDF80CA0 		str	r10, [sp, #12]
+ 1046 0070 DFE7     		b	.L34
+ 1047              	.LVL92:
+ 1048              	.L37:
+ 1049              	.LBB13:
+ 1050              		.loc 1 258 40 is_stmt 1 discriminator 2 view .LVU194
+ 1051 0072 0137     		adds	r7, r7, #1
+ 1052              	.LVL93:
+ 1053              	.L35:
+ 1054              		.loc 1 258 22 discriminator 1 view .LVU195
+ 1055              		.loc 1 258 34 is_stmt 0 discriminator 1 view .LVU196
+ 1056 0074 631C     		adds	r3, r4, #1
+ 1057              		.loc 1 258 22 discriminator 1 view .LVU197
+ 1058 0076 BB42     		cmp	r3, r7
+ 1059 0078 14DB     		blt	.L46
+ 259:BSP/LCD_ST7789/lcd_core.c ****         lcd_draw_point(plcd, pos_x, pos_y, color);
+ 1060              		.loc 1 259 9 is_stmt 1 view .LVU198
+ 1061 007a 019B     		ldr	r3, [sp, #4]
+ 1062 007c 1FFA89F2 		uxth	r2, r9
+ 1063 0080 1FFA88F1 		uxth	r1, r8
+ 1064 0084 0098     		ldr	r0, [sp]
+ 1065 0086 FFF7FEFF 		bl	lcd_draw_point
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccpsKaNv.s 			page 26
+
+
+ 1066              	.LVL94:
+ 260:BSP/LCD_ST7789/lcd_core.c ****         xerr += delta_x; 
+ 1067              		.loc 1 260 9 view .LVU199
+ 1068              		.loc 1 260 14 is_stmt 0 view .LVU200
+ 1069 008a 5D44     		add	r5, r5, fp
+ 1070              	.LVL95:
+ 261:BSP/LCD_ST7789/lcd_core.c ****         yerr += delta_y; 
+ 1071              		.loc 1 261 9 is_stmt 1 view .LVU201
+ 1072              		.loc 1 261 14 is_stmt 0 view .LVU202
+ 1073 008c 5644     		add	r6, r6, r10
+ 1074              	.LVL96:
+ 262:BSP/LCD_ST7789/lcd_core.c ****         if(xerr > distance) { 
+ 1075              		.loc 1 262 9 is_stmt 1 view .LVU203
+ 1076              		.loc 1 262 11 is_stmt 0 view .LVU204
+ 1077 008e AC42     		cmp	r4, r5
+ 1078 0090 02DA     		bge	.L36
+ 263:BSP/LCD_ST7789/lcd_core.c ****             xerr -= distance; 
+ 1079              		.loc 1 263 13 is_stmt 1 view .LVU205
+ 1080              		.loc 1 263 18 is_stmt 0 view .LVU206
+ 1081 0092 2D1B     		subs	r5, r5, r4
+ 1082              	.LVL97:
+ 264:BSP/LCD_ST7789/lcd_core.c ****             pos_x += incx; 
+ 1083              		.loc 1 264 13 is_stmt 1 view .LVU207
+ 1084              		.loc 1 264 19 is_stmt 0 view .LVU208
+ 1085 0094 029B     		ldr	r3, [sp, #8]
+ 1086 0096 9844     		add	r8, r8, r3
+ 1087              	.LVL98:
+ 1088              	.L36:
+ 265:BSP/LCD_ST7789/lcd_core.c ****         } 
+ 266:BSP/LCD_ST7789/lcd_core.c ****         if(yerr > distance) { 
+ 1089              		.loc 1 266 9 is_stmt 1 view .LVU209
+ 1090              		.loc 1 266 11 is_stmt 0 view .LVU210
+ 1091 0098 B442     		cmp	r4, r6
+ 1092 009a EADA     		bge	.L37
+ 267:BSP/LCD_ST7789/lcd_core.c ****             yerr -= distance; 
+ 1093              		.loc 1 267 13 is_stmt 1 view .LVU211
+ 1094              		.loc 1 267 18 is_stmt 0 view .LVU212
+ 1095 009c 361B     		subs	r6, r6, r4
+ 1096              	.LVL99:
+ 268:BSP/LCD_ST7789/lcd_core.c ****             pos_y += incy; 
+ 1097              		.loc 1 268 13 is_stmt 1 view .LVU213
+ 1098              		.loc 1 268 19 is_stmt 0 view .LVU214
+ 1099 009e 039B     		ldr	r3, [sp, #12]
+ 1100 00a0 9944     		add	r9, r9, r3
+ 1101              	.LVL100:
+ 1102              		.loc 1 268 19 view .LVU215
+ 1103 00a2 E6E7     		b	.L37
+ 1104              	.LVL101:
+ 1105              	.L46:
+ 1106              		.loc 1 268 19 view .LVU216
+ 1107              	.LBE13:
+ 269:BSP/LCD_ST7789/lcd_core.c ****         }
+ 270:BSP/LCD_ST7789/lcd_core.c ****     }
+ 271:BSP/LCD_ST7789/lcd_core.c **** }
+ 1108              		.loc 1 271 1 view .LVU217
+ 1109 00a4 05B0     		add	sp, sp, #20
+ 1110              	.LCFI22:
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccpsKaNv.s 			page 27
+
+
+ 1111              		.cfi_def_cfa_offset 36
+ 1112              	.LVL102:
+ 1113              		.loc 1 271 1 view .LVU218
+ 1114              		@ sp needed
+ 1115 00a6 BDE8F08F 		pop	{r4, r5, r6, r7, r8, r9, r10, fp, pc}
+ 1116              		.loc 1 271 1 view .LVU219
+ 1117              		.cfi_endproc
+ 1118              	.LFE10:
+ 1120              		.section	.text.lcd_draw_rectangle,"ax",%progbits
+ 1121              		.align	1
+ 1122              		.global	lcd_draw_rectangle
+ 1123              		.syntax unified
+ 1124              		.thumb
+ 1125              		.thumb_func
+ 1127              	lcd_draw_rectangle:
+ 1128              	.LVL103:
+ 1129              	.LFB11:
+ 272:BSP/LCD_ST7789/lcd_core.c **** 
+ 273:BSP/LCD_ST7789/lcd_core.c **** void lcd_draw_rectangle(lcd* plcd, uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t col
+ 274:BSP/LCD_ST7789/lcd_core.c **** {
+ 1130              		.loc 1 274 1 is_stmt 1 view -0
+ 1131              		.cfi_startproc
+ 1132              		@ args = 8, pretend = 0, frame = 0
+ 1133              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1134              		.loc 1 274 1 is_stmt 0 view .LVU221
+ 1135 0000 2DE9F043 		push	{r4, r5, r6, r7, r8, r9, lr}
+ 1136              	.LCFI23:
+ 1137              		.cfi_def_cfa_offset 28
+ 1138              		.cfi_offset 4, -28
+ 1139              		.cfi_offset 5, -24
+ 1140              		.cfi_offset 6, -20
+ 1141              		.cfi_offset 7, -16
+ 1142              		.cfi_offset 8, -12
+ 1143              		.cfi_offset 9, -8
+ 1144              		.cfi_offset 14, -4
+ 1145 0004 83B0     		sub	sp, sp, #12
+ 1146              	.LCFI24:
+ 1147              		.cfi_def_cfa_offset 40
+ 1148 0006 0446     		mov	r4, r0
+ 1149 0008 0F46     		mov	r7, r1
+ 1150 000a 1646     		mov	r6, r2
+ 1151 000c 1D46     		mov	r5, r3
+ 1152 000e BDF82880 		ldrh	r8, [sp, #40]
+ 1153 0012 BDF82C90 		ldrh	r9, [sp, #44]
+ 275:BSP/LCD_ST7789/lcd_core.c ****     lcd_draw_line(plcd, x1, y1, x2, y1, color);
+ 1154              		.loc 1 275 5 is_stmt 1 view .LVU222
+ 1155 0016 CDF80490 		str	r9, [sp, #4]
+ 1156 001a 0092     		str	r2, [sp]
+ 1157 001c FFF7FEFF 		bl	lcd_draw_line
+ 1158              	.LVL104:
+ 276:BSP/LCD_ST7789/lcd_core.c ****     lcd_draw_line(plcd, x1, y1, x1, y2, color);
+ 1159              		.loc 1 276 5 view .LVU223
+ 1160 0020 CDF80490 		str	r9, [sp, #4]
+ 1161 0024 CDF80080 		str	r8, [sp]
+ 1162 0028 3B46     		mov	r3, r7
+ 1163 002a 3246     		mov	r2, r6
+ 1164 002c 3946     		mov	r1, r7
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccpsKaNv.s 			page 28
+
+
+ 1165 002e 2046     		mov	r0, r4
+ 1166 0030 FFF7FEFF 		bl	lcd_draw_line
+ 1167              	.LVL105:
+ 277:BSP/LCD_ST7789/lcd_core.c ****     lcd_draw_line(plcd, x1, y2, x2, y2, color);
+ 1168              		.loc 1 277 5 view .LVU224
+ 1169 0034 CDF80490 		str	r9, [sp, #4]
+ 1170 0038 CDF80080 		str	r8, [sp]
+ 1171 003c 2B46     		mov	r3, r5
+ 1172 003e 4246     		mov	r2, r8
+ 1173 0040 3946     		mov	r1, r7
+ 1174 0042 2046     		mov	r0, r4
+ 1175 0044 FFF7FEFF 		bl	lcd_draw_line
+ 1176              	.LVL106:
+ 278:BSP/LCD_ST7789/lcd_core.c ****     lcd_draw_line(plcd, x2, y1, x2, y2, color);
+ 1177              		.loc 1 278 5 view .LVU225
+ 1178 0048 CDF80490 		str	r9, [sp, #4]
+ 1179 004c CDF80080 		str	r8, [sp]
+ 1180 0050 2B46     		mov	r3, r5
+ 1181 0052 3246     		mov	r2, r6
+ 1182 0054 2946     		mov	r1, r5
+ 1183 0056 2046     		mov	r0, r4
+ 1184 0058 FFF7FEFF 		bl	lcd_draw_line
+ 1185              	.LVL107:
+ 279:BSP/LCD_ST7789/lcd_core.c **** }
+ 1186              		.loc 1 279 1 is_stmt 0 view .LVU226
+ 1187 005c 03B0     		add	sp, sp, #12
+ 1188              	.LCFI25:
+ 1189              		.cfi_def_cfa_offset 28
+ 1190              		@ sp needed
+ 1191 005e BDE8F083 		pop	{r4, r5, r6, r7, r8, r9, pc}
+ 1192              		.loc 1 279 1 view .LVU227
+ 1193              		.cfi_endproc
+ 1194              	.LFE11:
+ 1196              		.section	.text.lcd_set_font,"ax",%progbits
+ 1197              		.align	1
+ 1198              		.global	lcd_set_font
+ 1199              		.syntax unified
+ 1200              		.thumb
+ 1201              		.thumb_func
+ 1203              	lcd_set_font:
+ 1204              	.LVL108:
+ 1205              	.LFB12:
+ 280:BSP/LCD_ST7789/lcd_core.c **** 
+ 281:BSP/LCD_ST7789/lcd_core.c **** void lcd_set_font(lcd* plcd, font_type type, uint16_t front_color, uint16_t back_color)
+ 282:BSP/LCD_ST7789/lcd_core.c **** {
+ 1206              		.loc 1 282 1 is_stmt 1 view -0
+ 1207              		.cfi_startproc
+ 1208              		@ args = 0, pretend = 0, frame = 0
+ 1209              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1210              		.loc 1 282 1 is_stmt 0 view .LVU229
+ 1211 0000 30B5     		push	{r4, r5, lr}
+ 1212              	.LCFI26:
+ 1213              		.cfi_def_cfa_offset 12
+ 1214              		.cfi_offset 4, -12
+ 1215              		.cfi_offset 5, -8
+ 1216              		.cfi_offset 14, -4
+ 1217 0002 8446     		mov	ip, r0
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccpsKaNv.s 			page 29
+
+
+ 1218 0004 1546     		mov	r5, r2
+ 1219 0006 1C46     		mov	r4, r3
+ 283:BSP/LCD_ST7789/lcd_core.c ****     plcd->font = lcd_fonts[type];
+ 1220              		.loc 1 283 5 is_stmt 1 view .LVU230
+ 1221              		.loc 1 283 16 is_stmt 0 view .LVU231
+ 1222 0008 064B     		ldr	r3, .L51
+ 1223              	.LVL109:
+ 1224              		.loc 1 283 16 view .LVU232
+ 1225 000a 03EB0111 		add	r1, r3, r1, lsl #4
+ 1226              	.LVL110:
+ 1227              		.loc 1 283 16 view .LVU233
+ 1228 000e 00F1080E 		add	lr, r0, #8
+ 1229 0012 0FC9     		ldm	r1, {r0, r1, r2, r3}
+ 1230              	.LVL111:
+ 1231              		.loc 1 283 16 view .LVU234
+ 1232 0014 8EE80F00 		stm	lr, {r0, r1, r2, r3}
+ 284:BSP/LCD_ST7789/lcd_core.c ****     plcd->font.front_color = front_color;
+ 1233              		.loc 1 284 5 is_stmt 1 view .LVU235
+ 1234              		.loc 1 284 28 is_stmt 0 view .LVU236
+ 1235 0018 ACF80E50 		strh	r5, [ip, #14]	@ movhi
+ 285:BSP/LCD_ST7789/lcd_core.c ****     plcd->font.back_color  = back_color;
+ 1236              		.loc 1 285 5 is_stmt 1 view .LVU237
+ 1237              		.loc 1 285 28 is_stmt 0 view .LVU238
+ 1238 001c ACF81040 		strh	r4, [ip, #16]	@ movhi
+ 286:BSP/LCD_ST7789/lcd_core.c **** }
+ 1239              		.loc 1 286 1 view .LVU239
+ 1240 0020 30BD     		pop	{r4, r5, pc}
+ 1241              	.LVL112:
+ 1242              	.L52:
+ 1243              		.loc 1 286 1 view .LVU240
+ 1244 0022 00BF     		.align	2
+ 1245              	.L51:
+ 1246 0024 00000000 		.word	lcd_fonts
+ 1247              		.cfi_endproc
+ 1248              	.LFE12:
+ 1250              		.section	.text.lcd_init_dev,"ax",%progbits
+ 1251              		.align	1
+ 1252              		.global	lcd_init_dev
+ 1253              		.syntax unified
+ 1254              		.thumb
+ 1255              		.thumb_func
+ 1257              	lcd_init_dev:
+ 1258              	.LVL113:
+ 1259              	.LFB6:
+ 165:BSP/LCD_ST7789/lcd_core.c ****     uint16_t width;
+ 1260              		.loc 1 165 1 is_stmt 1 view -0
+ 1261              		.cfi_startproc
+ 1262              		@ args = 0, pretend = 0, frame = 0
+ 1263              		@ frame_needed = 0, uses_anonymous_args = 0
+ 165:BSP/LCD_ST7789/lcd_core.c ****     uint16_t width;
+ 1264              		.loc 1 165 1 is_stmt 0 view .LVU242
+ 1265 0000 10B5     		push	{r4, lr}
+ 1266              	.LCFI27:
+ 1267              		.cfi_def_cfa_offset 8
+ 1268              		.cfi_offset 4, -8
+ 1269              		.cfi_offset 14, -4
+ 1270 0002 0446     		mov	r4, r0
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccpsKaNv.s 			page 30
+
+
+ 166:BSP/LCD_ST7789/lcd_core.c ****     uint16_t height;
+ 1271              		.loc 1 166 5 is_stmt 1 view .LVU243
+ 167:BSP/LCD_ST7789/lcd_core.c ****     
+ 1272              		.loc 1 167 5 view .LVU244
+ 169:BSP/LCD_ST7789/lcd_core.c ****     
+ 1273              		.loc 1 169 5 view .LVU245
+ 169:BSP/LCD_ST7789/lcd_core.c ****     
+ 1274              		.loc 1 169 27 is_stmt 0 view .LVU246
+ 1275 0004 0F4B     		ldr	r3, .L58
+ 1276 0006 53F82130 		ldr	r3, [r3, r1, lsl #2]
+ 169:BSP/LCD_ST7789/lcd_core.c ****     
+ 1277              		.loc 1 169 14 view .LVU247
+ 1278 000a 4360     		str	r3, [r0, #4]
+ 171:BSP/LCD_ST7789/lcd_core.c **** 	case LCD_ROTATE_0:
+ 1279              		.loc 1 171 5 is_stmt 1 view .LVU248
+ 1280 000c 012A     		cmp	r2, #1
+ 1281 000e 15D9     		bls	.L57
+ 178:BSP/LCD_ST7789/lcd_core.c **** 		height = plcd->hw->height;
+ 1282              		.loc 1 178 3 view .LVU249
+ 178:BSP/LCD_ST7789/lcd_core.c **** 		height = plcd->hw->height;
+ 1283              		.loc 1 178 9 is_stmt 0 view .LVU250
+ 1284 0010 D888     		ldrh	r0, [r3, #6]
+ 1285              	.LVL114:
+ 179:BSP/LCD_ST7789/lcd_core.c **** 	}
+ 1286              		.loc 1 179 3 is_stmt 1 view .LVU251
+ 179:BSP/LCD_ST7789/lcd_core.c **** 	}
+ 1287              		.loc 1 179 10 is_stmt 0 view .LVU252
+ 1288 0012 1989     		ldrh	r1, [r3, #8]
+ 1289              	.LVL115:
+ 1290              	.L55:
+ 182:BSP/LCD_ST7789/lcd_core.c ****     plcd->hw->height = height;
+ 1291              		.loc 1 182 5 is_stmt 1 view .LVU253
+ 182:BSP/LCD_ST7789/lcd_core.c ****     plcd->hw->height = height;
+ 1292              		.loc 1 182 22 is_stmt 0 view .LVU254
+ 1293 0014 D880     		strh	r0, [r3, #6]	@ movhi
+ 183:BSP/LCD_ST7789/lcd_core.c ****     plcd->hw->rotate = rotate;
+ 1294              		.loc 1 183 5 is_stmt 1 view .LVU255
+ 183:BSP/LCD_ST7789/lcd_core.c ****     plcd->hw->rotate = rotate;
+ 1295              		.loc 1 183 9 is_stmt 0 view .LVU256
+ 1296 0016 6368     		ldr	r3, [r4, #4]
+ 183:BSP/LCD_ST7789/lcd_core.c ****     plcd->hw->rotate = rotate;
+ 1297              		.loc 1 183 22 view .LVU257
+ 1298 0018 1981     		strh	r1, [r3, #8]	@ movhi
+ 184:BSP/LCD_ST7789/lcd_core.c ****     lcd_set_font(plcd, FONT_DEFAULT, LIGHTBLUE, BLACK);
+ 1299              		.loc 1 184 5 is_stmt 1 view .LVU258
+ 184:BSP/LCD_ST7789/lcd_core.c ****     lcd_set_font(plcd, FONT_DEFAULT, LIGHTBLUE, BLACK);
+ 1300              		.loc 1 184 9 is_stmt 0 view .LVU259
+ 1301 001a 6368     		ldr	r3, [r4, #4]
+ 184:BSP/LCD_ST7789/lcd_core.c ****     lcd_set_font(plcd, FONT_DEFAULT, LIGHTBLUE, BLACK);
+ 1302              		.loc 1 184 22 view .LVU260
+ 1303 001c 5A71     		strb	r2, [r3, #5]
+ 185:BSP/LCD_ST7789/lcd_core.c **** 
+ 1304              		.loc 1 185 5 is_stmt 1 view .LVU261
+ 1305 001e 0023     		movs	r3, #0
+ 1306 0020 47F67C52 		movw	r2, #32124
+ 1307              	.LVL116:
+ 185:BSP/LCD_ST7789/lcd_core.c **** 
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccpsKaNv.s 			page 31
+
+
+ 1308              		.loc 1 185 5 is_stmt 0 view .LVU262
+ 1309 0024 0121     		movs	r1, #1
+ 1310              	.LVL117:
+ 185:BSP/LCD_ST7789/lcd_core.c **** 
+ 1311              		.loc 1 185 5 view .LVU263
+ 1312 0026 2046     		mov	r0, r4
+ 1313              	.LVL118:
+ 185:BSP/LCD_ST7789/lcd_core.c **** 
+ 1314              		.loc 1 185 5 view .LVU264
+ 1315 0028 FFF7FEFF 		bl	lcd_set_font
+ 1316              	.LVL119:
+ 187:BSP/LCD_ST7789/lcd_core.c ****     lcd_clear(plcd, BLACK);
+ 1317              		.loc 1 187 5 is_stmt 1 view .LVU265
+ 1318 002c 2046     		mov	r0, r4
+ 1319 002e FFF7FEFF 		bl	lcd_init_hw
+ 1320              	.LVL120:
+ 188:BSP/LCD_ST7789/lcd_core.c **** }
+ 1321              		.loc 1 188 5 view .LVU266
+ 1322 0032 0021     		movs	r1, #0
+ 1323 0034 2046     		mov	r0, r4
+ 1324 0036 FFF7FEFF 		bl	lcd_clear
+ 1325              	.LVL121:
+ 189:BSP/LCD_ST7789/lcd_core.c **** 
+ 1326              		.loc 1 189 1 is_stmt 0 view .LVU267
+ 1327 003a 10BD     		pop	{r4, pc}
+ 1328              	.LVL122:
+ 1329              	.L57:
+ 174:BSP/LCD_ST7789/lcd_core.c **** 		height = plcd->hw->width;
+ 1330              		.loc 1 174 3 is_stmt 1 view .LVU268
+ 174:BSP/LCD_ST7789/lcd_core.c **** 		height = plcd->hw->width;
+ 1331              		.loc 1 174 9 is_stmt 0 view .LVU269
+ 1332 003c 1889     		ldrh	r0, [r3, #8]
+ 1333              	.LVL123:
+ 175:BSP/LCD_ST7789/lcd_core.c **** 		break;
+ 1334              		.loc 1 175 3 is_stmt 1 view .LVU270
+ 175:BSP/LCD_ST7789/lcd_core.c **** 		break;
+ 1335              		.loc 1 175 10 is_stmt 0 view .LVU271
+ 1336 003e D988     		ldrh	r1, [r3, #6]
+ 1337              	.LVL124:
+ 176:BSP/LCD_ST7789/lcd_core.c **** 	default:
+ 1338              		.loc 1 176 3 is_stmt 1 view .LVU272
+ 1339 0040 E8E7     		b	.L55
+ 1340              	.L59:
+ 1341 0042 00BF     		.align	2
+ 1342              	.L58:
+ 1343 0044 00000000 		.word	lcd_hw_desc
+ 1344              		.cfi_endproc
+ 1345              	.LFE6:
+ 1347              		.section	.text.lcd_show_char,"ax",%progbits
+ 1348              		.align	1
+ 1349              		.global	lcd_show_char
+ 1350              		.syntax unified
+ 1351              		.thumb
+ 1352              		.thumb_func
+ 1354              	lcd_show_char:
+ 1355              	.LVL125:
+ 1356              	.LFB13:
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccpsKaNv.s 			page 32
+
+
+ 287:BSP/LCD_ST7789/lcd_core.c **** 
+ 288:BSP/LCD_ST7789/lcd_core.c **** //在指定位置显示一个字符
+ 289:BSP/LCD_ST7789/lcd_core.c **** //num:要显示的字符:" "--->"~"
+ 290:BSP/LCD_ST7789/lcd_core.c **** void lcd_show_char(lcd* plcd, uint16_t x, uint16_t y, uint16_t chr)
+ 291:BSP/LCD_ST7789/lcd_core.c **** {
+ 1357              		.loc 1 291 1 view -0
+ 1358              		.cfi_startproc
+ 1359              		@ args = 0, pretend = 0, frame = 0
+ 1360              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1361              		.loc 1 291 1 is_stmt 0 view .LVU274
+ 1362 0000 2DE9F043 		push	{r4, r5, r6, r7, r8, r9, lr}
+ 1363              	.LCFI28:
+ 1364              		.cfi_def_cfa_offset 28
+ 1365              		.cfi_offset 4, -28
+ 1366              		.cfi_offset 5, -24
+ 1367              		.cfi_offset 6, -20
+ 1368              		.cfi_offset 7, -16
+ 1369              		.cfi_offset 8, -12
+ 1370              		.cfi_offset 9, -8
+ 1371              		.cfi_offset 14, -4
+ 1372 0004 83B0     		sub	sp, sp, #12
+ 1373              	.LCFI29:
+ 1374              		.cfi_def_cfa_offset 40
+ 1375 0006 0746     		mov	r7, r0
+ 292:BSP/LCD_ST7789/lcd_core.c ****     uint8_t width = 0;
+ 1376              		.loc 1 292 5 is_stmt 1 view .LVU275
+ 1377              	.LVL126:
+ 293:BSP/LCD_ST7789/lcd_core.c ****     chr = chr - ' ';
+ 1378              		.loc 1 293 5 view .LVU276
+ 1379              		.loc 1 293 9 is_stmt 0 view .LVU277
+ 1380 0008 A3F12009 		sub	r9, r3, #32
+ 1381              	.LVL127:
+ 294:BSP/LCD_ST7789/lcd_core.c ****     
+ 295:BSP/LCD_ST7789/lcd_core.c ****     if(x > plcd->hw->width - plcd->font.width ||
+ 1382              		.loc 1 295 5 is_stmt 1 view .LVU278
+ 1383              		.loc 1 295 16 is_stmt 0 view .LVU279
+ 1384 000c 4468     		ldr	r4, [r0, #4]
+ 1385              		.loc 1 295 20 view .LVU280
+ 1386 000e E088     		ldrh	r0, [r4, #6]
+ 1387              	.LVL128:
+ 1388              		.loc 1 295 40 view .LVU281
+ 1389 0010 3B89     		ldrh	r3, [r7, #8]
+ 1390              		.loc 1 295 28 view .LVU282
+ 1391 0012 C01A     		subs	r0, r0, r3
+ 1392              		.loc 1 295 7 view .LVU283
+ 1393 0014 8142     		cmp	r1, r0
+ 1394 0016 06DC     		bgt	.L60
+ 1395 0018 1FFA89F9 		uxth	r9, r9
+ 296:BSP/LCD_ST7789/lcd_core.c ****        y > plcd->hw->height - plcd->font.height) {
+ 1396              		.loc 1 296 20 view .LVU284
+ 1397 001c 2489     		ldrh	r4, [r4, #8]
+ 1398              		.loc 1 296 41 view .LVU285
+ 1399 001e 7889     		ldrh	r0, [r7, #10]
+ 1400              		.loc 1 296 29 view .LVU286
+ 1401 0020 241A     		subs	r4, r4, r0
+ 295:BSP/LCD_ST7789/lcd_core.c ****        y > plcd->hw->height - plcd->font.height) {
+ 1402              		.loc 1 295 47 discriminator 1 view .LVU287
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccpsKaNv.s 			page 33
+
+
+ 1403 0022 A242     		cmp	r2, r4
+ 1404 0024 02DD     		ble	.L71
+ 1405              	.LVL129:
+ 1406              	.L60:
+ 297:BSP/LCD_ST7789/lcd_core.c ****         return;
+ 298:BSP/LCD_ST7789/lcd_core.c ****     }
+ 299:BSP/LCD_ST7789/lcd_core.c **** 
+ 300:BSP/LCD_ST7789/lcd_core.c ****     lcd_set_address(plcd, x, y, x + plcd->font.width - 1, y + plcd->font.height - 1);
+ 301:BSP/LCD_ST7789/lcd_core.c ****     
+ 302:BSP/LCD_ST7789/lcd_core.c ****     for(int idx = 0; idx < plcd->font.bytes; idx++) {
+ 303:BSP/LCD_ST7789/lcd_core.c ****         uint8_t data = plcd->font.addr[chr * plcd->font.bytes + idx];
+ 304:BSP/LCD_ST7789/lcd_core.c ****         for(int pixel = 0; pixel < 8; pixel++) {
+ 305:BSP/LCD_ST7789/lcd_core.c ****             if(data & 0x01)
+ 306:BSP/LCD_ST7789/lcd_core.c ****                 lcd_write_halfword(plcd->io, plcd->font.front_color);
+ 307:BSP/LCD_ST7789/lcd_core.c ****             else
+ 308:BSP/LCD_ST7789/lcd_core.c ****                 lcd_write_halfword(plcd->io, plcd->font.back_color);
+ 309:BSP/LCD_ST7789/lcd_core.c ****             data >>= 1;
+ 310:BSP/LCD_ST7789/lcd_core.c **** 
+ 311:BSP/LCD_ST7789/lcd_core.c ****             width++;
+ 312:BSP/LCD_ST7789/lcd_core.c ****             if(width == plcd->font.width) {
+ 313:BSP/LCD_ST7789/lcd_core.c ****                 width = 0;
+ 314:BSP/LCD_ST7789/lcd_core.c ****                 break;
+ 315:BSP/LCD_ST7789/lcd_core.c ****             }
+ 316:BSP/LCD_ST7789/lcd_core.c ****         }
+ 317:BSP/LCD_ST7789/lcd_core.c ****     }  	 	  
+ 318:BSP/LCD_ST7789/lcd_core.c **** }
+ 1407              		.loc 1 318 1 view .LVU288
+ 1408 0026 03B0     		add	sp, sp, #12
+ 1409              	.LCFI30:
+ 1410              		.cfi_remember_state
+ 1411              		.cfi_def_cfa_offset 28
+ 1412              		@ sp needed
+ 1413 0028 BDE8F083 		pop	{r4, r5, r6, r7, r8, r9, pc}
+ 1414              	.LVL130:
+ 1415              	.L71:
+ 1416              	.LCFI31:
+ 1417              		.cfi_restore_state
+ 300:BSP/LCD_ST7789/lcd_core.c ****     
+ 1418              		.loc 1 300 5 is_stmt 1 view .LVU289
+ 300:BSP/LCD_ST7789/lcd_core.c ****     
+ 1419              		.loc 1 300 35 is_stmt 0 view .LVU290
+ 1420 002c 0B44     		add	r3, r3, r1
+ 1421 002e 9BB2     		uxth	r3, r3
+ 300:BSP/LCD_ST7789/lcd_core.c ****     
+ 1422              		.loc 1 300 61 view .LVU291
+ 1423 0030 1044     		add	r0, r0, r2
+ 1424 0032 80B2     		uxth	r0, r0
+ 300:BSP/LCD_ST7789/lcd_core.c ****     
+ 1425              		.loc 1 300 5 view .LVU292
+ 1426 0034 013B     		subs	r3, r3, #1
+ 1427 0036 0138     		subs	r0, r0, #1
+ 1428 0038 80B2     		uxth	r0, r0
+ 1429 003a 0090     		str	r0, [sp]
+ 1430 003c 9BB2     		uxth	r3, r3
+ 1431 003e 3846     		mov	r0, r7
+ 1432 0040 FFF7FEFF 		bl	lcd_set_address
+ 1433              	.LVL131:
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccpsKaNv.s 			page 34
+
+
+ 302:BSP/LCD_ST7789/lcd_core.c ****         uint8_t data = plcd->font.addr[chr * plcd->font.bytes + idx];
+ 1434              		.loc 1 302 5 is_stmt 1 view .LVU293
+ 1435              	.LBB14:
+ 302:BSP/LCD_ST7789/lcd_core.c ****         uint8_t data = plcd->font.addr[chr * plcd->font.bytes + idx];
+ 1436              		.loc 1 302 9 view .LVU294
+ 302:BSP/LCD_ST7789/lcd_core.c ****         uint8_t data = plcd->font.addr[chr * plcd->font.bytes + idx];
+ 1437              		.loc 1 302 13 is_stmt 0 view .LVU295
+ 1438 0044 4FF00008 		mov	r8, #0
+ 1439              	.LBE14:
+ 292:BSP/LCD_ST7789/lcd_core.c ****     chr = chr - ' ';
+ 1440              		.loc 1 292 13 view .LVU296
+ 1441 0048 4446     		mov	r4, r8
+ 1442              	.LBB19:
+ 302:BSP/LCD_ST7789/lcd_core.c ****         uint8_t data = plcd->font.addr[chr * plcd->font.bytes + idx];
+ 1443              		.loc 1 302 5 view .LVU297
+ 1444 004a 17E0     		b	.L62
+ 1445              	.LVL132:
+ 1446              	.L64:
+ 1447              	.LBB15:
+ 1448              	.LBB16:
+ 308:BSP/LCD_ST7789/lcd_core.c ****             data >>= 1;
+ 1449              		.loc 1 308 17 is_stmt 1 view .LVU298
+ 1450 004c 398A     		ldrh	r1, [r7, #16]
+ 1451 004e 3868     		ldr	r0, [r7]
+ 1452 0050 FFF7FEFF 		bl	lcd_write_halfword
+ 1453              	.LVL133:
+ 1454              	.L65:
+ 309:BSP/LCD_ST7789/lcd_core.c **** 
+ 1455              		.loc 1 309 13 view .LVU299
+ 309:BSP/LCD_ST7789/lcd_core.c **** 
+ 1456              		.loc 1 309 18 is_stmt 0 view .LVU300
+ 1457 0054 7608     		lsrs	r6, r6, #1
+ 1458              	.LVL134:
+ 311:BSP/LCD_ST7789/lcd_core.c ****             if(width == plcd->font.width) {
+ 1459              		.loc 1 311 13 is_stmt 1 view .LVU301
+ 311:BSP/LCD_ST7789/lcd_core.c ****             if(width == plcd->font.width) {
+ 1460              		.loc 1 311 18 is_stmt 0 view .LVU302
+ 1461 0056 0134     		adds	r4, r4, #1
+ 1462              	.LVL135:
+ 311:BSP/LCD_ST7789/lcd_core.c ****             if(width == plcd->font.width) {
+ 1463              		.loc 1 311 18 view .LVU303
+ 1464 0058 E4B2     		uxtb	r4, r4
+ 1465              	.LVL136:
+ 312:BSP/LCD_ST7789/lcd_core.c ****                 width = 0;
+ 1466              		.loc 1 312 13 is_stmt 1 view .LVU304
+ 312:BSP/LCD_ST7789/lcd_core.c ****                 width = 0;
+ 1467              		.loc 1 312 35 is_stmt 0 view .LVU305
+ 1468 005a 3B89     		ldrh	r3, [r7, #8]
+ 312:BSP/LCD_ST7789/lcd_core.c ****                 width = 0;
+ 1469              		.loc 1 312 15 view .LVU306
+ 1470 005c 9C42     		cmp	r4, r3
+ 1471 005e 0AD0     		beq	.L69
+ 304:BSP/LCD_ST7789/lcd_core.c ****             if(data & 0x01)
+ 1472              		.loc 1 304 44 is_stmt 1 discriminator 2 view .LVU307
+ 1473 0060 0135     		adds	r5, r5, #1
+ 1474              	.LVL137:
+ 1475              	.L63:
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccpsKaNv.s 			page 35
+
+
+ 304:BSP/LCD_ST7789/lcd_core.c ****             if(data & 0x01)
+ 1476              		.loc 1 304 34 discriminator 1 view .LVU308
+ 1477 0062 072D     		cmp	r5, #7
+ 1478 0064 08DC     		bgt	.L66
+ 305:BSP/LCD_ST7789/lcd_core.c ****                 lcd_write_halfword(plcd->io, plcd->font.front_color);
+ 1479              		.loc 1 305 13 view .LVU309
+ 305:BSP/LCD_ST7789/lcd_core.c ****                 lcd_write_halfword(plcd->io, plcd->font.front_color);
+ 1480              		.loc 1 305 15 is_stmt 0 view .LVU310
+ 1481 0066 16F0010F 		tst	r6, #1
+ 1482 006a EFD0     		beq	.L64
+ 306:BSP/LCD_ST7789/lcd_core.c ****             else
+ 1483              		.loc 1 306 17 is_stmt 1 view .LVU311
+ 1484 006c F989     		ldrh	r1, [r7, #14]
+ 1485 006e 3868     		ldr	r0, [r7]
+ 1486 0070 FFF7FEFF 		bl	lcd_write_halfword
+ 1487              	.LVL138:
+ 1488 0074 EEE7     		b	.L65
+ 1489              	.L69:
+ 313:BSP/LCD_ST7789/lcd_core.c ****                 break;
+ 1490              		.loc 1 313 23 is_stmt 0 view .LVU312
+ 1491 0076 0024     		movs	r4, #0
+ 1492              	.LVL139:
+ 1493              	.L66:
+ 313:BSP/LCD_ST7789/lcd_core.c ****                 break;
+ 1494              		.loc 1 313 23 view .LVU313
+ 1495              	.LBE16:
+ 1496              	.LBE15:
+ 302:BSP/LCD_ST7789/lcd_core.c ****         uint8_t data = plcd->font.addr[chr * plcd->font.bytes + idx];
+ 1497              		.loc 1 302 49 is_stmt 1 discriminator 2 view .LVU314
+ 1498 0078 08F10108 		add	r8, r8, #1
+ 1499              	.LVL140:
+ 1500              	.L62:
+ 302:BSP/LCD_ST7789/lcd_core.c ****         uint8_t data = plcd->font.addr[chr * plcd->font.bytes + idx];
+ 1501              		.loc 1 302 26 discriminator 1 view .LVU315
+ 302:BSP/LCD_ST7789/lcd_core.c ****         uint8_t data = plcd->font.addr[chr * plcd->font.bytes + idx];
+ 1502              		.loc 1 302 38 is_stmt 0 discriminator 1 view .LVU316
+ 1503 007c BB89     		ldrh	r3, [r7, #12]
+ 302:BSP/LCD_ST7789/lcd_core.c ****         uint8_t data = plcd->font.addr[chr * plcd->font.bytes + idx];
+ 1504              		.loc 1 302 26 discriminator 1 view .LVU317
+ 1505 007e 4345     		cmp	r3, r8
+ 1506 0080 D1DD     		ble	.L60
+ 1507              	.LBB18:
+ 303:BSP/LCD_ST7789/lcd_core.c ****         for(int pixel = 0; pixel < 8; pixel++) {
+ 1508              		.loc 1 303 9 is_stmt 1 view .LVU318
+ 303:BSP/LCD_ST7789/lcd_core.c ****         for(int pixel = 0; pixel < 8; pixel++) {
+ 1509              		.loc 1 303 34 is_stmt 0 view .LVU319
+ 1510 0082 7A69     		ldr	r2, [r7, #20]
+ 303:BSP/LCD_ST7789/lcd_core.c ****         for(int pixel = 0; pixel < 8; pixel++) {
+ 1511              		.loc 1 303 63 view .LVU320
+ 1512 0084 03FB0983 		mla	r3, r3, r9, r8
+ 303:BSP/LCD_ST7789/lcd_core.c ****         for(int pixel = 0; pixel < 8; pixel++) {
+ 1513              		.loc 1 303 17 view .LVU321
+ 1514 0088 D65C     		ldrb	r6, [r2, r3]	@ zero_extendqisi2
+ 1515              	.LVL141:
+ 304:BSP/LCD_ST7789/lcd_core.c ****             if(data & 0x01)
+ 1516              		.loc 1 304 9 is_stmt 1 view .LVU322
+ 1517              	.LBB17:
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccpsKaNv.s 			page 36
+
+
+ 304:BSP/LCD_ST7789/lcd_core.c ****             if(data & 0x01)
+ 1518              		.loc 1 304 13 view .LVU323
+ 304:BSP/LCD_ST7789/lcd_core.c ****             if(data & 0x01)
+ 1519              		.loc 1 304 17 is_stmt 0 view .LVU324
+ 1520 008a 0025     		movs	r5, #0
+ 304:BSP/LCD_ST7789/lcd_core.c ****             if(data & 0x01)
+ 1521              		.loc 1 304 9 view .LVU325
+ 1522 008c E9E7     		b	.L63
+ 1523              	.LBE17:
+ 1524              	.LBE18:
+ 1525              	.LBE19:
+ 1526              		.cfi_endproc
+ 1527              	.LFE13:
+ 1529              		.section	.text.lcd_show_string,"ax",%progbits
+ 1530              		.align	1
+ 1531              		.global	lcd_show_string
+ 1532              		.syntax unified
+ 1533              		.thumb
+ 1534              		.thumb_func
+ 1536              	lcd_show_string:
+ 1537              	.LVL142:
+ 1538              	.LFB14:
+ 319:BSP/LCD_ST7789/lcd_core.c **** 
+ 320:BSP/LCD_ST7789/lcd_core.c **** /*** *p:字符串起始地址 用16字体 ***/
+ 321:BSP/LCD_ST7789/lcd_core.c **** void lcd_show_string(lcd* plcd, uint16_t x, uint16_t y, const uint8_t *p)
+ 322:BSP/LCD_ST7789/lcd_core.c **** {
+ 1539              		.loc 1 322 1 is_stmt 1 view -0
+ 1540              		.cfi_startproc
+ 1541              		@ args = 0, pretend = 0, frame = 0
+ 1542              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1543              		.loc 1 322 1 is_stmt 0 view .LVU327
+ 1544 0000 F8B5     		push	{r3, r4, r5, r6, r7, lr}
+ 1545              	.LCFI32:
+ 1546              		.cfi_def_cfa_offset 24
+ 1547              		.cfi_offset 3, -24
+ 1548              		.cfi_offset 4, -20
+ 1549              		.cfi_offset 5, -16
+ 1550              		.cfi_offset 6, -12
+ 1551              		.cfi_offset 7, -8
+ 1552              		.cfi_offset 14, -4
+ 1553 0002 0546     		mov	r5, r0
+ 1554 0004 0C46     		mov	r4, r1
+ 1555 0006 1746     		mov	r7, r2
+ 1556 0008 1E46     		mov	r6, r3
+ 323:BSP/LCD_ST7789/lcd_core.c ****     while(*p != '\0') {
+ 1557              		.loc 1 323 5 is_stmt 1 view .LVU328
+ 1558              		.loc 1 323 10 is_stmt 0 view .LVU329
+ 1559 000a 08E0     		b	.L73
+ 1560              	.LVL143:
+ 1561              	.L74:
+ 324:BSP/LCD_ST7789/lcd_core.c ****         if(x > plcd->hw->width - plcd->font.width) {
+ 325:BSP/LCD_ST7789/lcd_core.c ****             x = 0;
+ 326:BSP/LCD_ST7789/lcd_core.c ****             y += plcd->font.height;
+ 327:BSP/LCD_ST7789/lcd_core.c ****         }
+ 328:BSP/LCD_ST7789/lcd_core.c **** 
+ 329:BSP/LCD_ST7789/lcd_core.c ****         lcd_show_char(plcd, x, y, *p++); 
+ 1562              		.loc 1 329 9 is_stmt 1 view .LVU330
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccpsKaNv.s 			page 37
+
+
+ 1563              		.loc 1 329 37 is_stmt 0 view .LVU331
+ 1564 000c 0136     		adds	r6, r6, #1
+ 1565              	.LVL144:
+ 1566              		.loc 1 329 9 view .LVU332
+ 1567 000e 3A46     		mov	r2, r7
+ 1568 0010 2146     		mov	r1, r4
+ 1569 0012 2846     		mov	r0, r5
+ 1570 0014 FFF7FEFF 		bl	lcd_show_char
+ 1571              	.LVL145:
+ 330:BSP/LCD_ST7789/lcd_core.c ****         x += plcd->font.width;
+ 1572              		.loc 1 330 9 is_stmt 1 view .LVU333
+ 1573              		.loc 1 330 24 is_stmt 0 view .LVU334
+ 1574 0018 2989     		ldrh	r1, [r5, #8]
+ 1575              		.loc 1 330 11 view .LVU335
+ 1576 001a 2144     		add	r1, r1, r4
+ 1577 001c 8CB2     		uxth	r4, r1
+ 1578              	.LVL146:
+ 1579              	.L73:
+ 323:BSP/LCD_ST7789/lcd_core.c ****     while(*p != '\0') {
+ 1580              		.loc 1 323 14 is_stmt 1 view .LVU336
+ 323:BSP/LCD_ST7789/lcd_core.c ****     while(*p != '\0') {
+ 1581              		.loc 1 323 11 is_stmt 0 view .LVU337
+ 1582 001e 3378     		ldrb	r3, [r6]	@ zero_extendqisi2
+ 323:BSP/LCD_ST7789/lcd_core.c ****     while(*p != '\0') {
+ 1583              		.loc 1 323 14 view .LVU338
+ 1584 0020 53B1     		cbz	r3, .L77
+ 324:BSP/LCD_ST7789/lcd_core.c ****         if(x > plcd->hw->width - plcd->font.width) {
+ 1585              		.loc 1 324 9 is_stmt 1 view .LVU339
+ 324:BSP/LCD_ST7789/lcd_core.c ****         if(x > plcd->hw->width - plcd->font.width) {
+ 1586              		.loc 1 324 20 is_stmt 0 view .LVU340
+ 1587 0022 6A68     		ldr	r2, [r5, #4]
+ 324:BSP/LCD_ST7789/lcd_core.c ****         if(x > plcd->hw->width - plcd->font.width) {
+ 1588              		.loc 1 324 24 view .LVU341
+ 1589 0024 D188     		ldrh	r1, [r2, #6]
+ 324:BSP/LCD_ST7789/lcd_core.c ****         if(x > plcd->hw->width - plcd->font.width) {
+ 1590              		.loc 1 324 44 view .LVU342
+ 1591 0026 2A89     		ldrh	r2, [r5, #8]
+ 324:BSP/LCD_ST7789/lcd_core.c ****         if(x > plcd->hw->width - plcd->font.width) {
+ 1592              		.loc 1 324 32 view .LVU343
+ 1593 0028 891A     		subs	r1, r1, r2
+ 324:BSP/LCD_ST7789/lcd_core.c ****         if(x > plcd->hw->width - plcd->font.width) {
+ 1594              		.loc 1 324 11 view .LVU344
+ 1595 002a 8C42     		cmp	r4, r1
+ 1596 002c EEDD     		ble	.L74
+ 325:BSP/LCD_ST7789/lcd_core.c ****             y += plcd->font.height;
+ 1597              		.loc 1 325 13 is_stmt 1 view .LVU345
+ 1598              	.LVL147:
+ 326:BSP/LCD_ST7789/lcd_core.c ****         }
+ 1599              		.loc 1 326 13 view .LVU346
+ 326:BSP/LCD_ST7789/lcd_core.c ****         }
+ 1600              		.loc 1 326 28 is_stmt 0 view .LVU347
+ 1601 002e 6A89     		ldrh	r2, [r5, #10]
+ 326:BSP/LCD_ST7789/lcd_core.c ****         }
+ 1602              		.loc 1 326 15 view .LVU348
+ 1603 0030 3A44     		add	r2, r2, r7
+ 1604 0032 97B2     		uxth	r7, r2
+ 1605              	.LVL148:
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccpsKaNv.s 			page 38
+
+
+ 325:BSP/LCD_ST7789/lcd_core.c ****             y += plcd->font.height;
+ 1606              		.loc 1 325 15 view .LVU349
+ 1607 0034 0024     		movs	r4, #0
+ 1608 0036 E9E7     		b	.L74
+ 1609              	.LVL149:
+ 1610              	.L77:
+ 331:BSP/LCD_ST7789/lcd_core.c ****     }
+ 332:BSP/LCD_ST7789/lcd_core.c **** }
+ 1611              		.loc 1 332 1 view .LVU350
+ 1612 0038 F8BD     		pop	{r3, r4, r5, r6, r7, pc}
+ 1613              		.loc 1 332 1 view .LVU351
+ 1614              		.cfi_endproc
+ 1615              	.LFE14:
+ 1617              		.section	.text.lcd_print,"ax",%progbits
+ 1618              		.align	1
+ 1619              		.global	lcd_print
+ 1620              		.syntax unified
+ 1621              		.thumb
+ 1622              		.thumb_func
+ 1624              	lcd_print:
+ 1625              	.LVL150:
+ 1626              	.LFB15:
+ 333:BSP/LCD_ST7789/lcd_core.c **** 
+ 334:BSP/LCD_ST7789/lcd_core.c **** void lcd_print(lcd* plcd, uint16_t x, uint16_t y, const char *fmt, ...)
+ 335:BSP/LCD_ST7789/lcd_core.c **** {
+ 1627              		.loc 1 335 1 is_stmt 1 view -0
+ 1628              		.cfi_startproc
+ 1629              		@ args = 4, pretend = 4, frame = 136
+ 1630              		@ frame_needed = 0, uses_anonymous_args = 1
+ 1631              		.loc 1 335 1 is_stmt 0 view .LVU353
+ 1632 0000 08B4     		push	{r3}
+ 1633              	.LCFI33:
+ 1634              		.cfi_def_cfa_offset 4
+ 1635              		.cfi_offset 3, -4
+ 1636 0002 2DE9F047 		push	{r4, r5, r6, r7, r8, r9, r10, lr}
+ 1637              	.LCFI34:
+ 1638              		.cfi_def_cfa_offset 36
+ 1639              		.cfi_offset 4, -36
+ 1640              		.cfi_offset 5, -32
+ 1641              		.cfi_offset 6, -28
+ 1642              		.cfi_offset 7, -24
+ 1643              		.cfi_offset 8, -20
+ 1644              		.cfi_offset 9, -16
+ 1645              		.cfi_offset 10, -12
+ 1646              		.cfi_offset 14, -8
+ 1647 0006 A3B0     		sub	sp, sp, #140
+ 1648              	.LCFI35:
+ 1649              		.cfi_def_cfa_offset 176
+ 1650 0008 0546     		mov	r5, r0
+ 1651 000a 0E46     		mov	r6, r1
+ 1652 000c 1746     		mov	r7, r2
+ 1653 000e 2BAC     		add	r4, sp, #172
+ 1654 0010 54F804AB 		ldr	r10, [r4], #4
+ 336:BSP/LCD_ST7789/lcd_core.c ****     unsigned char buffer[128] = { 0 }; 
+ 1655              		.loc 1 336 5 is_stmt 1 view .LVU354
+ 1656              		.loc 1 336 19 is_stmt 0 view .LVU355
+ 1657 0014 0DF10808 		add	r8, sp, #8
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccpsKaNv.s 			page 39
+
+
+ 1658 0018 4FF08009 		mov	r9, #128
+ 1659 001c 4A46     		mov	r2, r9
+ 1660              	.LVL151:
+ 1661              		.loc 1 336 19 view .LVU356
+ 1662 001e 0021     		movs	r1, #0
+ 1663              	.LVL152:
+ 1664              		.loc 1 336 19 view .LVU357
+ 1665 0020 4046     		mov	r0, r8
+ 1666              	.LVL153:
+ 1667              		.loc 1 336 19 view .LVU358
+ 1668 0022 FFF7FEFF 		bl	memset
+ 1669              	.LVL154:
+ 337:BSP/LCD_ST7789/lcd_core.c ****     va_list ap;
+ 1670              		.loc 1 337 5 is_stmt 1 view .LVU359
+ 338:BSP/LCD_ST7789/lcd_core.c ****     
+ 339:BSP/LCD_ST7789/lcd_core.c ****     va_start(ap,fmt);
+ 1671              		.loc 1 339 5 view .LVU360
+ 1672 0026 0194     		str	r4, [sp, #4]
+ 340:BSP/LCD_ST7789/lcd_core.c ****     vsnprintf((char*)buffer, sizeof(buffer), fmt, ap);
+ 1673              		.loc 1 340 5 view .LVU361
+ 1674 0028 2346     		mov	r3, r4
+ 1675 002a 5246     		mov	r2, r10
+ 1676 002c 4946     		mov	r1, r9
+ 1677 002e 4046     		mov	r0, r8
+ 1678 0030 FFF7FEFF 		bl	vsnprintf
+ 1679              	.LVL155:
+ 341:BSP/LCD_ST7789/lcd_core.c ****     va_end(ap);
+ 1680              		.loc 1 341 5 view .LVU362
+ 342:BSP/LCD_ST7789/lcd_core.c **** 
+ 343:BSP/LCD_ST7789/lcd_core.c ****     lcd_show_string(plcd, x, y, buffer);
+ 1681              		.loc 1 343 5 view .LVU363
+ 1682 0034 4346     		mov	r3, r8
+ 1683 0036 3A46     		mov	r2, r7
+ 1684 0038 3146     		mov	r1, r6
+ 1685 003a 2846     		mov	r0, r5
+ 1686 003c FFF7FEFF 		bl	lcd_show_string
+ 1687              	.LVL156:
+ 344:BSP/LCD_ST7789/lcd_core.c **** }
+ 1688              		.loc 1 344 1 is_stmt 0 view .LVU364
+ 1689 0040 23B0     		add	sp, sp, #140
+ 1690              	.LCFI36:
+ 1691              		.cfi_def_cfa_offset 36
+ 1692              		@ sp needed
+ 1693 0042 BDE8F047 		pop	{r4, r5, r6, r7, r8, r9, r10, lr}
+ 1694              	.LCFI37:
+ 1695              		.cfi_restore 14
+ 1696              		.cfi_restore 10
+ 1697              		.cfi_restore 9
+ 1698              		.cfi_restore 8
+ 1699              		.cfi_restore 7
+ 1700              		.cfi_restore 6
+ 1701              		.cfi_restore 5
+ 1702              		.cfi_restore 4
+ 1703              		.cfi_def_cfa_offset 4
+ 1704              	.LVL157:
+ 1705              		.loc 1 344 1 view .LVU365
+ 1706 0046 01B0     		add	sp, sp, #4
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccpsKaNv.s 			page 40
+
+
+ 1707              	.LCFI38:
+ 1708              		.cfi_restore 3
+ 1709              		.cfi_def_cfa_offset 0
+ 1710 0048 7047     		bx	lr
+ 1711              		.cfi_endproc
+ 1712              	.LFE15:
+ 1714              		.section	.text.lcd_show_picture,"ax",%progbits
+ 1715              		.align	1
+ 1716              		.global	lcd_show_picture
+ 1717              		.syntax unified
+ 1718              		.thumb
+ 1719              		.thumb_func
+ 1721              	lcd_show_picture:
+ 1722              	.LVL158:
+ 1723              	.LFB16:
+ 345:BSP/LCD_ST7789/lcd_core.c **** 
+ 346:BSP/LCD_ST7789/lcd_core.c **** /******************************************************************************
+ 347:BSP/LCD_ST7789/lcd_core.c ****       函数说明：显示图片
+ 348:BSP/LCD_ST7789/lcd_core.c ****       入口数据：x,y起点坐标
+ 349:BSP/LCD_ST7789/lcd_core.c ****                 length 图片长度
+ 350:BSP/LCD_ST7789/lcd_core.c ****                 width  图片宽度
+ 351:BSP/LCD_ST7789/lcd_core.c ****                 pic[]  图片数组    
+ 352:BSP/LCD_ST7789/lcd_core.c ****       返回值：  无
+ 353:BSP/LCD_ST7789/lcd_core.c **** ******************************************************************************/
+ 354:BSP/LCD_ST7789/lcd_core.c **** void lcd_show_picture(lcd* plcd, uint16_t x, uint16_t y, uint16_t width, uint16_t height, uint8_t* 
+ 355:BSP/LCD_ST7789/lcd_core.c **** {
+ 1724              		.loc 1 355 1 is_stmt 1 view -0
+ 1725              		.cfi_startproc
+ 1726              		@ args = 8, pretend = 0, frame = 0
+ 1727              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1728              		.loc 1 355 1 is_stmt 0 view .LVU367
+ 1729 0000 F0B5     		push	{r4, r5, r6, r7, lr}
+ 1730              	.LCFI39:
+ 1731              		.cfi_def_cfa_offset 20
+ 1732              		.cfi_offset 4, -20
+ 1733              		.cfi_offset 5, -16
+ 1734              		.cfi_offset 6, -12
+ 1735              		.cfi_offset 7, -8
+ 1736              		.cfi_offset 14, -4
+ 1737 0002 83B0     		sub	sp, sp, #12
+ 1738              	.LCFI40:
+ 1739              		.cfi_def_cfa_offset 32
+ 1740 0004 0646     		mov	r6, r0
+ 1741 0006 1D46     		mov	r5, r3
+ 1742 0008 BDF82070 		ldrh	r7, [sp, #32]
+ 356:BSP/LCD_ST7789/lcd_core.c ****     lcd_set_address(plcd, x, y, x + width - 1, y + height - 1);
+ 1743              		.loc 1 356 5 is_stmt 1 view .LVU368
+ 1744              		.loc 1 356 35 is_stmt 0 view .LVU369
+ 1745 000c CB18     		adds	r3, r1, r3
+ 1746              	.LVL159:
+ 1747              		.loc 1 356 35 view .LVU370
+ 1748 000e 9BB2     		uxth	r3, r3
+ 1749              		.loc 1 356 50 view .LVU371
+ 1750 0010 D419     		adds	r4, r2, r7
+ 1751 0012 A4B2     		uxth	r4, r4
+ 1752              		.loc 1 356 5 view .LVU372
+ 1753 0014 013B     		subs	r3, r3, #1
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccpsKaNv.s 			page 41
+
+
+ 1754 0016 013C     		subs	r4, r4, #1
+ 1755 0018 A4B2     		uxth	r4, r4
+ 1756 001a 0094     		str	r4, [sp]
+ 1757 001c 9BB2     		uxth	r3, r3
+ 1758 001e FFF7FEFF 		bl	lcd_set_address
+ 1759              	.LVL160:
+ 357:BSP/LCD_ST7789/lcd_core.c ****     lcd_write_bulk(plcd->io, pic, width * height * 2);
+ 1760              		.loc 1 357 5 is_stmt 1 view .LVU373
+ 1761              		.loc 1 357 41 is_stmt 0 view .LVU374
+ 1762 0022 07FB05F2 		mul	r2, r7, r5
+ 1763              		.loc 1 357 5 view .LVU375
+ 1764 0026 5200     		lsls	r2, r2, #1
+ 1765 0028 0999     		ldr	r1, [sp, #36]
+ 1766 002a 3068     		ldr	r0, [r6]
+ 1767 002c FFF7FEFF 		bl	lcd_write_bulk
+ 1768              	.LVL161:
+ 358:BSP/LCD_ST7789/lcd_core.c **** }
+ 1769              		.loc 1 358 1 view .LVU376
+ 1770 0030 03B0     		add	sp, sp, #12
+ 1771              	.LCFI41:
+ 1772              		.cfi_def_cfa_offset 20
+ 1773              		@ sp needed
+ 1774 0032 F0BD     		pop	{r4, r5, r6, r7, pc}
+ 1775              		.loc 1 358 1 view .LVU377
+ 1776              		.cfi_endproc
+ 1777              	.LFE16:
+ 1779              		.global	lcd_cfg_address
+ 1780              		.section	.data.lcd_cfg_address,"aw"
+ 1781              		.align	2
+ 1784              	lcd_cfg_address:
+ 1785 0000 1A1A0101 		.ascii	"\032\032\001\001"
+ 1786 0004 1A1A0101 		.ascii	"\032\032\001\001"
+ 1787 0008 01011A1A 		.ascii	"\001\001\032\032"
+ 1788 000c 01011A1A 		.ascii	"\001\001\032\032"
+ 1789 0010 34342828 		.ascii	"44(("
+ 1790 0014 35352828 		.ascii	"55(("
+ 1791 0018 28283535 		.ascii	"((55"
+ 1792 001c 28283434 		.ascii	"((44"
+ 1793 0020 22220000 		.ascii	"\"\"\000\000"
+ 1794 0024 22220000 		.ascii	"\"\"\000\000"
+ 1795 0028 00002222 		.ascii	"\000\000\"\""
+ 1796 002c 00002222 		.ascii	"\000\000\"\""
+ 1797              		.global	lcd_cfg_order
+ 1798              		.section	.data.lcd_cfg_order,"aw"
+ 1799              		.align	2
+ 1802              	lcd_cfg_order:
+ 1803 0000 08C878A8 		.ascii	"\010\310x\250"
+ 1804 0004 00C070A0 		.ascii	"\000\300p\240"
+ 1805 0008 00C070A0 		.ascii	"\000\300p\240"
+ 1806              		.global	lcd_hw_desc
+ 1807              		.section	.data.lcd_hw_desc,"aw"
+ 1808              		.align	2
+ 1811              	lcd_hw_desc:
+ 1812 0000 00000000 		.word	lcd_hw_0_96
+ 1813 0004 00000000 		.word	lcd_hw_1_14
+ 1814 0008 00000000 		.word	lcd_hw_1_47
+ 1815              		.global	lcd_hw_1_47
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccpsKaNv.s 			page 42
+
+
+ 1816              		.section	.rodata.str1.4,"aMS",%progbits,1
+ 1817              		.align	2
+ 1818              	.LC0:
+ 1819 0000 312E3437 		.ascii	"1.47 inch\000"
+ 1819      20696E63 
+ 1819      6800
+ 1820              		.section	.data.lcd_hw_1_47,"aw"
+ 1821              		.align	2
+ 1824              	lcd_hw_1_47:
+ 1825 0000 00000000 		.word	.LC0
+ 1826 0004 02       		.byte	2
+ 1827 0005 03       		.byte	3
+ 1828 0006 4001     		.short	320
+ 1829 0008 AC00     		.short	172
+ 1830 000a 0000     		.space	2
+ 1831              		.global	lcd_hw_1_14
+ 1832              		.section	.rodata.str1.4
+ 1833 000a 0000     		.align	2
+ 1834              	.LC1:
+ 1835 000c 312E3134 		.ascii	"1.14 inch\000"
+ 1835      20696E63 
+ 1835      6800
+ 1836              		.section	.data.lcd_hw_1_14,"aw"
+ 1837              		.align	2
+ 1840              	lcd_hw_1_14:
+ 1841 0000 0C000000 		.word	.LC1
+ 1842 0004 01       		.byte	1
+ 1843 0005 03       		.byte	3
+ 1844 0006 F000     		.short	240
+ 1845 0008 8700     		.short	135
+ 1846 000a 0000     		.space	2
+ 1847              		.global	lcd_hw_0_96
+ 1848              		.section	.rodata.str1.4
+ 1849 0016 0000     		.align	2
+ 1850              	.LC2:
+ 1851 0018 302E3936 		.ascii	"0.96 inch\000"
+ 1851      20696E63 
+ 1851      6800
+ 1852              		.section	.data.lcd_hw_0_96,"aw"
+ 1853              		.align	2
+ 1856              	lcd_hw_0_96:
+ 1857 0000 18000000 		.word	.LC2
+ 1858 0004 00       		.byte	0
+ 1859 0005 03       		.byte	3
+ 1860 0006 A000     		.short	160
+ 1861 0008 5000     		.short	80
+ 1862 000a 0000     		.space	2
+ 1863              		.text
+ 1864              	.Letext0:
+ 1865              		.file 2 "/Users/zhy/Tools/xpack-arm-none-eabi-gcc-14.2.1-1.1/arm-none-eabi/include/machine/_defaul
+ 1866              		.file 3 "/Users/zhy/Tools/xpack-arm-none-eabi-gcc-14.2.1-1.1/lib/gcc/arm-none-eabi/14.2.1/include/
+ 1867              		.file 4 "/Users/zhy/Tools/xpack-arm-none-eabi-gcc-14.2.1-1.1/arm-none-eabi/include/stdio.h"
+ 1868              		.file 5 "/Users/zhy/Tools/xpack-arm-none-eabi-gcc-14.2.1-1.1/arm-none-eabi/include/sys/_stdint.h"
+ 1869              		.file 6 "BSP/LCD_ST7789/lcd_port.h"
+ 1870              		.file 7 "BSP/LCD_ST7789/lcd_font.h"
+ 1871              		.file 8 "BSP/LCD_ST7789/lcd.h"
+ 1872              		.file 9 "<built-in>"
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccpsKaNv.s 			page 43
+
+
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccpsKaNv.s 			page 44
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 lcd_core.c
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccpsKaNv.s:20     .text.lcd_write_reg_data:00000000 $t
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccpsKaNv.s:26     .text.lcd_write_reg_data:00000000 lcd_write_reg_data
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccpsKaNv.s:116    .text.lcd_set_address:00000000 $t
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccpsKaNv.s:122    .text.lcd_set_address:00000000 lcd_set_address
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccpsKaNv.s:243    .text.lcd_set_address:0000009c $d
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccpsKaNv.s:1784   .data.lcd_cfg_address:00000000 lcd_cfg_address
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccpsKaNv.s:248    .text.lcd_init_hw:00000000 $t
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccpsKaNv.s:254    .text.lcd_init_hw:00000000 lcd_init_hw
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccpsKaNv.s:629    .text.lcd_init_hw:00000298 $d
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccpsKaNv.s:1802   .data.lcd_cfg_order:00000000 lcd_cfg_order
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccpsKaNv.s:635    .text.lcd_draw_point:00000000 $t
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccpsKaNv.s:641    .text.lcd_draw_point:00000000 lcd_draw_point
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccpsKaNv.s:683    .text.lcd_fill:00000000 $t
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccpsKaNv.s:689    .text.lcd_fill:00000000 lcd_fill
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccpsKaNv.s:857    .text.lcd_clear:00000000 $t
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccpsKaNv.s:863    .text.lcd_clear:00000000 lcd_clear
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccpsKaNv.s:908    .text.lcd_draw_line:00000000 $t
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccpsKaNv.s:914    .text.lcd_draw_line:00000000 lcd_draw_line
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccpsKaNv.s:1121   .text.lcd_draw_rectangle:00000000 $t
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccpsKaNv.s:1127   .text.lcd_draw_rectangle:00000000 lcd_draw_rectangle
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccpsKaNv.s:1197   .text.lcd_set_font:00000000 $t
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccpsKaNv.s:1203   .text.lcd_set_font:00000000 lcd_set_font
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccpsKaNv.s:1246   .text.lcd_set_font:00000024 $d
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccpsKaNv.s:1251   .text.lcd_init_dev:00000000 $t
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccpsKaNv.s:1257   .text.lcd_init_dev:00000000 lcd_init_dev
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccpsKaNv.s:1343   .text.lcd_init_dev:00000044 $d
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccpsKaNv.s:1811   .data.lcd_hw_desc:00000000 lcd_hw_desc
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccpsKaNv.s:1348   .text.lcd_show_char:00000000 $t
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccpsKaNv.s:1354   .text.lcd_show_char:00000000 lcd_show_char
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccpsKaNv.s:1530   .text.lcd_show_string:00000000 $t
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccpsKaNv.s:1536   .text.lcd_show_string:00000000 lcd_show_string
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccpsKaNv.s:1618   .text.lcd_print:00000000 $t
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccpsKaNv.s:1624   .text.lcd_print:00000000 lcd_print
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccpsKaNv.s:1715   .text.lcd_show_picture:00000000 $t
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccpsKaNv.s:1721   .text.lcd_show_picture:00000000 lcd_show_picture
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccpsKaNv.s:1781   .data.lcd_cfg_address:00000000 $d
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccpsKaNv.s:1799   .data.lcd_cfg_order:00000000 $d
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccpsKaNv.s:1808   .data.lcd_hw_desc:00000000 $d
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccpsKaNv.s:1856   .data.lcd_hw_0_96:00000000 lcd_hw_0_96
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccpsKaNv.s:1840   .data.lcd_hw_1_14:00000000 lcd_hw_1_14
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccpsKaNv.s:1824   .data.lcd_hw_1_47:00000000 lcd_hw_1_47
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccpsKaNv.s:1817   .rodata.str1.4:00000000 $d
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccpsKaNv.s:1821   .data.lcd_hw_1_47:00000000 $d
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccpsKaNv.s:1837   .data.lcd_hw_1_14:00000000 $d
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccpsKaNv.s:1853   .data.lcd_hw_0_96:00000000 $d
+
+UNDEFINED SYMBOLS
+lcd_write_reg
+lcd_write_byte
+lcd_write_halfword
+lcd_io_rst
+lcd_delay
+lcd_io_bl
+lcd_write_bulk
+lcd_fonts
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccpsKaNv.s 			page 45
+
+
+memset
+vsnprintf

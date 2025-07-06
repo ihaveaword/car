@@ -20,9 +20,9 @@
 #include "main.h"
 #include "memorymap.h"
 #include "tim.h"
+#include "usart.h"
 #include "gpio.h"
 #include "motor.h"
-
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -94,11 +94,13 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_TIM1_Init();
+  MX_USART3_UART_Init();
   /* USER CODE BEGIN 2 */
-  load(0, 0); // 初始化后立即让电机停止
+
   HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1); 
   HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_4); 
-  load(50, 50); // 启动电机M1和M4，设置初始速度
+  load(0, 0); // 启动电机M1和M4，设置初始速度
+  HAL_UART_Transmit(&huart3, (uint8_t *)"Hello\r\n", 7, 1000);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -152,7 +154,7 @@ void SystemClock_Config(void)
   RCC_ClkInitStruct.SYSCLKDivider = RCC_SYSCLK_DIV1;
   RCC_ClkInitStruct.AHBCLKDivider = RCC_HCLK_DIV1;
   RCC_ClkInitStruct.APB3CLKDivider = RCC_APB3_DIV1;
-  RCC_ClkInitStruct.APB1CLKDivider = RCC_APB1_DIV1;
+  RCC_ClkInitStruct.APB1CLKDivider = RCC_APB1_DIV2;
   RCC_ClkInitStruct.APB2CLKDivider = RCC_APB2_DIV1;
   RCC_ClkInitStruct.APB4CLKDivider = RCC_APB4_DIV1;
 

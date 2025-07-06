@@ -1,0 +1,624 @@
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccx5PJ9q.s 			page 1
+
+
+   1              		.cpu cortex-m7
+   2              		.arch armv7e-m
+   3              		.fpu fpv5-d16
+   4              		.eabi_attribute 28, 1
+   5              		.eabi_attribute 20, 1
+   6              		.eabi_attribute 21, 1
+   7              		.eabi_attribute 23, 3
+   8              		.eabi_attribute 24, 1
+   9              		.eabi_attribute 25, 1
+  10              		.eabi_attribute 26, 1
+  11              		.eabi_attribute 30, 1
+  12              		.eabi_attribute 34, 1
+  13              		.eabi_attribute 18, 4
+  14              		.file	"lcd_port.c"
+  15              		.text
+  16              	.Ltext0:
+  17              		.cfi_sections	.debug_frame
+  18              		.file 1 "BSP/LCD_ST7789/lcd_port.c"
+  19              		.section	.text.lcd_io_ctrl,"ax",%progbits
+  20              		.align	1
+  21              		.syntax unified
+  22              		.thumb
+  23              		.thumb_func
+  25              	lcd_io_ctrl:
+  26              	.LVL0:
+  27              	.LFB145:
+   1:BSP/LCD_ST7789/lcd_port.c **** #include "main.h"
+   2:BSP/LCD_ST7789/lcd_port.c **** #include "lcd.h"
+   3:BSP/LCD_ST7789/lcd_port.c **** #include "lcd_port.h"
+   4:BSP/LCD_ST7789/lcd_port.c **** 
+   5:BSP/LCD_ST7789/lcd_port.c **** /************ Hardware Port ************/
+   6:BSP/LCD_ST7789/lcd_port.c **** void lcd_delay(uint32_t delay)
+   7:BSP/LCD_ST7789/lcd_port.c **** {
+   8:BSP/LCD_ST7789/lcd_port.c ****     HAL_Delay(delay);
+   9:BSP/LCD_ST7789/lcd_port.c **** }
+  10:BSP/LCD_ST7789/lcd_port.c **** 
+  11:BSP/LCD_ST7789/lcd_port.c **** static void lcd_io_ctrl(gpio_io* io, bool flag)
+  12:BSP/LCD_ST7789/lcd_port.c **** {
+  28              		.loc 1 12 1 view -0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  13:BSP/LCD_ST7789/lcd_port.c ****     if(io && io->port)
+  32              		.loc 1 13 5 view .LVU1
+  33              		.loc 1 13 7 is_stmt 0 view .LVU2
+  34 0000 48B1     		cbz	r0, .L4
+  12:BSP/LCD_ST7789/lcd_port.c ****     if(io && io->port)
+  35              		.loc 1 12 1 view .LVU3
+  36 0002 08B5     		push	{r3, lr}
+  37              	.LCFI0:
+  38              		.cfi_def_cfa_offset 8
+  39              		.cfi_offset 3, -8
+  40              		.cfi_offset 14, -4
+  41 0004 0346     		mov	r3, r0
+  42              		.loc 1 13 16 discriminator 1 view .LVU4
+  43 0006 0068     		ldr	r0, [r0]
+  44              	.LVL1:
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccx5PJ9q.s 			page 2
+
+
+  45              		.loc 1 13 11 discriminator 1 view .LVU5
+  46 0008 20B1     		cbz	r0, .L1
+  14:BSP/LCD_ST7789/lcd_port.c ****         HAL_GPIO_WritePin(io->port, io->pin, flag ^ io->invert);
+  47              		.loc 1 14 9 is_stmt 1 view .LVU6
+  48              		.loc 1 14 55 is_stmt 0 view .LVU7
+  49 000a 9A79     		ldrb	r2, [r3, #6]	@ zero_extendqisi2
+  50              		.loc 1 14 9 view .LVU8
+  51 000c 4A40     		eors	r2, r2, r1
+  52 000e 9988     		ldrh	r1, [r3, #4]
+  53              	.LVL2:
+  54              		.loc 1 14 9 view .LVU9
+  55 0010 FFF7FEFF 		bl	HAL_GPIO_WritePin
+  56              	.LVL3:
+  57              	.L1:
+  15:BSP/LCD_ST7789/lcd_port.c **** }
+  58              		.loc 1 15 1 view .LVU10
+  59 0014 08BD     		pop	{r3, pc}
+  60              	.LVL4:
+  61              	.L4:
+  62              	.LCFI1:
+  63              		.cfi_def_cfa_offset 0
+  64              		.cfi_restore 3
+  65              		.cfi_restore 14
+  66              		.loc 1 15 1 view .LVU11
+  67 0016 7047     		bx	lr
+  68              		.cfi_endproc
+  69              	.LFE145:
+  71              		.section	.text.lcd_spi_transmit,"ax",%progbits
+  72              		.align	1
+  73              		.syntax unified
+  74              		.thumb
+  75              		.thumb_func
+  77              	lcd_spi_transmit:
+  78              	.LVL5:
+  79              	.LFB146:
+  16:BSP/LCD_ST7789/lcd_port.c **** 
+  17:BSP/LCD_ST7789/lcd_port.c **** static void lcd_spi_transmit(void* spi, uint8_t* data, uint32_t len)
+  18:BSP/LCD_ST7789/lcd_port.c **** {
+  80              		.loc 1 18 1 is_stmt 1 view -0
+  81              		.cfi_startproc
+  82              		@ args = 0, pretend = 0, frame = 0
+  83              		@ frame_needed = 0, uses_anonymous_args = 0
+  84              		.loc 1 18 1 is_stmt 0 view .LVU13
+  85 0000 70B5     		push	{r4, r5, r6, lr}
+  86              	.LCFI2:
+  87              		.cfi_def_cfa_offset 16
+  88              		.cfi_offset 4, -16
+  89              		.cfi_offset 5, -12
+  90              		.cfi_offset 6, -8
+  91              		.cfi_offset 14, -4
+  92 0002 0546     		mov	r5, r0
+  93 0004 0E46     		mov	r6, r1
+  94 0006 1446     		mov	r4, r2
+  19:BSP/LCD_ST7789/lcd_port.c ****     while(spi && len) {
+  95              		.loc 1 19 5 is_stmt 1 view .LVU14
+  96              		.loc 1 19 10 is_stmt 0 view .LVU15
+  97 0008 09E0     		b	.L8
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccx5PJ9q.s 			page 3
+
+
+  98              	.LVL6:
+  99              	.L14:
+  20:BSP/LCD_ST7789/lcd_port.c ****         if(len > 0xffff) {
+  21:BSP/LCD_ST7789/lcd_port.c ****             len -= 0xffff;
+ 100              		.loc 1 21 13 is_stmt 1 view .LVU16
+ 101              		.loc 1 21 17 is_stmt 0 view .LVU17
+ 102 000a A4F57F44 		sub	r4, r4, #65280
+ 103              	.LVL7:
+ 104              		.loc 1 21 17 view .LVU18
+ 105 000e FF3C     		subs	r4, r4, #255
+ 106              	.LVL8:
+  22:BSP/LCD_ST7789/lcd_port.c ****             HAL_SPI_Transmit(spi, data, 0xffff, 0xffff);
+ 107              		.loc 1 22 13 is_stmt 1 view .LVU19
+ 108 0010 4FF6FF73 		movw	r3, #65535
+ 109 0014 1A46     		mov	r2, r3
+ 110 0016 3146     		mov	r1, r6
+ 111 0018 2846     		mov	r0, r5
+ 112 001a FFF7FEFF 		bl	HAL_SPI_Transmit
+ 113              	.LVL9:
+ 114              	.L8:
+  19:BSP/LCD_ST7789/lcd_port.c ****     while(spi && len) {
+ 115              		.loc 1 19 15 view .LVU20
+  19:BSP/LCD_ST7789/lcd_port.c ****     while(spi && len) {
+ 116              		.loc 1 19 11 is_stmt 0 view .LVU21
+ 117 001e 2B1E     		subs	r3, r5, #0
+ 118 0020 18BF     		it	ne
+ 119 0022 0123     		movne	r3, #1
+  19:BSP/LCD_ST7789/lcd_port.c ****     while(spi && len) {
+ 120              		.loc 1 19 15 view .LVU22
+ 121 0024 54B1     		cbz	r4, .L7
+  19:BSP/LCD_ST7789/lcd_port.c ****     while(spi && len) {
+ 122              		.loc 1 19 15 view .LVU23
+ 123 0026 4BB1     		cbz	r3, .L7
+  20:BSP/LCD_ST7789/lcd_port.c ****         if(len > 0xffff) {
+ 124              		.loc 1 20 9 is_stmt 1 view .LVU24
+  20:BSP/LCD_ST7789/lcd_port.c ****         if(len > 0xffff) {
+ 125              		.loc 1 20 11 is_stmt 0 view .LVU25
+ 126 0028 B4F5803F 		cmp	r4, #65536
+ 127 002c EDD2     		bcs	.L14
+  23:BSP/LCD_ST7789/lcd_port.c ****         } else {
+  24:BSP/LCD_ST7789/lcd_port.c ****             HAL_SPI_Transmit(spi, data, len, 0xffff);
+ 128              		.loc 1 24 13 is_stmt 1 view .LVU26
+ 129 002e 4FF6FF73 		movw	r3, #65535
+ 130 0032 A2B2     		uxth	r2, r4
+ 131 0034 3146     		mov	r1, r6
+ 132 0036 2846     		mov	r0, r5
+ 133 0038 FFF7FEFF 		bl	HAL_SPI_Transmit
+ 134              	.LVL10:
+  25:BSP/LCD_ST7789/lcd_port.c ****             break;
+ 135              		.loc 1 25 13 view .LVU27
+ 136              	.L7:
+  26:BSP/LCD_ST7789/lcd_port.c ****         }
+  27:BSP/LCD_ST7789/lcd_port.c ****     }
+  28:BSP/LCD_ST7789/lcd_port.c **** }
+ 137              		.loc 1 28 1 is_stmt 0 view .LVU28
+ 138 003c 70BD     		pop	{r4, r5, r6, pc}
+ 139              		.loc 1 28 1 view .LVU29
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccx5PJ9q.s 			page 4
+
+
+ 140              		.cfi_endproc
+ 141              	.LFE146:
+ 143              		.section	.text.lcd_delay,"ax",%progbits
+ 144              		.align	1
+ 145              		.global	lcd_delay
+ 146              		.syntax unified
+ 147              		.thumb
+ 148              		.thumb_func
+ 150              	lcd_delay:
+ 151              	.LVL11:
+ 152              	.LFB144:
+   7:BSP/LCD_ST7789/lcd_port.c ****     HAL_Delay(delay);
+ 153              		.loc 1 7 1 is_stmt 1 view -0
+ 154              		.cfi_startproc
+ 155              		@ args = 0, pretend = 0, frame = 0
+ 156              		@ frame_needed = 0, uses_anonymous_args = 0
+   7:BSP/LCD_ST7789/lcd_port.c ****     HAL_Delay(delay);
+ 157              		.loc 1 7 1 is_stmt 0 view .LVU31
+ 158 0000 08B5     		push	{r3, lr}
+ 159              	.LCFI3:
+ 160              		.cfi_def_cfa_offset 8
+ 161              		.cfi_offset 3, -8
+ 162              		.cfi_offset 14, -4
+   8:BSP/LCD_ST7789/lcd_port.c **** }
+ 163              		.loc 1 8 5 is_stmt 1 view .LVU32
+ 164 0002 FFF7FEFF 		bl	HAL_Delay
+ 165              	.LVL12:
+   9:BSP/LCD_ST7789/lcd_port.c **** 
+ 166              		.loc 1 9 1 is_stmt 0 view .LVU33
+ 167 0006 08BD     		pop	{r3, pc}
+ 168              		.cfi_endproc
+ 169              	.LFE144:
+ 171              		.section	.text.lcd_io_rst,"ax",%progbits
+ 172              		.align	1
+ 173              		.global	lcd_io_rst
+ 174              		.syntax unified
+ 175              		.thumb
+ 176              		.thumb_func
+ 178              	lcd_io_rst:
+ 179              	.LVL13:
+ 180              	.LFB147:
+  29:BSP/LCD_ST7789/lcd_port.c **** 
+  30:BSP/LCD_ST7789/lcd_port.c **** // 下面移动到core里面？
+  31:BSP/LCD_ST7789/lcd_port.c **** /************ GPIO ************/
+  32:BSP/LCD_ST7789/lcd_port.c **** void lcd_io_rst(lcd_io* lcdio, bool flag)
+  33:BSP/LCD_ST7789/lcd_port.c **** {
+ 181              		.loc 1 33 1 is_stmt 1 view -0
+ 182              		.cfi_startproc
+ 183              		@ args = 0, pretend = 0, frame = 0
+ 184              		@ frame_needed = 0, uses_anonymous_args = 0
+ 185              		.loc 1 33 1 is_stmt 0 view .LVU35
+ 186 0000 08B5     		push	{r3, lr}
+ 187              	.LCFI4:
+ 188              		.cfi_def_cfa_offset 8
+ 189              		.cfi_offset 3, -8
+ 190              		.cfi_offset 14, -4
+  34:BSP/LCD_ST7789/lcd_port.c ****     lcd_io_ctrl(&lcdio->rst, flag);
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccx5PJ9q.s 			page 5
+
+
+ 191              		.loc 1 34 5 is_stmt 1 view .LVU36
+ 192 0002 0430     		adds	r0, r0, #4
+ 193              	.LVL14:
+ 194              		.loc 1 34 5 is_stmt 0 view .LVU37
+ 195 0004 FFF7FEFF 		bl	lcd_io_ctrl
+ 196              	.LVL15:
+  35:BSP/LCD_ST7789/lcd_port.c **** }
+ 197              		.loc 1 35 1 view .LVU38
+ 198 0008 08BD     		pop	{r3, pc}
+ 199              		.cfi_endproc
+ 200              	.LFE147:
+ 202              		.section	.text.lcd_io_bl,"ax",%progbits
+ 203              		.align	1
+ 204              		.global	lcd_io_bl
+ 205              		.syntax unified
+ 206              		.thumb
+ 207              		.thumb_func
+ 209              	lcd_io_bl:
+ 210              	.LVL16:
+ 211              	.LFB148:
+  36:BSP/LCD_ST7789/lcd_port.c **** 
+  37:BSP/LCD_ST7789/lcd_port.c **** void lcd_io_bl(lcd_io* lcdio, bool flag)
+  38:BSP/LCD_ST7789/lcd_port.c **** {
+ 212              		.loc 1 38 1 is_stmt 1 view -0
+ 213              		.cfi_startproc
+ 214              		@ args = 0, pretend = 0, frame = 0
+ 215              		@ frame_needed = 0, uses_anonymous_args = 0
+ 216              		.loc 1 38 1 is_stmt 0 view .LVU40
+ 217 0000 08B5     		push	{r3, lr}
+ 218              	.LCFI5:
+ 219              		.cfi_def_cfa_offset 8
+ 220              		.cfi_offset 3, -8
+ 221              		.cfi_offset 14, -4
+  39:BSP/LCD_ST7789/lcd_port.c ****     lcd_io_ctrl(&lcdio->bl, flag);
+ 222              		.loc 1 39 5 is_stmt 1 view .LVU41
+ 223 0002 0C30     		adds	r0, r0, #12
+ 224              	.LVL17:
+ 225              		.loc 1 39 5 is_stmt 0 view .LVU42
+ 226 0004 FFF7FEFF 		bl	lcd_io_ctrl
+ 227              	.LVL18:
+  40:BSP/LCD_ST7789/lcd_port.c **** }
+ 228              		.loc 1 40 1 view .LVU43
+ 229 0008 08BD     		pop	{r3, pc}
+ 230              		.cfi_endproc
+ 231              	.LFE148:
+ 233              		.section	.text.lcd_io_cs,"ax",%progbits
+ 234              		.align	1
+ 235              		.global	lcd_io_cs
+ 236              		.syntax unified
+ 237              		.thumb
+ 238              		.thumb_func
+ 240              	lcd_io_cs:
+ 241              	.LVL19:
+ 242              	.LFB149:
+  41:BSP/LCD_ST7789/lcd_port.c **** 
+  42:BSP/LCD_ST7789/lcd_port.c **** void lcd_io_cs(lcd_io* lcdio, bool flag)
+  43:BSP/LCD_ST7789/lcd_port.c **** {
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccx5PJ9q.s 			page 6
+
+
+ 243              		.loc 1 43 1 is_stmt 1 view -0
+ 244              		.cfi_startproc
+ 245              		@ args = 0, pretend = 0, frame = 0
+ 246              		@ frame_needed = 0, uses_anonymous_args = 0
+ 247              		.loc 1 43 1 is_stmt 0 view .LVU45
+ 248 0000 08B5     		push	{r3, lr}
+ 249              	.LCFI6:
+ 250              		.cfi_def_cfa_offset 8
+ 251              		.cfi_offset 3, -8
+ 252              		.cfi_offset 14, -4
+  44:BSP/LCD_ST7789/lcd_port.c ****     lcd_io_ctrl(&lcdio->cs, flag);
+ 253              		.loc 1 44 5 is_stmt 1 view .LVU46
+ 254 0002 1430     		adds	r0, r0, #20
+ 255              	.LVL20:
+ 256              		.loc 1 44 5 is_stmt 0 view .LVU47
+ 257 0004 FFF7FEFF 		bl	lcd_io_ctrl
+ 258              	.LVL21:
+  45:BSP/LCD_ST7789/lcd_port.c **** }
+ 259              		.loc 1 45 1 view .LVU48
+ 260 0008 08BD     		pop	{r3, pc}
+ 261              		.cfi_endproc
+ 262              	.LFE149:
+ 264              		.section	.text.lcd_io_dc,"ax",%progbits
+ 265              		.align	1
+ 266              		.global	lcd_io_dc
+ 267              		.syntax unified
+ 268              		.thumb
+ 269              		.thumb_func
+ 271              	lcd_io_dc:
+ 272              	.LVL22:
+ 273              	.LFB150:
+  46:BSP/LCD_ST7789/lcd_port.c **** 
+  47:BSP/LCD_ST7789/lcd_port.c **** void lcd_io_dc(lcd_io* lcdio, bool flag)
+  48:BSP/LCD_ST7789/lcd_port.c **** {
+ 274              		.loc 1 48 1 is_stmt 1 view -0
+ 275              		.cfi_startproc
+ 276              		@ args = 0, pretend = 0, frame = 0
+ 277              		@ frame_needed = 0, uses_anonymous_args = 0
+ 278              		.loc 1 48 1 is_stmt 0 view .LVU50
+ 279 0000 08B5     		push	{r3, lr}
+ 280              	.LCFI7:
+ 281              		.cfi_def_cfa_offset 8
+ 282              		.cfi_offset 3, -8
+ 283              		.cfi_offset 14, -4
+  49:BSP/LCD_ST7789/lcd_port.c ****     lcd_io_ctrl(&lcdio->dc, flag);
+ 284              		.loc 1 49 5 is_stmt 1 view .LVU51
+ 285 0002 1C30     		adds	r0, r0, #28
+ 286              	.LVL23:
+ 287              		.loc 1 49 5 is_stmt 0 view .LVU52
+ 288 0004 FFF7FEFF 		bl	lcd_io_ctrl
+ 289              	.LVL24:
+  50:BSP/LCD_ST7789/lcd_port.c **** }
+ 290              		.loc 1 50 1 view .LVU53
+ 291 0008 08BD     		pop	{r3, pc}
+ 292              		.cfi_endproc
+ 293              	.LFE150:
+ 295              		.section	.text.lcd_write_byte,"ax",%progbits
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccx5PJ9q.s 			page 7
+
+
+ 296              		.align	1
+ 297              		.global	lcd_write_byte
+ 298              		.syntax unified
+ 299              		.thumb
+ 300              		.thumb_func
+ 302              	lcd_write_byte:
+ 303              	.LVL25:
+ 304              	.LFB151:
+  51:BSP/LCD_ST7789/lcd_port.c **** 
+  52:BSP/LCD_ST7789/lcd_port.c **** /************ SPI ************/
+  53:BSP/LCD_ST7789/lcd_port.c **** void lcd_write_byte(lcd_io* lcdio, uint8_t data)
+  54:BSP/LCD_ST7789/lcd_port.c **** {
+ 305              		.loc 1 54 1 is_stmt 1 view -0
+ 306              		.cfi_startproc
+ 307              		@ args = 0, pretend = 0, frame = 8
+ 308              		@ frame_needed = 0, uses_anonymous_args = 0
+ 309              		.loc 1 54 1 is_stmt 0 view .LVU55
+ 310 0000 10B5     		push	{r4, lr}
+ 311              	.LCFI8:
+ 312              		.cfi_def_cfa_offset 8
+ 313              		.cfi_offset 4, -8
+ 314              		.cfi_offset 14, -4
+ 315 0002 82B0     		sub	sp, sp, #8
+ 316              	.LCFI9:
+ 317              		.cfi_def_cfa_offset 16
+ 318 0004 0446     		mov	r4, r0
+ 319 0006 8DF80710 		strb	r1, [sp, #7]
+  55:BSP/LCD_ST7789/lcd_port.c ****     lcd_io_dc(lcdio, 1);
+ 320              		.loc 1 55 5 is_stmt 1 view .LVU56
+ 321 000a 0121     		movs	r1, #1
+ 322              	.LVL26:
+ 323              		.loc 1 55 5 is_stmt 0 view .LVU57
+ 324 000c FFF7FEFF 		bl	lcd_io_dc
+ 325              	.LVL27:
+  56:BSP/LCD_ST7789/lcd_port.c ****     lcd_spi_transmit(lcdio->spi, &data, 0x01);
+ 326              		.loc 1 56 5 is_stmt 1 view .LVU58
+ 327 0010 0122     		movs	r2, #1
+ 328 0012 0DF10701 		add	r1, sp, #7
+ 329 0016 2068     		ldr	r0, [r4]
+ 330 0018 FFF7FEFF 		bl	lcd_spi_transmit
+ 331              	.LVL28:
+  57:BSP/LCD_ST7789/lcd_port.c **** }
+ 332              		.loc 1 57 1 is_stmt 0 view .LVU59
+ 333 001c 02B0     		add	sp, sp, #8
+ 334              	.LCFI10:
+ 335              		.cfi_def_cfa_offset 8
+ 336              		@ sp needed
+ 337 001e 10BD     		pop	{r4, pc}
+ 338              		.loc 1 57 1 view .LVU60
+ 339              		.cfi_endproc
+ 340              	.LFE151:
+ 342              		.section	.text.lcd_write_halfword,"ax",%progbits
+ 343              		.align	1
+ 344              		.global	lcd_write_halfword
+ 345              		.syntax unified
+ 346              		.thumb
+ 347              		.thumb_func
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccx5PJ9q.s 			page 8
+
+
+ 349              	lcd_write_halfword:
+ 350              	.LVL29:
+ 351              	.LFB152:
+  58:BSP/LCD_ST7789/lcd_port.c **** 
+  59:BSP/LCD_ST7789/lcd_port.c **** void lcd_write_halfword(lcd_io* lcdio, uint16_t data)
+  60:BSP/LCD_ST7789/lcd_port.c **** {
+ 352              		.loc 1 60 1 is_stmt 1 view -0
+ 353              		.cfi_startproc
+ 354              		@ args = 0, pretend = 0, frame = 8
+ 355              		@ frame_needed = 0, uses_anonymous_args = 0
+ 356              		.loc 1 60 1 is_stmt 0 view .LVU62
+ 357 0000 10B5     		push	{r4, lr}
+ 358              	.LCFI11:
+ 359              		.cfi_def_cfa_offset 8
+ 360              		.cfi_offset 4, -8
+ 361              		.cfi_offset 14, -4
+ 362 0002 82B0     		sub	sp, sp, #8
+ 363              	.LCFI12:
+ 364              		.cfi_def_cfa_offset 16
+ 365 0004 0446     		mov	r4, r0
+ 366 0006 ADF80610 		strh	r1, [sp, #6]	@ movhi
+  61:BSP/LCD_ST7789/lcd_port.c ****     lcd_io_dc(lcdio, 1);
+ 367              		.loc 1 61 5 is_stmt 1 view .LVU63
+ 368 000a 0121     		movs	r1, #1
+ 369              	.LVL30:
+ 370              		.loc 1 61 5 is_stmt 0 view .LVU64
+ 371 000c FFF7FEFF 		bl	lcd_io_dc
+ 372              	.LVL31:
+  62:BSP/LCD_ST7789/lcd_port.c ****     /* note: 使用HAL库一次发送两个字节顺序与屏幕定义顺序相反 */
+  63:BSP/LCD_ST7789/lcd_port.c ****     data = (data << 8) | (data >> 8);
+ 373              		.loc 1 63 5 is_stmt 1 view .LVU65
+ 374              		.loc 1 63 24 is_stmt 0 view .LVU66
+ 375 0010 BDF80620 		ldrh	r2, [sp, #6]
+ 376 0014 1302     		lsls	r3, r2, #8
+ 377 0016 43EA1223 		orr	r3, r3, r2, lsr #8
+ 378              		.loc 1 63 10 view .LVU67
+ 379 001a ADF80630 		strh	r3, [sp, #6]	@ movhi
+  64:BSP/LCD_ST7789/lcd_port.c ****     lcd_spi_transmit(lcdio->spi, (uint8_t *)&data, 0x02);
+ 380              		.loc 1 64 5 is_stmt 1 view .LVU68
+ 381 001e 0222     		movs	r2, #2
+ 382 0020 0DF10601 		add	r1, sp, #6
+ 383 0024 2068     		ldr	r0, [r4]
+ 384 0026 FFF7FEFF 		bl	lcd_spi_transmit
+ 385              	.LVL32:
+  65:BSP/LCD_ST7789/lcd_port.c **** }
+ 386              		.loc 1 65 1 is_stmt 0 view .LVU69
+ 387 002a 02B0     		add	sp, sp, #8
+ 388              	.LCFI13:
+ 389              		.cfi_def_cfa_offset 8
+ 390              		@ sp needed
+ 391 002c 10BD     		pop	{r4, pc}
+ 392              		.loc 1 65 1 view .LVU70
+ 393              		.cfi_endproc
+ 394              	.LFE152:
+ 396              		.section	.text.lcd_write_bulk,"ax",%progbits
+ 397              		.align	1
+ 398              		.global	lcd_write_bulk
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccx5PJ9q.s 			page 9
+
+
+ 399              		.syntax unified
+ 400              		.thumb
+ 401              		.thumb_func
+ 403              	lcd_write_bulk:
+ 404              	.LVL33:
+ 405              	.LFB153:
+  66:BSP/LCD_ST7789/lcd_port.c **** 
+  67:BSP/LCD_ST7789/lcd_port.c **** void lcd_write_bulk(lcd_io* lcdio, uint8_t* data, uint32_t len)
+  68:BSP/LCD_ST7789/lcd_port.c **** {
+ 406              		.loc 1 68 1 is_stmt 1 view -0
+ 407              		.cfi_startproc
+ 408              		@ args = 0, pretend = 0, frame = 0
+ 409              		@ frame_needed = 0, uses_anonymous_args = 0
+ 410              		.loc 1 68 1 is_stmt 0 view .LVU72
+ 411 0000 70B5     		push	{r4, r5, r6, lr}
+ 412              	.LCFI14:
+ 413              		.cfi_def_cfa_offset 16
+ 414              		.cfi_offset 4, -16
+ 415              		.cfi_offset 5, -12
+ 416              		.cfi_offset 6, -8
+ 417              		.cfi_offset 14, -4
+ 418 0002 0446     		mov	r4, r0
+ 419 0004 0D46     		mov	r5, r1
+ 420 0006 1646     		mov	r6, r2
+  69:BSP/LCD_ST7789/lcd_port.c ****     lcd_io_dc(lcdio, 1);
+ 421              		.loc 1 69 5 is_stmt 1 view .LVU73
+ 422 0008 0121     		movs	r1, #1
+ 423              	.LVL34:
+ 424              		.loc 1 69 5 is_stmt 0 view .LVU74
+ 425 000a FFF7FEFF 		bl	lcd_io_dc
+ 426              	.LVL35:
+  70:BSP/LCD_ST7789/lcd_port.c ****     lcd_spi_transmit(lcdio->spi, (uint8_t *)data, len);
+ 427              		.loc 1 70 5 is_stmt 1 view .LVU75
+ 428 000e 3246     		mov	r2, r6
+ 429 0010 2946     		mov	r1, r5
+ 430 0012 2068     		ldr	r0, [r4]
+ 431 0014 FFF7FEFF 		bl	lcd_spi_transmit
+ 432              	.LVL36:
+  71:BSP/LCD_ST7789/lcd_port.c **** }
+ 433              		.loc 1 71 1 is_stmt 0 view .LVU76
+ 434 0018 70BD     		pop	{r4, r5, r6, pc}
+ 435              		.loc 1 71 1 view .LVU77
+ 436              		.cfi_endproc
+ 437              	.LFE153:
+ 439              		.section	.text.lcd_write_reg,"ax",%progbits
+ 440              		.align	1
+ 441              		.global	lcd_write_reg
+ 442              		.syntax unified
+ 443              		.thumb
+ 444              		.thumb_func
+ 446              	lcd_write_reg:
+ 447              	.LVL37:
+ 448              	.LFB154:
+  72:BSP/LCD_ST7789/lcd_port.c **** 
+  73:BSP/LCD_ST7789/lcd_port.c **** void lcd_write_reg(lcd_io* lcdio, uint8_t data)	 
+  74:BSP/LCD_ST7789/lcd_port.c **** {	
+ 449              		.loc 1 74 1 is_stmt 1 view -0
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccx5PJ9q.s 			page 10
+
+
+ 450              		.cfi_startproc
+ 451              		@ args = 0, pretend = 0, frame = 8
+ 452              		@ frame_needed = 0, uses_anonymous_args = 0
+ 453              		.loc 1 74 1 is_stmt 0 view .LVU79
+ 454 0000 10B5     		push	{r4, lr}
+ 455              	.LCFI15:
+ 456              		.cfi_def_cfa_offset 8
+ 457              		.cfi_offset 4, -8
+ 458              		.cfi_offset 14, -4
+ 459 0002 82B0     		sub	sp, sp, #8
+ 460              	.LCFI16:
+ 461              		.cfi_def_cfa_offset 16
+ 462 0004 0446     		mov	r4, r0
+ 463 0006 8DF80710 		strb	r1, [sp, #7]
+  75:BSP/LCD_ST7789/lcd_port.c ****     lcd_io_dc(lcdio, 0);
+ 464              		.loc 1 75 5 is_stmt 1 view .LVU80
+ 465 000a 0021     		movs	r1, #0
+ 466              	.LVL38:
+ 467              		.loc 1 75 5 is_stmt 0 view .LVU81
+ 468 000c FFF7FEFF 		bl	lcd_io_dc
+ 469              	.LVL39:
+  76:BSP/LCD_ST7789/lcd_port.c ****     lcd_spi_transmit(lcdio->spi, &data, 0x01);
+ 470              		.loc 1 76 5 is_stmt 1 view .LVU82
+ 471 0010 0122     		movs	r2, #1
+ 472 0012 0DF10701 		add	r1, sp, #7
+ 473 0016 2068     		ldr	r0, [r4]
+ 474 0018 FFF7FEFF 		bl	lcd_spi_transmit
+ 475              	.LVL40:
+  77:BSP/LCD_ST7789/lcd_port.c **** }...
+ 476              		.loc 1 77 1 is_stmt 0 view .LVU83
+ 477 001c 02B0     		add	sp, sp, #8
+ 478              	.LCFI17:
+ 479              		.cfi_def_cfa_offset 8
+ 480              		@ sp needed
+ 481 001e 10BD     		pop	{r4, pc}
+ 482              		.loc 1 77 1 view .LVU84
+ 483              		.cfi_endproc
+ 484              	.LFE154:
+ 486              		.text
+ 487              	.Letext0:
+ 488              		.file 2 "/Users/zhy/Tools/xpack-arm-none-eabi-gcc-14.2.1-1.1/arm-none-eabi/include/machine/_defaul
+ 489              		.file 3 "/Users/zhy/Tools/xpack-arm-none-eabi-gcc-14.2.1-1.1/arm-none-eabi/include/sys/_stdint.h"
+ 490              		.file 4 "Drivers/CMSIS/Device/ST/STM32H7xx/Include/stm32h743xx.h"
+ 491              		.file 5 "Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_def.h"
+ 492              		.file 6 "Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_gpio.h"
+ 493              		.file 7 "Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_dma.h"
+ 494              		.file 8 "Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_spi.h"
+ 495              		.file 9 "BSP/LCD_ST7789/lcd_port.h"
+ 496              		.file 10 "Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal.h"
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccx5PJ9q.s 			page 11
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 lcd_port.c
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccx5PJ9q.s:20     .text.lcd_io_ctrl:00000000 $t
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccx5PJ9q.s:25     .text.lcd_io_ctrl:00000000 lcd_io_ctrl
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccx5PJ9q.s:72     .text.lcd_spi_transmit:00000000 $t
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccx5PJ9q.s:77     .text.lcd_spi_transmit:00000000 lcd_spi_transmit
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccx5PJ9q.s:144    .text.lcd_delay:00000000 $t
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccx5PJ9q.s:150    .text.lcd_delay:00000000 lcd_delay
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccx5PJ9q.s:172    .text.lcd_io_rst:00000000 $t
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccx5PJ9q.s:178    .text.lcd_io_rst:00000000 lcd_io_rst
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccx5PJ9q.s:203    .text.lcd_io_bl:00000000 $t
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccx5PJ9q.s:209    .text.lcd_io_bl:00000000 lcd_io_bl
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccx5PJ9q.s:234    .text.lcd_io_cs:00000000 $t
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccx5PJ9q.s:240    .text.lcd_io_cs:00000000 lcd_io_cs
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccx5PJ9q.s:265    .text.lcd_io_dc:00000000 $t
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccx5PJ9q.s:271    .text.lcd_io_dc:00000000 lcd_io_dc
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccx5PJ9q.s:296    .text.lcd_write_byte:00000000 $t
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccx5PJ9q.s:302    .text.lcd_write_byte:00000000 lcd_write_byte
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccx5PJ9q.s:343    .text.lcd_write_halfword:00000000 $t
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccx5PJ9q.s:349    .text.lcd_write_halfword:00000000 lcd_write_halfword
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccx5PJ9q.s:397    .text.lcd_write_bulk:00000000 $t
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccx5PJ9q.s:403    .text.lcd_write_bulk:00000000 lcd_write_bulk
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccx5PJ9q.s:440    .text.lcd_write_reg:00000000 $t
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccx5PJ9q.s:446    .text.lcd_write_reg:00000000 lcd_write_reg
+
+UNDEFINED SYMBOLS
+HAL_GPIO_WritePin
+HAL_SPI_Transmit
+HAL_Delay

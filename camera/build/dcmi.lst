@@ -1,0 +1,900 @@
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccMculFJ.s 			page 1
+
+
+   1              		.cpu cortex-m7
+   2              		.arch armv7e-m
+   3              		.fpu fpv5-d16
+   4              		.eabi_attribute 28, 1
+   5              		.eabi_attribute 20, 1
+   6              		.eabi_attribute 21, 1
+   7              		.eabi_attribute 23, 3
+   8              		.eabi_attribute 24, 1
+   9              		.eabi_attribute 25, 1
+  10              		.eabi_attribute 26, 1
+  11              		.eabi_attribute 30, 1
+  12              		.eabi_attribute 34, 1
+  13              		.eabi_attribute 18, 4
+  14              		.file	"dcmi.c"
+  15              		.text
+  16              	.Ltext0:
+  17              		.cfi_sections	.debug_frame
+  18              		.file 1 "Core/Src/dcmi.c"
+  19              		.section	.text.MX_DCMI_Init,"ax",%progbits
+  20              		.align	1
+  21              		.global	MX_DCMI_Init
+  22              		.syntax unified
+  23              		.thumb
+  24              		.thumb_func
+  26              	MX_DCMI_Init:
+  27              	.LFB144:
+   1:Core/Src/dcmi.c **** /* USER CODE BEGIN Header */
+   2:Core/Src/dcmi.c **** /**
+   3:Core/Src/dcmi.c ****   ******************************************************************************
+   4:Core/Src/dcmi.c ****   * @file    dcmi.c
+   5:Core/Src/dcmi.c ****   * @brief   This file provides code for the configuration
+   6:Core/Src/dcmi.c ****   *          of the DCMI instances.
+   7:Core/Src/dcmi.c ****   ******************************************************************************
+   8:Core/Src/dcmi.c ****   * @attention
+   9:Core/Src/dcmi.c ****   *
+  10:Core/Src/dcmi.c ****   * Copyright (c) 2024 STMicroelectronics.
+  11:Core/Src/dcmi.c ****   * All rights reserved.
+  12:Core/Src/dcmi.c ****   *
+  13:Core/Src/dcmi.c ****   * This software is licensed under terms that can be found in the LICENSE file
+  14:Core/Src/dcmi.c ****   * in the root directory of this software component.
+  15:Core/Src/dcmi.c ****   * If no LICENSE file comes with this software, it is provided AS-IS.
+  16:Core/Src/dcmi.c ****   *
+  17:Core/Src/dcmi.c ****   ******************************************************************************
+  18:Core/Src/dcmi.c ****   */
+  19:Core/Src/dcmi.c **** /* USER CODE END Header */
+  20:Core/Src/dcmi.c **** /* Includes ------------------------------------------------------------------*/
+  21:Core/Src/dcmi.c **** #include "dcmi.h"
+  22:Core/Src/dcmi.c **** 
+  23:Core/Src/dcmi.c **** /* USER CODE BEGIN 0 */
+  24:Core/Src/dcmi.c **** 
+  25:Core/Src/dcmi.c **** /* USER CODE END 0 */
+  26:Core/Src/dcmi.c **** 
+  27:Core/Src/dcmi.c **** DCMI_HandleTypeDef hdcmi;
+  28:Core/Src/dcmi.c **** DMA_HandleTypeDef hdma_dcmi;
+  29:Core/Src/dcmi.c **** 
+  30:Core/Src/dcmi.c **** /* DCMI init function */
+  31:Core/Src/dcmi.c **** void MX_DCMI_Init(void)
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccMculFJ.s 			page 2
+
+
+  32:Core/Src/dcmi.c **** {
+  28              		.loc 1 32 1 view -0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32 0000 08B5     		push	{r3, lr}
+  33              	.LCFI0:
+  34              		.cfi_def_cfa_offset 8
+  35              		.cfi_offset 3, -8
+  36              		.cfi_offset 14, -4
+  33:Core/Src/dcmi.c **** 
+  34:Core/Src/dcmi.c ****   /* USER CODE BEGIN DCMI_Init 0 */
+  35:Core/Src/dcmi.c **** 
+  36:Core/Src/dcmi.c ****   /* USER CODE END DCMI_Init 0 */
+  37:Core/Src/dcmi.c **** 
+  38:Core/Src/dcmi.c ****   /* USER CODE BEGIN DCMI_Init 1 */
+  39:Core/Src/dcmi.c **** 
+  40:Core/Src/dcmi.c ****   /* USER CODE END DCMI_Init 1 */
+  41:Core/Src/dcmi.c ****   hdcmi.Instance = DCMI;
+  37              		.loc 1 41 3 view .LVU1
+  38              		.loc 1 41 18 is_stmt 0 view .LVU2
+  39 0002 0C48     		ldr	r0, .L5
+  40 0004 0C4B     		ldr	r3, .L5+4
+  41 0006 0360     		str	r3, [r0]
+  42:Core/Src/dcmi.c ****   hdcmi.Init.SynchroMode = DCMI_SYNCHRO_HARDWARE;
+  42              		.loc 1 42 3 is_stmt 1 view .LVU3
+  43              		.loc 1 42 26 is_stmt 0 view .LVU4
+  44 0008 0023     		movs	r3, #0
+  45 000a 4360     		str	r3, [r0, #4]
+  43:Core/Src/dcmi.c ****   hdcmi.Init.PCKPolarity = DCMI_PCKPOLARITY_RISING;
+  46              		.loc 1 43 3 is_stmt 1 view .LVU5
+  47              		.loc 1 43 26 is_stmt 0 view .LVU6
+  48 000c 2022     		movs	r2, #32
+  49 000e 8260     		str	r2, [r0, #8]
+  44:Core/Src/dcmi.c ****   hdcmi.Init.VSPolarity = DCMI_VSPOLARITY_HIGH;
+  50              		.loc 1 44 3 is_stmt 1 view .LVU7
+  51              		.loc 1 44 25 is_stmt 0 view .LVU8
+  52 0010 8022     		movs	r2, #128
+  53 0012 C260     		str	r2, [r0, #12]
+  45:Core/Src/dcmi.c ****   hdcmi.Init.HSPolarity = DCMI_HSPOLARITY_LOW;
+  54              		.loc 1 45 3 is_stmt 1 view .LVU9
+  55              		.loc 1 45 25 is_stmt 0 view .LVU10
+  56 0014 0361     		str	r3, [r0, #16]
+  46:Core/Src/dcmi.c ****   hdcmi.Init.CaptureRate = DCMI_CR_ALL_FRAME;
+  57              		.loc 1 46 3 is_stmt 1 view .LVU11
+  58              		.loc 1 46 26 is_stmt 0 view .LVU12
+  59 0016 4361     		str	r3, [r0, #20]
+  47:Core/Src/dcmi.c ****   hdcmi.Init.ExtendedDataMode = DCMI_EXTEND_DATA_8B;
+  60              		.loc 1 47 3 is_stmt 1 view .LVU13
+  61              		.loc 1 47 31 is_stmt 0 view .LVU14
+  62 0018 8361     		str	r3, [r0, #24]
+  48:Core/Src/dcmi.c ****   hdcmi.Init.JPEGMode = DCMI_JPEG_DISABLE;
+  63              		.loc 1 48 3 is_stmt 1 view .LVU15
+  64              		.loc 1 48 23 is_stmt 0 view .LVU16
+  65 001a 0362     		str	r3, [r0, #32]
+  49:Core/Src/dcmi.c ****   hdcmi.Init.ByteSelectMode = DCMI_BSM_ALL;
+  66              		.loc 1 49 3 is_stmt 1 view .LVU17
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccMculFJ.s 			page 3
+
+
+  67              		.loc 1 49 29 is_stmt 0 view .LVU18
+  68 001c 4362     		str	r3, [r0, #36]
+  50:Core/Src/dcmi.c ****   hdcmi.Init.ByteSelectStart = DCMI_OEBS_ODD;
+  69              		.loc 1 50 3 is_stmt 1 view .LVU19
+  70              		.loc 1 50 30 is_stmt 0 view .LVU20
+  71 001e 8362     		str	r3, [r0, #40]
+  51:Core/Src/dcmi.c ****   hdcmi.Init.LineSelectMode = DCMI_LSM_ALL;
+  72              		.loc 1 51 3 is_stmt 1 view .LVU21
+  73              		.loc 1 51 29 is_stmt 0 view .LVU22
+  74 0020 C362     		str	r3, [r0, #44]
+  52:Core/Src/dcmi.c ****   hdcmi.Init.LineSelectStart = DCMI_OELS_ODD;
+  75              		.loc 1 52 3 is_stmt 1 view .LVU23
+  76              		.loc 1 52 30 is_stmt 0 view .LVU24
+  77 0022 0363     		str	r3, [r0, #48]
+  53:Core/Src/dcmi.c ****   if (HAL_DCMI_Init(&hdcmi) != HAL_OK)
+  78              		.loc 1 53 3 is_stmt 1 view .LVU25
+  79              		.loc 1 53 7 is_stmt 0 view .LVU26
+  80 0024 FFF7FEFF 		bl	HAL_DCMI_Init
+  81              	.LVL0:
+  82              		.loc 1 53 6 discriminator 1 view .LVU27
+  83 0028 00B9     		cbnz	r0, .L4
+  84              	.L1:
+  54:Core/Src/dcmi.c ****   {
+  55:Core/Src/dcmi.c ****     Error_Handler();
+  56:Core/Src/dcmi.c ****   }
+  57:Core/Src/dcmi.c ****   /* USER CODE BEGIN DCMI_Init 2 */
+  58:Core/Src/dcmi.c **** 
+  59:Core/Src/dcmi.c ****   /* USER CODE END DCMI_Init 2 */
+  60:Core/Src/dcmi.c **** 
+  61:Core/Src/dcmi.c **** }
+  85              		.loc 1 61 1 view .LVU28
+  86 002a 08BD     		pop	{r3, pc}
+  87              	.L4:
+  55:Core/Src/dcmi.c ****   }
+  88              		.loc 1 55 5 is_stmt 1 view .LVU29
+  89 002c FFF7FEFF 		bl	Error_Handler
+  90              	.LVL1:
+  91              		.loc 1 61 1 is_stmt 0 view .LVU30
+  92 0030 FBE7     		b	.L1
+  93              	.L6:
+  94 0032 00BF     		.align	2
+  95              	.L5:
+  96 0034 00000000 		.word	hdcmi
+  97 0038 00000248 		.word	1208090624
+  98              		.cfi_endproc
+  99              	.LFE144:
+ 101              		.section	.text.HAL_DCMI_MspInit,"ax",%progbits
+ 102              		.align	1
+ 103              		.global	HAL_DCMI_MspInit
+ 104              		.syntax unified
+ 105              		.thumb
+ 106              		.thumb_func
+ 108              	HAL_DCMI_MspInit:
+ 109              	.LVL2:
+ 110              	.LFB145:
+  62:Core/Src/dcmi.c **** 
+  63:Core/Src/dcmi.c **** void HAL_DCMI_MspInit(DCMI_HandleTypeDef* dcmiHandle)
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccMculFJ.s 			page 4
+
+
+  64:Core/Src/dcmi.c **** {
+ 111              		.loc 1 64 1 is_stmt 1 view -0
+ 112              		.cfi_startproc
+ 113              		@ args = 0, pretend = 0, frame = 40
+ 114              		@ frame_needed = 0, uses_anonymous_args = 0
+ 115              		.loc 1 64 1 is_stmt 0 view .LVU32
+ 116 0000 2DE9F043 		push	{r4, r5, r6, r7, r8, r9, lr}
+ 117              	.LCFI1:
+ 118              		.cfi_def_cfa_offset 28
+ 119              		.cfi_offset 4, -28
+ 120              		.cfi_offset 5, -24
+ 121              		.cfi_offset 6, -20
+ 122              		.cfi_offset 7, -16
+ 123              		.cfi_offset 8, -12
+ 124              		.cfi_offset 9, -8
+ 125              		.cfi_offset 14, -4
+ 126 0004 8BB0     		sub	sp, sp, #44
+ 127              	.LCFI2:
+ 128              		.cfi_def_cfa_offset 72
+  65:Core/Src/dcmi.c **** 
+  66:Core/Src/dcmi.c ****   GPIO_InitTypeDef GPIO_InitStruct = {0};
+ 129              		.loc 1 66 3 is_stmt 1 view .LVU33
+ 130              		.loc 1 66 20 is_stmt 0 view .LVU34
+ 131 0006 0023     		movs	r3, #0
+ 132 0008 0593     		str	r3, [sp, #20]
+ 133 000a 0693     		str	r3, [sp, #24]
+ 134 000c 0793     		str	r3, [sp, #28]
+ 135 000e 0893     		str	r3, [sp, #32]
+ 136 0010 0993     		str	r3, [sp, #36]
+  67:Core/Src/dcmi.c ****   if(dcmiHandle->Instance==DCMI)
+ 137              		.loc 1 67 3 is_stmt 1 view .LVU35
+ 138              		.loc 1 67 16 is_stmt 0 view .LVU36
+ 139 0012 0268     		ldr	r2, [r0]
+ 140              		.loc 1 67 5 view .LVU37
+ 141 0014 514B     		ldr	r3, .L13
+ 142 0016 9A42     		cmp	r2, r3
+ 143 0018 02D0     		beq	.L11
+ 144              	.LVL3:
+ 145              	.L7:
+  68:Core/Src/dcmi.c ****   {
+  69:Core/Src/dcmi.c ****   /* USER CODE BEGIN DCMI_MspInit 0 */
+  70:Core/Src/dcmi.c **** 
+  71:Core/Src/dcmi.c ****   /* USER CODE END DCMI_MspInit 0 */
+  72:Core/Src/dcmi.c ****     /* DCMI clock enable */
+  73:Core/Src/dcmi.c ****     __HAL_RCC_DCMI_CLK_ENABLE();
+  74:Core/Src/dcmi.c **** 
+  75:Core/Src/dcmi.c ****     __HAL_RCC_GPIOE_CLK_ENABLE();
+  76:Core/Src/dcmi.c ****     __HAL_RCC_GPIOA_CLK_ENABLE();
+  77:Core/Src/dcmi.c ****     __HAL_RCC_GPIOC_CLK_ENABLE();
+  78:Core/Src/dcmi.c ****     __HAL_RCC_GPIOB_CLK_ENABLE();
+  79:Core/Src/dcmi.c ****     /**DCMI GPIO Configuration
+  80:Core/Src/dcmi.c ****     PE4     ------> DCMI_D4
+  81:Core/Src/dcmi.c ****     PE5     ------> DCMI_D6
+  82:Core/Src/dcmi.c ****     PE6     ------> DCMI_D7
+  83:Core/Src/dcmi.c ****     PA4     ------> DCMI_HSYNC
+  84:Core/Src/dcmi.c ****     PA6     ------> DCMI_PIXCLK
+  85:Core/Src/dcmi.c ****     PC6     ------> DCMI_D0
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccMculFJ.s 			page 5
+
+
+  86:Core/Src/dcmi.c ****     PC7     ------> DCMI_D1
+  87:Core/Src/dcmi.c ****     PB6     ------> DCMI_D5
+  88:Core/Src/dcmi.c ****     PB7     ------> DCMI_VSYNC
+  89:Core/Src/dcmi.c ****     PE0     ------> DCMI_D2
+  90:Core/Src/dcmi.c ****     PE1     ------> DCMI_D3
+  91:Core/Src/dcmi.c ****     */
+  92:Core/Src/dcmi.c ****     GPIO_InitStruct.Pin = GPIO_PIN_4|GPIO_PIN_5|GPIO_PIN_6|GPIO_PIN_0
+  93:Core/Src/dcmi.c ****                           |GPIO_PIN_1;
+  94:Core/Src/dcmi.c ****     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+  95:Core/Src/dcmi.c ****     GPIO_InitStruct.Pull = GPIO_NOPULL;
+  96:Core/Src/dcmi.c ****     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+  97:Core/Src/dcmi.c ****     GPIO_InitStruct.Alternate = GPIO_AF13_DCMI;
+  98:Core/Src/dcmi.c ****     HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
+  99:Core/Src/dcmi.c **** 
+ 100:Core/Src/dcmi.c ****     GPIO_InitStruct.Pin = GPIO_PIN_4|GPIO_PIN_6;
+ 101:Core/Src/dcmi.c ****     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+ 102:Core/Src/dcmi.c ****     GPIO_InitStruct.Pull = GPIO_NOPULL;
+ 103:Core/Src/dcmi.c ****     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+ 104:Core/Src/dcmi.c ****     GPIO_InitStruct.Alternate = GPIO_AF13_DCMI;
+ 105:Core/Src/dcmi.c ****     HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+ 106:Core/Src/dcmi.c **** 
+ 107:Core/Src/dcmi.c ****     GPIO_InitStruct.Pin = GPIO_PIN_6|GPIO_PIN_7;
+ 108:Core/Src/dcmi.c ****     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+ 109:Core/Src/dcmi.c ****     GPIO_InitStruct.Pull = GPIO_NOPULL;
+ 110:Core/Src/dcmi.c ****     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+ 111:Core/Src/dcmi.c ****     GPIO_InitStruct.Alternate = GPIO_AF13_DCMI;
+ 112:Core/Src/dcmi.c ****     HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+ 113:Core/Src/dcmi.c **** 
+ 114:Core/Src/dcmi.c ****     GPIO_InitStruct.Pin = GPIO_PIN_6|GPIO_PIN_7;
+ 115:Core/Src/dcmi.c ****     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+ 116:Core/Src/dcmi.c ****     GPIO_InitStruct.Pull = GPIO_NOPULL;
+ 117:Core/Src/dcmi.c ****     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+ 118:Core/Src/dcmi.c ****     GPIO_InitStruct.Alternate = GPIO_AF13_DCMI;
+ 119:Core/Src/dcmi.c ****     HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+ 120:Core/Src/dcmi.c **** 
+ 121:Core/Src/dcmi.c ****     /* DCMI DMA Init */
+ 122:Core/Src/dcmi.c ****     /* DCMI Init */
+ 123:Core/Src/dcmi.c ****     hdma_dcmi.Instance = DMA1_Stream0;
+ 124:Core/Src/dcmi.c ****     hdma_dcmi.Init.Request = DMA_REQUEST_DCMI;
+ 125:Core/Src/dcmi.c ****     hdma_dcmi.Init.Direction = DMA_PERIPH_TO_MEMORY;
+ 126:Core/Src/dcmi.c ****     hdma_dcmi.Init.PeriphInc = DMA_PINC_DISABLE;
+ 127:Core/Src/dcmi.c ****     hdma_dcmi.Init.MemInc = DMA_MINC_ENABLE;
+ 128:Core/Src/dcmi.c ****     hdma_dcmi.Init.PeriphDataAlignment = DMA_PDATAALIGN_WORD;
+ 129:Core/Src/dcmi.c ****     hdma_dcmi.Init.MemDataAlignment = DMA_MDATAALIGN_WORD;
+ 130:Core/Src/dcmi.c ****     hdma_dcmi.Init.Mode = DMA_CIRCULAR;
+ 131:Core/Src/dcmi.c ****     hdma_dcmi.Init.Priority = DMA_PRIORITY_VERY_HIGH;
+ 132:Core/Src/dcmi.c ****     hdma_dcmi.Init.FIFOMode = DMA_FIFOMODE_ENABLE;
+ 133:Core/Src/dcmi.c ****     hdma_dcmi.Init.FIFOThreshold = DMA_FIFO_THRESHOLD_FULL;
+ 134:Core/Src/dcmi.c ****     hdma_dcmi.Init.MemBurst = DMA_MBURST_SINGLE;
+ 135:Core/Src/dcmi.c ****     hdma_dcmi.Init.PeriphBurst = DMA_PBURST_SINGLE;
+ 136:Core/Src/dcmi.c ****     if (HAL_DMA_Init(&hdma_dcmi) != HAL_OK)
+ 137:Core/Src/dcmi.c ****     {
+ 138:Core/Src/dcmi.c ****       Error_Handler();
+ 139:Core/Src/dcmi.c ****     }
+ 140:Core/Src/dcmi.c **** 
+ 141:Core/Src/dcmi.c ****     __HAL_LINKDMA(dcmiHandle,DMA_Handle,hdma_dcmi);
+ 142:Core/Src/dcmi.c **** 
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccMculFJ.s 			page 6
+
+
+ 143:Core/Src/dcmi.c ****     /* DCMI interrupt Init */
+ 144:Core/Src/dcmi.c ****     HAL_NVIC_SetPriority(DCMI_IRQn, 1, 0);
+ 145:Core/Src/dcmi.c ****     HAL_NVIC_EnableIRQ(DCMI_IRQn);
+ 146:Core/Src/dcmi.c ****   /* USER CODE BEGIN DCMI_MspInit 1 */
+ 147:Core/Src/dcmi.c **** 
+ 148:Core/Src/dcmi.c ****   /* USER CODE END DCMI_MspInit 1 */
+ 149:Core/Src/dcmi.c ****   }
+ 150:Core/Src/dcmi.c **** }
+ 146              		.loc 1 150 1 view .LVU38
+ 147 001a 0BB0     		add	sp, sp, #44
+ 148              	.LCFI3:
+ 149              		.cfi_remember_state
+ 150              		.cfi_def_cfa_offset 28
+ 151              		@ sp needed
+ 152 001c BDE8F083 		pop	{r4, r5, r6, r7, r8, r9, pc}
+ 153              	.LVL4:
+ 154              	.L11:
+ 155              	.LCFI4:
+ 156              		.cfi_restore_state
+ 157              		.loc 1 150 1 view .LVU39
+ 158 0020 0446     		mov	r4, r0
+  73:Core/Src/dcmi.c **** 
+ 159              		.loc 1 73 5 is_stmt 1 view .LVU40
+ 160              	.LBB2:
+  73:Core/Src/dcmi.c **** 
+ 161              		.loc 1 73 5 view .LVU41
+  73:Core/Src/dcmi.c **** 
+ 162              		.loc 1 73 5 view .LVU42
+ 163 0022 4F4B     		ldr	r3, .L13+4
+ 164 0024 D3F8DC20 		ldr	r2, [r3, #220]
+ 165 0028 42F00102 		orr	r2, r2, #1
+ 166 002c C3F8DC20 		str	r2, [r3, #220]
+  73:Core/Src/dcmi.c **** 
+ 167              		.loc 1 73 5 view .LVU43
+ 168 0030 D3F8DC20 		ldr	r2, [r3, #220]
+ 169 0034 02F00102 		and	r2, r2, #1
+ 170 0038 0092     		str	r2, [sp]
+  73:Core/Src/dcmi.c **** 
+ 171              		.loc 1 73 5 view .LVU44
+ 172 003a 009A     		ldr	r2, [sp]
+ 173              	.LBE2:
+  73:Core/Src/dcmi.c **** 
+ 174              		.loc 1 73 5 view .LVU45
+  75:Core/Src/dcmi.c ****     __HAL_RCC_GPIOA_CLK_ENABLE();
+ 175              		.loc 1 75 5 view .LVU46
+ 176              	.LBB3:
+  75:Core/Src/dcmi.c ****     __HAL_RCC_GPIOA_CLK_ENABLE();
+ 177              		.loc 1 75 5 view .LVU47
+  75:Core/Src/dcmi.c ****     __HAL_RCC_GPIOA_CLK_ENABLE();
+ 178              		.loc 1 75 5 view .LVU48
+ 179 003c D3F8E020 		ldr	r2, [r3, #224]
+ 180 0040 42F01002 		orr	r2, r2, #16
+ 181 0044 C3F8E020 		str	r2, [r3, #224]
+  75:Core/Src/dcmi.c ****     __HAL_RCC_GPIOA_CLK_ENABLE();
+ 182              		.loc 1 75 5 view .LVU49
+ 183 0048 D3F8E020 		ldr	r2, [r3, #224]
+ 184 004c 02F01002 		and	r2, r2, #16
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccMculFJ.s 			page 7
+
+
+ 185 0050 0192     		str	r2, [sp, #4]
+  75:Core/Src/dcmi.c ****     __HAL_RCC_GPIOA_CLK_ENABLE();
+ 186              		.loc 1 75 5 view .LVU50
+ 187 0052 019A     		ldr	r2, [sp, #4]
+ 188              	.LBE3:
+  75:Core/Src/dcmi.c ****     __HAL_RCC_GPIOA_CLK_ENABLE();
+ 189              		.loc 1 75 5 view .LVU51
+  76:Core/Src/dcmi.c ****     __HAL_RCC_GPIOC_CLK_ENABLE();
+ 190              		.loc 1 76 5 view .LVU52
+ 191              	.LBB4:
+  76:Core/Src/dcmi.c ****     __HAL_RCC_GPIOC_CLK_ENABLE();
+ 192              		.loc 1 76 5 view .LVU53
+  76:Core/Src/dcmi.c ****     __HAL_RCC_GPIOC_CLK_ENABLE();
+ 193              		.loc 1 76 5 view .LVU54
+ 194 0054 D3F8E020 		ldr	r2, [r3, #224]
+ 195 0058 42F00102 		orr	r2, r2, #1
+ 196 005c C3F8E020 		str	r2, [r3, #224]
+  76:Core/Src/dcmi.c ****     __HAL_RCC_GPIOC_CLK_ENABLE();
+ 197              		.loc 1 76 5 view .LVU55
+ 198 0060 D3F8E020 		ldr	r2, [r3, #224]
+ 199 0064 02F00102 		and	r2, r2, #1
+ 200 0068 0292     		str	r2, [sp, #8]
+  76:Core/Src/dcmi.c ****     __HAL_RCC_GPIOC_CLK_ENABLE();
+ 201              		.loc 1 76 5 view .LVU56
+ 202 006a 029A     		ldr	r2, [sp, #8]
+ 203              	.LBE4:
+  76:Core/Src/dcmi.c ****     __HAL_RCC_GPIOC_CLK_ENABLE();
+ 204              		.loc 1 76 5 view .LVU57
+  77:Core/Src/dcmi.c ****     __HAL_RCC_GPIOB_CLK_ENABLE();
+ 205              		.loc 1 77 5 view .LVU58
+ 206              	.LBB5:
+  77:Core/Src/dcmi.c ****     __HAL_RCC_GPIOB_CLK_ENABLE();
+ 207              		.loc 1 77 5 view .LVU59
+  77:Core/Src/dcmi.c ****     __HAL_RCC_GPIOB_CLK_ENABLE();
+ 208              		.loc 1 77 5 view .LVU60
+ 209 006c D3F8E020 		ldr	r2, [r3, #224]
+ 210 0070 42F00402 		orr	r2, r2, #4
+ 211 0074 C3F8E020 		str	r2, [r3, #224]
+  77:Core/Src/dcmi.c ****     __HAL_RCC_GPIOB_CLK_ENABLE();
+ 212              		.loc 1 77 5 view .LVU61
+ 213 0078 D3F8E020 		ldr	r2, [r3, #224]
+ 214 007c 02F00402 		and	r2, r2, #4
+ 215 0080 0392     		str	r2, [sp, #12]
+  77:Core/Src/dcmi.c ****     __HAL_RCC_GPIOB_CLK_ENABLE();
+ 216              		.loc 1 77 5 view .LVU62
+ 217 0082 039A     		ldr	r2, [sp, #12]
+ 218              	.LBE5:
+  77:Core/Src/dcmi.c ****     __HAL_RCC_GPIOB_CLK_ENABLE();
+ 219              		.loc 1 77 5 view .LVU63
+  78:Core/Src/dcmi.c ****     /**DCMI GPIO Configuration
+ 220              		.loc 1 78 5 view .LVU64
+ 221              	.LBB6:
+  78:Core/Src/dcmi.c ****     /**DCMI GPIO Configuration
+ 222              		.loc 1 78 5 view .LVU65
+  78:Core/Src/dcmi.c ****     /**DCMI GPIO Configuration
+ 223              		.loc 1 78 5 view .LVU66
+ 224 0084 D3F8E020 		ldr	r2, [r3, #224]
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccMculFJ.s 			page 8
+
+
+ 225 0088 42F00202 		orr	r2, r2, #2
+ 226 008c C3F8E020 		str	r2, [r3, #224]
+  78:Core/Src/dcmi.c ****     /**DCMI GPIO Configuration
+ 227              		.loc 1 78 5 view .LVU67
+ 228 0090 D3F8E030 		ldr	r3, [r3, #224]
+ 229 0094 03F00203 		and	r3, r3, #2
+ 230 0098 0493     		str	r3, [sp, #16]
+  78:Core/Src/dcmi.c ****     /**DCMI GPIO Configuration
+ 231              		.loc 1 78 5 view .LVU68
+ 232 009a 049B     		ldr	r3, [sp, #16]
+ 233              	.LBE6:
+  78:Core/Src/dcmi.c ****     /**DCMI GPIO Configuration
+ 234              		.loc 1 78 5 view .LVU69
+  92:Core/Src/dcmi.c ****                           |GPIO_PIN_1;
+ 235              		.loc 1 92 5 view .LVU70
+  92:Core/Src/dcmi.c ****                           |GPIO_PIN_1;
+ 236              		.loc 1 92 25 is_stmt 0 view .LVU71
+ 237 009c 7323     		movs	r3, #115
+ 238 009e 0593     		str	r3, [sp, #20]
+  94:Core/Src/dcmi.c ****     GPIO_InitStruct.Pull = GPIO_NOPULL;
+ 239              		.loc 1 94 5 is_stmt 1 view .LVU72
+  94:Core/Src/dcmi.c ****     GPIO_InitStruct.Pull = GPIO_NOPULL;
+ 240              		.loc 1 94 26 is_stmt 0 view .LVU73
+ 241 00a0 0225     		movs	r5, #2
+ 242 00a2 0695     		str	r5, [sp, #24]
+  95:Core/Src/dcmi.c ****     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+ 243              		.loc 1 95 5 is_stmt 1 view .LVU74
+  96:Core/Src/dcmi.c ****     GPIO_InitStruct.Alternate = GPIO_AF13_DCMI;
+ 244              		.loc 1 96 5 view .LVU75
+  96:Core/Src/dcmi.c ****     GPIO_InitStruct.Alternate = GPIO_AF13_DCMI;
+ 245              		.loc 1 96 27 is_stmt 0 view .LVU76
+ 246 00a4 0895     		str	r5, [sp, #32]
+  97:Core/Src/dcmi.c ****     HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
+ 247              		.loc 1 97 5 is_stmt 1 view .LVU77
+  97:Core/Src/dcmi.c ****     HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
+ 248              		.loc 1 97 31 is_stmt 0 view .LVU78
+ 249 00a6 4FF00D08 		mov	r8, #13
+ 250 00aa CDF82480 		str	r8, [sp, #36]
+  98:Core/Src/dcmi.c **** 
+ 251              		.loc 1 98 5 is_stmt 1 view .LVU79
+ 252 00ae 05AF     		add	r7, sp, #20
+ 253 00b0 3946     		mov	r1, r7
+ 254 00b2 2C48     		ldr	r0, .L13+8
+ 255              	.LVL5:
+  98:Core/Src/dcmi.c **** 
+ 256              		.loc 1 98 5 is_stmt 0 view .LVU80
+ 257 00b4 FFF7FEFF 		bl	HAL_GPIO_Init
+ 258              	.LVL6:
+ 100:Core/Src/dcmi.c ****     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+ 259              		.loc 1 100 5 is_stmt 1 view .LVU81
+ 100:Core/Src/dcmi.c ****     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+ 260              		.loc 1 100 25 is_stmt 0 view .LVU82
+ 261 00b8 5023     		movs	r3, #80
+ 262 00ba 0593     		str	r3, [sp, #20]
+ 101:Core/Src/dcmi.c ****     GPIO_InitStruct.Pull = GPIO_NOPULL;
+ 263              		.loc 1 101 5 is_stmt 1 view .LVU83
+ 101:Core/Src/dcmi.c ****     GPIO_InitStruct.Pull = GPIO_NOPULL;
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccMculFJ.s 			page 9
+
+
+ 264              		.loc 1 101 26 is_stmt 0 view .LVU84
+ 265 00bc 0695     		str	r5, [sp, #24]
+ 102:Core/Src/dcmi.c ****     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+ 266              		.loc 1 102 5 is_stmt 1 view .LVU85
+ 102:Core/Src/dcmi.c ****     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+ 267              		.loc 1 102 26 is_stmt 0 view .LVU86
+ 268 00be 0026     		movs	r6, #0
+ 269 00c0 0796     		str	r6, [sp, #28]
+ 103:Core/Src/dcmi.c ****     GPIO_InitStruct.Alternate = GPIO_AF13_DCMI;
+ 270              		.loc 1 103 5 is_stmt 1 view .LVU87
+ 103:Core/Src/dcmi.c ****     GPIO_InitStruct.Alternate = GPIO_AF13_DCMI;
+ 271              		.loc 1 103 27 is_stmt 0 view .LVU88
+ 272 00c2 0895     		str	r5, [sp, #32]
+ 104:Core/Src/dcmi.c ****     HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+ 273              		.loc 1 104 5 is_stmt 1 view .LVU89
+ 104:Core/Src/dcmi.c ****     HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+ 274              		.loc 1 104 31 is_stmt 0 view .LVU90
+ 275 00c4 CDF82480 		str	r8, [sp, #36]
+ 105:Core/Src/dcmi.c **** 
+ 276              		.loc 1 105 5 is_stmt 1 view .LVU91
+ 277 00c8 3946     		mov	r1, r7
+ 278 00ca 2748     		ldr	r0, .L13+12
+ 279 00cc FFF7FEFF 		bl	HAL_GPIO_Init
+ 280              	.LVL7:
+ 107:Core/Src/dcmi.c ****     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+ 281              		.loc 1 107 5 view .LVU92
+ 107:Core/Src/dcmi.c ****     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+ 282              		.loc 1 107 25 is_stmt 0 view .LVU93
+ 283 00d0 4FF0C009 		mov	r9, #192
+ 284 00d4 CDF81490 		str	r9, [sp, #20]
+ 108:Core/Src/dcmi.c ****     GPIO_InitStruct.Pull = GPIO_NOPULL;
+ 285              		.loc 1 108 5 is_stmt 1 view .LVU94
+ 108:Core/Src/dcmi.c ****     GPIO_InitStruct.Pull = GPIO_NOPULL;
+ 286              		.loc 1 108 26 is_stmt 0 view .LVU95
+ 287 00d8 0695     		str	r5, [sp, #24]
+ 109:Core/Src/dcmi.c ****     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+ 288              		.loc 1 109 5 is_stmt 1 view .LVU96
+ 109:Core/Src/dcmi.c ****     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+ 289              		.loc 1 109 26 is_stmt 0 view .LVU97
+ 290 00da 0796     		str	r6, [sp, #28]
+ 110:Core/Src/dcmi.c ****     GPIO_InitStruct.Alternate = GPIO_AF13_DCMI;
+ 291              		.loc 1 110 5 is_stmt 1 view .LVU98
+ 110:Core/Src/dcmi.c ****     GPIO_InitStruct.Alternate = GPIO_AF13_DCMI;
+ 292              		.loc 1 110 27 is_stmt 0 view .LVU99
+ 293 00dc 0895     		str	r5, [sp, #32]
+ 111:Core/Src/dcmi.c ****     HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+ 294              		.loc 1 111 5 is_stmt 1 view .LVU100
+ 111:Core/Src/dcmi.c ****     HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+ 295              		.loc 1 111 31 is_stmt 0 view .LVU101
+ 296 00de CDF82480 		str	r8, [sp, #36]
+ 112:Core/Src/dcmi.c **** 
+ 297              		.loc 1 112 5 is_stmt 1 view .LVU102
+ 298 00e2 3946     		mov	r1, r7
+ 299 00e4 2148     		ldr	r0, .L13+16
+ 300 00e6 FFF7FEFF 		bl	HAL_GPIO_Init
+ 301              	.LVL8:
+ 114:Core/Src/dcmi.c ****     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccMculFJ.s 			page 10
+
+
+ 302              		.loc 1 114 5 view .LVU103
+ 114:Core/Src/dcmi.c ****     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+ 303              		.loc 1 114 25 is_stmt 0 view .LVU104
+ 304 00ea CDF81490 		str	r9, [sp, #20]
+ 115:Core/Src/dcmi.c ****     GPIO_InitStruct.Pull = GPIO_NOPULL;
+ 305              		.loc 1 115 5 is_stmt 1 view .LVU105
+ 115:Core/Src/dcmi.c ****     GPIO_InitStruct.Pull = GPIO_NOPULL;
+ 306              		.loc 1 115 26 is_stmt 0 view .LVU106
+ 307 00ee 0695     		str	r5, [sp, #24]
+ 116:Core/Src/dcmi.c ****     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+ 308              		.loc 1 116 5 is_stmt 1 view .LVU107
+ 116:Core/Src/dcmi.c ****     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+ 309              		.loc 1 116 26 is_stmt 0 view .LVU108
+ 310 00f0 0796     		str	r6, [sp, #28]
+ 117:Core/Src/dcmi.c ****     GPIO_InitStruct.Alternate = GPIO_AF13_DCMI;
+ 311              		.loc 1 117 5 is_stmt 1 view .LVU109
+ 117:Core/Src/dcmi.c ****     GPIO_InitStruct.Alternate = GPIO_AF13_DCMI;
+ 312              		.loc 1 117 27 is_stmt 0 view .LVU110
+ 313 00f2 0895     		str	r5, [sp, #32]
+ 118:Core/Src/dcmi.c ****     HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+ 314              		.loc 1 118 5 is_stmt 1 view .LVU111
+ 118:Core/Src/dcmi.c ****     HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+ 315              		.loc 1 118 31 is_stmt 0 view .LVU112
+ 316 00f4 CDF82480 		str	r8, [sp, #36]
+ 119:Core/Src/dcmi.c **** 
+ 317              		.loc 1 119 5 is_stmt 1 view .LVU113
+ 318 00f8 3946     		mov	r1, r7
+ 319 00fa 1D48     		ldr	r0, .L13+20
+ 320 00fc FFF7FEFF 		bl	HAL_GPIO_Init
+ 321              	.LVL9:
+ 123:Core/Src/dcmi.c ****     hdma_dcmi.Init.Request = DMA_REQUEST_DCMI;
+ 322              		.loc 1 123 5 view .LVU114
+ 123:Core/Src/dcmi.c ****     hdma_dcmi.Init.Request = DMA_REQUEST_DCMI;
+ 323              		.loc 1 123 24 is_stmt 0 view .LVU115
+ 324 0100 1C48     		ldr	r0, .L13+24
+ 325 0102 1D4B     		ldr	r3, .L13+28
+ 326 0104 0360     		str	r3, [r0]
+ 124:Core/Src/dcmi.c ****     hdma_dcmi.Init.Direction = DMA_PERIPH_TO_MEMORY;
+ 327              		.loc 1 124 5 is_stmt 1 view .LVU116
+ 124:Core/Src/dcmi.c ****     hdma_dcmi.Init.Direction = DMA_PERIPH_TO_MEMORY;
+ 328              		.loc 1 124 28 is_stmt 0 view .LVU117
+ 329 0106 4B23     		movs	r3, #75
+ 330 0108 4360     		str	r3, [r0, #4]
+ 125:Core/Src/dcmi.c ****     hdma_dcmi.Init.PeriphInc = DMA_PINC_DISABLE;
+ 331              		.loc 1 125 5 is_stmt 1 view .LVU118
+ 125:Core/Src/dcmi.c ****     hdma_dcmi.Init.PeriphInc = DMA_PINC_DISABLE;
+ 332              		.loc 1 125 30 is_stmt 0 view .LVU119
+ 333 010a 8660     		str	r6, [r0, #8]
+ 126:Core/Src/dcmi.c ****     hdma_dcmi.Init.MemInc = DMA_MINC_ENABLE;
+ 334              		.loc 1 126 5 is_stmt 1 view .LVU120
+ 126:Core/Src/dcmi.c ****     hdma_dcmi.Init.MemInc = DMA_MINC_ENABLE;
+ 335              		.loc 1 126 30 is_stmt 0 view .LVU121
+ 336 010c C660     		str	r6, [r0, #12]
+ 127:Core/Src/dcmi.c ****     hdma_dcmi.Init.PeriphDataAlignment = DMA_PDATAALIGN_WORD;
+ 337              		.loc 1 127 5 is_stmt 1 view .LVU122
+ 127:Core/Src/dcmi.c ****     hdma_dcmi.Init.PeriphDataAlignment = DMA_PDATAALIGN_WORD;
+ 338              		.loc 1 127 27 is_stmt 0 view .LVU123
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccMculFJ.s 			page 11
+
+
+ 339 010e 4FF48063 		mov	r3, #1024
+ 340 0112 0361     		str	r3, [r0, #16]
+ 128:Core/Src/dcmi.c ****     hdma_dcmi.Init.MemDataAlignment = DMA_MDATAALIGN_WORD;
+ 341              		.loc 1 128 5 is_stmt 1 view .LVU124
+ 128:Core/Src/dcmi.c ****     hdma_dcmi.Init.MemDataAlignment = DMA_MDATAALIGN_WORD;
+ 342              		.loc 1 128 40 is_stmt 0 view .LVU125
+ 343 0114 4FF48053 		mov	r3, #4096
+ 344 0118 4361     		str	r3, [r0, #20]
+ 129:Core/Src/dcmi.c ****     hdma_dcmi.Init.Mode = DMA_CIRCULAR;
+ 345              		.loc 1 129 5 is_stmt 1 view .LVU126
+ 129:Core/Src/dcmi.c ****     hdma_dcmi.Init.Mode = DMA_CIRCULAR;
+ 346              		.loc 1 129 37 is_stmt 0 view .LVU127
+ 347 011a 4FF48043 		mov	r3, #16384
+ 348 011e 8361     		str	r3, [r0, #24]
+ 130:Core/Src/dcmi.c ****     hdma_dcmi.Init.Priority = DMA_PRIORITY_VERY_HIGH;
+ 349              		.loc 1 130 5 is_stmt 1 view .LVU128
+ 130:Core/Src/dcmi.c ****     hdma_dcmi.Init.Priority = DMA_PRIORITY_VERY_HIGH;
+ 350              		.loc 1 130 25 is_stmt 0 view .LVU129
+ 351 0120 4FF48073 		mov	r3, #256
+ 352 0124 C361     		str	r3, [r0, #28]
+ 131:Core/Src/dcmi.c ****     hdma_dcmi.Init.FIFOMode = DMA_FIFOMODE_ENABLE;
+ 353              		.loc 1 131 5 is_stmt 1 view .LVU130
+ 131:Core/Src/dcmi.c ****     hdma_dcmi.Init.FIFOMode = DMA_FIFOMODE_ENABLE;
+ 354              		.loc 1 131 29 is_stmt 0 view .LVU131
+ 355 0126 4FF44033 		mov	r3, #196608
+ 356 012a 0362     		str	r3, [r0, #32]
+ 132:Core/Src/dcmi.c ****     hdma_dcmi.Init.FIFOThreshold = DMA_FIFO_THRESHOLD_FULL;
+ 357              		.loc 1 132 5 is_stmt 1 view .LVU132
+ 132:Core/Src/dcmi.c ****     hdma_dcmi.Init.FIFOThreshold = DMA_FIFO_THRESHOLD_FULL;
+ 358              		.loc 1 132 29 is_stmt 0 view .LVU133
+ 359 012c 0423     		movs	r3, #4
+ 360 012e 4362     		str	r3, [r0, #36]
+ 133:Core/Src/dcmi.c ****     hdma_dcmi.Init.MemBurst = DMA_MBURST_SINGLE;
+ 361              		.loc 1 133 5 is_stmt 1 view .LVU134
+ 133:Core/Src/dcmi.c ****     hdma_dcmi.Init.MemBurst = DMA_MBURST_SINGLE;
+ 362              		.loc 1 133 34 is_stmt 0 view .LVU135
+ 363 0130 0323     		movs	r3, #3
+ 364 0132 8362     		str	r3, [r0, #40]
+ 134:Core/Src/dcmi.c ****     hdma_dcmi.Init.PeriphBurst = DMA_PBURST_SINGLE;
+ 365              		.loc 1 134 5 is_stmt 1 view .LVU136
+ 134:Core/Src/dcmi.c ****     hdma_dcmi.Init.PeriphBurst = DMA_PBURST_SINGLE;
+ 366              		.loc 1 134 29 is_stmt 0 view .LVU137
+ 367 0134 C662     		str	r6, [r0, #44]
+ 135:Core/Src/dcmi.c ****     if (HAL_DMA_Init(&hdma_dcmi) != HAL_OK)
+ 368              		.loc 1 135 5 is_stmt 1 view .LVU138
+ 135:Core/Src/dcmi.c ****     if (HAL_DMA_Init(&hdma_dcmi) != HAL_OK)
+ 369              		.loc 1 135 32 is_stmt 0 view .LVU139
+ 370 0136 0663     		str	r6, [r0, #48]
+ 136:Core/Src/dcmi.c ****     {
+ 371              		.loc 1 136 5 is_stmt 1 view .LVU140
+ 136:Core/Src/dcmi.c ****     {
+ 372              		.loc 1 136 9 is_stmt 0 view .LVU141
+ 373 0138 FFF7FEFF 		bl	HAL_DMA_Init
+ 374              	.LVL10:
+ 136:Core/Src/dcmi.c ****     {
+ 375              		.loc 1 136 8 discriminator 1 view .LVU142
+ 376 013c 58B9     		cbnz	r0, .L12
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccMculFJ.s 			page 12
+
+
+ 377              	.L9:
+ 141:Core/Src/dcmi.c **** 
+ 378              		.loc 1 141 5 is_stmt 1 view .LVU143
+ 141:Core/Src/dcmi.c **** 
+ 379              		.loc 1 141 5 view .LVU144
+ 380 013e 0D4B     		ldr	r3, .L13+24
+ 381 0140 A364     		str	r3, [r4, #72]
+ 141:Core/Src/dcmi.c **** 
+ 382              		.loc 1 141 5 view .LVU145
+ 383 0142 9C63     		str	r4, [r3, #56]
+ 141:Core/Src/dcmi.c **** 
+ 384              		.loc 1 141 5 view .LVU146
+ 144:Core/Src/dcmi.c ****     HAL_NVIC_EnableIRQ(DCMI_IRQn);
+ 385              		.loc 1 144 5 view .LVU147
+ 386 0144 0022     		movs	r2, #0
+ 387 0146 0121     		movs	r1, #1
+ 388 0148 4E20     		movs	r0, #78
+ 389 014a FFF7FEFF 		bl	HAL_NVIC_SetPriority
+ 390              	.LVL11:
+ 145:Core/Src/dcmi.c ****   /* USER CODE BEGIN DCMI_MspInit 1 */
+ 391              		.loc 1 145 5 view .LVU148
+ 392 014e 4E20     		movs	r0, #78
+ 393 0150 FFF7FEFF 		bl	HAL_NVIC_EnableIRQ
+ 394              	.LVL12:
+ 395              		.loc 1 150 1 is_stmt 0 view .LVU149
+ 396 0154 61E7     		b	.L7
+ 397              	.L12:
+ 138:Core/Src/dcmi.c ****     }
+ 398              		.loc 1 138 7 is_stmt 1 view .LVU150
+ 399 0156 FFF7FEFF 		bl	Error_Handler
+ 400              	.LVL13:
+ 401 015a F0E7     		b	.L9
+ 402              	.L14:
+ 403              		.align	2
+ 404              	.L13:
+ 405 015c 00000248 		.word	1208090624
+ 406 0160 00440258 		.word	1476543488
+ 407 0164 00100258 		.word	1476530176
+ 408 0168 00000258 		.word	1476526080
+ 409 016c 00080258 		.word	1476528128
+ 410 0170 00040258 		.word	1476527104
+ 411 0174 00000000 		.word	hdma_dcmi
+ 412 0178 10000240 		.word	1073872912
+ 413              		.cfi_endproc
+ 414              	.LFE145:
+ 416              		.section	.text.HAL_DCMI_MspDeInit,"ax",%progbits
+ 417              		.align	1
+ 418              		.global	HAL_DCMI_MspDeInit
+ 419              		.syntax unified
+ 420              		.thumb
+ 421              		.thumb_func
+ 423              	HAL_DCMI_MspDeInit:
+ 424              	.LVL14:
+ 425              	.LFB146:
+ 151:Core/Src/dcmi.c **** 
+ 152:Core/Src/dcmi.c **** void HAL_DCMI_MspDeInit(DCMI_HandleTypeDef* dcmiHandle)
+ 153:Core/Src/dcmi.c **** {
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccMculFJ.s 			page 13
+
+
+ 426              		.loc 1 153 1 view -0
+ 427              		.cfi_startproc
+ 428              		@ args = 0, pretend = 0, frame = 0
+ 429              		@ frame_needed = 0, uses_anonymous_args = 0
+ 154:Core/Src/dcmi.c **** 
+ 155:Core/Src/dcmi.c ****   if(dcmiHandle->Instance==DCMI)
+ 430              		.loc 1 155 3 view .LVU152
+ 431              		.loc 1 155 16 is_stmt 0 view .LVU153
+ 432 0000 0268     		ldr	r2, [r0]
+ 433              		.loc 1 155 5 view .LVU154
+ 434 0002 124B     		ldr	r3, .L22
+ 435 0004 9A42     		cmp	r2, r3
+ 436 0006 00D0     		beq	.L21
+ 437 0008 7047     		bx	lr
+ 438              	.L21:
+ 153:Core/Src/dcmi.c **** 
+ 439              		.loc 1 153 1 view .LVU155
+ 440 000a 10B5     		push	{r4, lr}
+ 441              	.LCFI5:
+ 442              		.cfi_def_cfa_offset 8
+ 443              		.cfi_offset 4, -8
+ 444              		.cfi_offset 14, -4
+ 445 000c 0446     		mov	r4, r0
+ 156:Core/Src/dcmi.c ****   {
+ 157:Core/Src/dcmi.c ****   /* USER CODE BEGIN DCMI_MspDeInit 0 */
+ 158:Core/Src/dcmi.c **** 
+ 159:Core/Src/dcmi.c ****   /* USER CODE END DCMI_MspDeInit 0 */
+ 160:Core/Src/dcmi.c ****     /* Peripheral clock disable */
+ 161:Core/Src/dcmi.c ****     __HAL_RCC_DCMI_CLK_DISABLE();
+ 446              		.loc 1 161 5 is_stmt 1 view .LVU156
+ 447 000e 104A     		ldr	r2, .L22+4
+ 448 0010 D2F8DC30 		ldr	r3, [r2, #220]
+ 449 0014 23F00103 		bic	r3, r3, #1
+ 450 0018 C2F8DC30 		str	r3, [r2, #220]
+ 162:Core/Src/dcmi.c **** 
+ 163:Core/Src/dcmi.c ****     /**DCMI GPIO Configuration
+ 164:Core/Src/dcmi.c ****     PE4     ------> DCMI_D4
+ 165:Core/Src/dcmi.c ****     PE5     ------> DCMI_D6
+ 166:Core/Src/dcmi.c ****     PE6     ------> DCMI_D7
+ 167:Core/Src/dcmi.c ****     PA4     ------> DCMI_HSYNC
+ 168:Core/Src/dcmi.c ****     PA6     ------> DCMI_PIXCLK
+ 169:Core/Src/dcmi.c ****     PC6     ------> DCMI_D0
+ 170:Core/Src/dcmi.c ****     PC7     ------> DCMI_D1
+ 171:Core/Src/dcmi.c ****     PB6     ------> DCMI_D5
+ 172:Core/Src/dcmi.c ****     PB7     ------> DCMI_VSYNC
+ 173:Core/Src/dcmi.c ****     PE0     ------> DCMI_D2
+ 174:Core/Src/dcmi.c ****     PE1     ------> DCMI_D3
+ 175:Core/Src/dcmi.c ****     */
+ 176:Core/Src/dcmi.c ****     HAL_GPIO_DeInit(GPIOE, GPIO_PIN_4|GPIO_PIN_5|GPIO_PIN_6|GPIO_PIN_0
+ 451              		.loc 1 176 5 view .LVU157
+ 452 001c 7321     		movs	r1, #115
+ 453 001e 0D48     		ldr	r0, .L22+8
+ 454              	.LVL15:
+ 455              		.loc 1 176 5 is_stmt 0 view .LVU158
+ 456 0020 FFF7FEFF 		bl	HAL_GPIO_DeInit
+ 457              	.LVL16:
+ 177:Core/Src/dcmi.c ****                           |GPIO_PIN_1);
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccMculFJ.s 			page 14
+
+
+ 178:Core/Src/dcmi.c **** 
+ 179:Core/Src/dcmi.c ****     HAL_GPIO_DeInit(GPIOA, GPIO_PIN_4|GPIO_PIN_6);
+ 458              		.loc 1 179 5 is_stmt 1 view .LVU159
+ 459 0024 5021     		movs	r1, #80
+ 460 0026 0C48     		ldr	r0, .L22+12
+ 461 0028 FFF7FEFF 		bl	HAL_GPIO_DeInit
+ 462              	.LVL17:
+ 180:Core/Src/dcmi.c **** 
+ 181:Core/Src/dcmi.c ****     HAL_GPIO_DeInit(GPIOC, GPIO_PIN_6|GPIO_PIN_7);
+ 463              		.loc 1 181 5 view .LVU160
+ 464 002c C021     		movs	r1, #192
+ 465 002e 0B48     		ldr	r0, .L22+16
+ 466 0030 FFF7FEFF 		bl	HAL_GPIO_DeInit
+ 467              	.LVL18:
+ 182:Core/Src/dcmi.c **** 
+ 183:Core/Src/dcmi.c ****     HAL_GPIO_DeInit(GPIOB, GPIO_PIN_6|GPIO_PIN_7);
+ 468              		.loc 1 183 5 view .LVU161
+ 469 0034 C021     		movs	r1, #192
+ 470 0036 0A48     		ldr	r0, .L22+20
+ 471 0038 FFF7FEFF 		bl	HAL_GPIO_DeInit
+ 472              	.LVL19:
+ 184:Core/Src/dcmi.c **** 
+ 185:Core/Src/dcmi.c ****     /* DCMI DMA DeInit */
+ 186:Core/Src/dcmi.c ****     HAL_DMA_DeInit(dcmiHandle->DMA_Handle);
+ 473              		.loc 1 186 5 view .LVU162
+ 474 003c A06C     		ldr	r0, [r4, #72]
+ 475 003e FFF7FEFF 		bl	HAL_DMA_DeInit
+ 476              	.LVL20:
+ 187:Core/Src/dcmi.c **** 
+ 188:Core/Src/dcmi.c ****     /* DCMI interrupt Deinit */
+ 189:Core/Src/dcmi.c ****     HAL_NVIC_DisableIRQ(DCMI_IRQn);
+ 477              		.loc 1 189 5 view .LVU163
+ 478 0042 4E20     		movs	r0, #78
+ 479 0044 FFF7FEFF 		bl	HAL_NVIC_DisableIRQ
+ 480              	.LVL21:
+ 190:Core/Src/dcmi.c ****   /* USER CODE BEGIN DCMI_MspDeInit 1 */
+ 191:Core/Src/dcmi.c **** 
+ 192:Core/Src/dcmi.c ****   /* USER CODE END DCMI_MspDeInit 1 */
+ 193:Core/Src/dcmi.c ****   }
+ 194:Core/Src/dcmi.c **** }
+ 481              		.loc 1 194 1 is_stmt 0 view .LVU164
+ 482 0048 10BD     		pop	{r4, pc}
+ 483              	.LVL22:
+ 484              	.L23:
+ 485              		.loc 1 194 1 view .LVU165
+ 486 004a 00BF     		.align	2
+ 487              	.L22:
+ 488 004c 00000248 		.word	1208090624
+ 489 0050 00440258 		.word	1476543488
+ 490 0054 00100258 		.word	1476530176
+ 491 0058 00000258 		.word	1476526080
+ 492 005c 00080258 		.word	1476528128
+ 493 0060 00040258 		.word	1476527104
+ 494              		.cfi_endproc
+ 495              	.LFE146:
+ 497              		.global	hdma_dcmi
+ 498              		.section	.bss.hdma_dcmi,"aw",%nobits
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccMculFJ.s 			page 15
+
+
+ 499              		.align	2
+ 502              	hdma_dcmi:
+ 503 0000 00000000 		.space	120
+ 503      00000000 
+ 503      00000000 
+ 503      00000000 
+ 503      00000000 
+ 504              		.global	hdcmi
+ 505              		.section	.bss.hdcmi,"aw",%nobits
+ 506              		.align	2
+ 509              	hdcmi:
+ 510 0000 00000000 		.space	80
+ 510      00000000 
+ 510      00000000 
+ 510      00000000 
+ 510      00000000 
+ 511              		.text
+ 512              	.Letext0:
+ 513              		.file 2 "Drivers/CMSIS/Device/ST/STM32H7xx/Include/stm32h743xx.h"
+ 514              		.file 3 "/Users/zhy/Tools/xpack-arm-none-eabi-gcc-14.2.1-1.1/arm-none-eabi/include/machine/_defaul
+ 515              		.file 4 "/Users/zhy/Tools/xpack-arm-none-eabi-gcc-14.2.1-1.1/arm-none-eabi/include/sys/_stdint.h"
+ 516              		.file 5 "Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_def.h"
+ 517              		.file 6 "Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_gpio.h"
+ 518              		.file 7 "Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_dma.h"
+ 519              		.file 8 "Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_dcmi.h"
+ 520              		.file 9 "Core/Inc/dcmi.h"
+ 521              		.file 10 "Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_cortex.h"
+ 522              		.file 11 "Core/Inc/main.h"
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccMculFJ.s 			page 16
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 dcmi.c
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccMculFJ.s:20     .text.MX_DCMI_Init:00000000 $t
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccMculFJ.s:26     .text.MX_DCMI_Init:00000000 MX_DCMI_Init
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccMculFJ.s:96     .text.MX_DCMI_Init:00000034 $d
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccMculFJ.s:509    .bss.hdcmi:00000000 hdcmi
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccMculFJ.s:102    .text.HAL_DCMI_MspInit:00000000 $t
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccMculFJ.s:108    .text.HAL_DCMI_MspInit:00000000 HAL_DCMI_MspInit
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccMculFJ.s:405    .text.HAL_DCMI_MspInit:0000015c $d
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccMculFJ.s:502    .bss.hdma_dcmi:00000000 hdma_dcmi
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccMculFJ.s:417    .text.HAL_DCMI_MspDeInit:00000000 $t
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccMculFJ.s:423    .text.HAL_DCMI_MspDeInit:00000000 HAL_DCMI_MspDeInit
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccMculFJ.s:488    .text.HAL_DCMI_MspDeInit:0000004c $d
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccMculFJ.s:499    .bss.hdma_dcmi:00000000 $d
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccMculFJ.s:506    .bss.hdcmi:00000000 $d
+
+UNDEFINED SYMBOLS
+HAL_DCMI_Init
+Error_Handler
+HAL_GPIO_Init
+HAL_DMA_Init
+HAL_NVIC_SetPriority
+HAL_NVIC_EnableIRQ
+HAL_GPIO_DeInit
+HAL_DMA_DeInit
+HAL_NVIC_DisableIRQ

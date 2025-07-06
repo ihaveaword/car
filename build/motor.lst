@@ -1,0 +1,328 @@
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccrHmDcY.s 			page 1
+
+
+   1              		.cpu cortex-m7
+   2              		.arch armv7e-m
+   3              		.fpu fpv5-d16
+   4              		.eabi_attribute 28, 1
+   5              		.eabi_attribute 20, 1
+   6              		.eabi_attribute 21, 1
+   7              		.eabi_attribute 23, 3
+   8              		.eabi_attribute 24, 1
+   9              		.eabi_attribute 25, 1
+  10              		.eabi_attribute 26, 1
+  11              		.eabi_attribute 30, 1
+  12              		.eabi_attribute 34, 1
+  13              		.eabi_attribute 18, 4
+  14              		.file	"motor.c"
+  15              		.text
+  16              	.Ltext0:
+  17              		.cfi_sections	.debug_frame
+  18              		.file 1 "Core/Src/motor.c"
+  19              		.section	.text.abd,"ax",%progbits
+  20              		.align	1
+  21              		.global	abd
+  22              		.syntax unified
+  23              		.thumb
+  24              		.thumb_func
+  26              	abd:
+  27              	.LVL0:
+  28              	.LFB144:
+   1:Core/Src/motor.c **** #include"motor.h"
+   2:Core/Src/motor.c **** extern TIM_HandleTypeDef htim1; // 定义定时器句柄
+   3:Core/Src/motor.c **** 
+   4:Core/Src/motor.c **** int abd(int p)
+   5:Core/Src/motor.c **** {
+  29              		.loc 1 5 1 view -0
+  30              		.cfi_startproc
+  31              		@ args = 0, pretend = 0, frame = 0
+  32              		@ frame_needed = 0, uses_anonymous_args = 0
+  33              		@ link register save eliminated.
+   6:Core/Src/motor.c ****     if (p < 0)
+  34              		.loc 1 6 5 view .LVU1
+  35              		.loc 1 6 8 is_stmt 0 view .LVU2
+  36 0000 0028     		cmp	r0, #0
+  37              		.loc 1 6 8 view .LVU3
+  38 0002 00DB     		blt	.L3
+  39              	.LVL1:
+  40              	.L2:
+   7:Core/Src/motor.c ****         return -p;
+   8:Core/Src/motor.c ****     else
+   9:Core/Src/motor.c ****         return p;
+  10:Core/Src/motor.c **** }
+  41              		.loc 1 10 1 view .LVU4
+  42 0004 7047     		bx	lr
+  43              	.LVL2:
+  44              	.L3:
+   7:Core/Src/motor.c ****         return -p;
+  45              		.loc 1 7 9 is_stmt 1 view .LVU5
+   7:Core/Src/motor.c ****         return -p;
+  46              		.loc 1 7 16 is_stmt 0 view .LVU6
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccrHmDcY.s 			page 2
+
+
+  47 0006 4042     		rsbs	r0, r0, #0
+  48              	.LVL3:
+   7:Core/Src/motor.c ****         return -p;
+  49              		.loc 1 7 16 view .LVU7
+  50 0008 FCE7     		b	.L2
+  51              		.cfi_endproc
+  52              	.LFE144:
+  54              		.section	.text.load,"ax",%progbits
+  55              		.align	1
+  56              		.global	load
+  57              		.syntax unified
+  58              		.thumb
+  59              		.thumb_func
+  61              	load:
+  62              	.LVL4:
+  63              	.LFB145:
+  11:Core/Src/motor.c **** void load(int moto1 ,int moto2)     //-100 100
+  12:Core/Src/motor.c **** {
+  64              		.loc 1 12 1 is_stmt 1 view -0
+  65              		.cfi_startproc
+  66              		@ args = 0, pretend = 0, frame = 0
+  67              		@ frame_needed = 0, uses_anonymous_args = 0
+  68              		.loc 1 12 1 is_stmt 0 view .LVU9
+  69 0000 70B5     		push	{r4, r5, r6, lr}
+  70              	.LCFI0:
+  71              		.cfi_def_cfa_offset 16
+  72              		.cfi_offset 4, -16
+  73              		.cfi_offset 5, -12
+  74              		.cfi_offset 6, -8
+  75              		.cfi_offset 14, -4
+  76 0002 0C46     		mov	r4, r1
+  13:Core/Src/motor.c ****     if (moto1 < 0)
+  77              		.loc 1 13 5 is_stmt 1 view .LVU10
+  78              		.loc 1 13 8 is_stmt 0 view .LVU11
+  79 0004 051E     		subs	r5, r0, #0
+  80 0006 2ADB     		blt	.L12
+  14:Core/Src/motor.c ****     {
+  15:Core/Src/motor.c ****         HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_SET); // A电机正转
+  16:Core/Src/motor.c ****         HAL_GPIO_WritePin(GPIOC, GPIO_PIN_8, GPIO_PIN_RESET); // A电机反转
+  17:Core/Src/motor.c ****     }
+  18:Core/Src/motor.c ****     else if (moto1 > 0)
+  81              		.loc 1 18 10 is_stmt 1 view .LVU12
+  82              		.loc 1 18 13 is_stmt 0 view .LVU13
+  83 0008 002D     		cmp	r5, #0
+  84 000a 36DD     		ble	.L7
+  19:Core/Src/motor.c ****     {
+  20:Core/Src/motor.c ****         HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_RESET); // A电机正转
+  85              		.loc 1 20 9 is_stmt 1 view .LVU14
+  86 000c 2E4E     		ldr	r6, .L14
+  87 000e 0022     		movs	r2, #0
+  88 0010 4FF40071 		mov	r1, #512
+  89              	.LVL5:
+  90              		.loc 1 20 9 is_stmt 0 view .LVU15
+  91 0014 3046     		mov	r0, r6
+  92              	.LVL6:
+  93              		.loc 1 20 9 view .LVU16
+  94 0016 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccrHmDcY.s 			page 3
+
+
+  95              	.LVL7:
+  21:Core/Src/motor.c ****         HAL_GPIO_WritePin(GPIOC, GPIO_PIN_8, GPIO_PIN_SET); // A电机反转
+  96              		.loc 1 21 9 is_stmt 1 view .LVU17
+  97 001a 0122     		movs	r2, #1
+  98 001c 4FF48071 		mov	r1, #256
+  99 0020 3046     		mov	r0, r6
+ 100 0022 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 101              	.LVL8:
+ 102              	.L6:
+  22:Core/Src/motor.c ****     }
+  23:Core/Src/motor.c ****     else
+  24:Core/Src/motor.c ****     {
+  25:Core/Src/motor.c ****         HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_RESET); // A电机停止
+  26:Core/Src/motor.c ****         HAL_GPIO_WritePin(GPIOC, GPIO_PIN_8, GPIO_PIN_RESET); // A电机停止
+  27:Core/Src/motor.c ****         
+  28:Core/Src/motor.c ****     }
+  29:Core/Src/motor.c ****     __HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_1, abd(moto1)); // 设置A电机PWM占空比
+ 103              		.loc 1 29 5 view .LVU18
+ 104 0026 2846     		mov	r0, r5
+ 105 0028 FFF7FEFF 		bl	abd
+ 106              	.LVL9:
+ 107              		.loc 1 29 5 is_stmt 0 discriminator 1 view .LVU19
+ 108 002c 274B     		ldr	r3, .L14+4
+ 109 002e 1B68     		ldr	r3, [r3]
+ 110 0030 5863     		str	r0, [r3, #52]
+  30:Core/Src/motor.c ****   
+  31:Core/Src/motor.c ****     if (moto2 < 0)
+ 111              		.loc 1 31 5 is_stmt 1 view .LVU20
+ 112              		.loc 1 31 8 is_stmt 0 view .LVU21
+ 113 0032 002C     		cmp	r4, #0
+ 114 0034 2FDB     		blt	.L13
+  32:Core/Src/motor.c ****     {
+  33:Core/Src/motor.c ****         HAL_GPIO_WritePin(GPIOC, GPIO_PIN_7, GPIO_PIN_SET); // B电机正转
+  34:Core/Src/motor.c ****         HAL_GPIO_WritePin(GPIOC, GPIO_PIN_6, GPIO_PIN_RESET); // B电机反转
+  35:Core/Src/motor.c ****     }
+  36:Core/Src/motor.c ****     else if (moto2 > 0)
+ 115              		.loc 1 36 10 is_stmt 1 view .LVU22
+ 116              		.loc 1 36 13 is_stmt 0 view .LVU23
+ 117 0036 002C     		cmp	r4, #0
+ 118 0038 39DD     		ble	.L10
+  37:Core/Src/motor.c ****     {
+  38:Core/Src/motor.c ****         HAL_GPIO_WritePin(GPIOC, GPIO_PIN_7, GPIO_PIN_RESET); // B电机正转
+ 119              		.loc 1 38 9 is_stmt 1 view .LVU24
+ 120 003a 234D     		ldr	r5, .L14
+ 121              	.LVL10:
+ 122              		.loc 1 38 9 is_stmt 0 view .LVU25
+ 123 003c 0022     		movs	r2, #0
+ 124 003e 8021     		movs	r1, #128
+ 125 0040 2846     		mov	r0, r5
+ 126 0042 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 127              	.LVL11:
+  39:Core/Src/motor.c ****         HAL_GPIO_WritePin(GPIOC, GPIO_PIN_6, GPIO_PIN_SET); // B电机反转
+ 128              		.loc 1 39 9 is_stmt 1 view .LVU26
+ 129 0046 0122     		movs	r2, #1
+ 130 0048 4021     		movs	r1, #64
+ 131 004a 2846     		mov	r0, r5
+ 132 004c FFF7FEFF 		bl	HAL_GPIO_WritePin
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccrHmDcY.s 			page 4
+
+
+ 133              	.LVL12:
+ 134              	.L9:
+  40:Core/Src/motor.c ****     }
+  41:Core/Src/motor.c ****     else
+  42:Core/Src/motor.c ****     {
+  43:Core/Src/motor.c ****         HAL_GPIO_WritePin(GPIOC, GPIO_PIN_7, GPIO_PIN_RESET); // B电机停止
+  44:Core/Src/motor.c ****         HAL_GPIO_WritePin(GPIOC, GPIO_PIN_6, GPIO_PIN_RESET); // B电机停止
+  45:Core/Src/motor.c ****     } 
+  46:Core/Src/motor.c ****     __HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_4, abd(moto2)); // 设置B电机PWM占空比
+ 135              		.loc 1 46 5 view .LVU27
+ 136 0050 2046     		mov	r0, r4
+ 137 0052 FFF7FEFF 		bl	abd
+ 138              	.LVL13:
+ 139              		.loc 1 46 5 is_stmt 0 discriminator 1 view .LVU28
+ 140 0056 1D4B     		ldr	r3, .L14+4
+ 141 0058 1B68     		ldr	r3, [r3]
+ 142 005a 1864     		str	r0, [r3, #64]
+  47:Core/Src/motor.c **** }
+ 143              		.loc 1 47 1 view .LVU29
+ 144 005c 70BD     		pop	{r4, r5, r6, pc}
+ 145              	.LVL14:
+ 146              	.L12:
+  15:Core/Src/motor.c ****         HAL_GPIO_WritePin(GPIOC, GPIO_PIN_8, GPIO_PIN_RESET); // A电机反转
+ 147              		.loc 1 15 9 is_stmt 1 view .LVU30
+ 148 005e 1A4E     		ldr	r6, .L14
+ 149 0060 0122     		movs	r2, #1
+ 150 0062 4FF40071 		mov	r1, #512
+ 151              	.LVL15:
+  15:Core/Src/motor.c ****         HAL_GPIO_WritePin(GPIOC, GPIO_PIN_8, GPIO_PIN_RESET); // A电机反转
+ 152              		.loc 1 15 9 is_stmt 0 view .LVU31
+ 153 0066 3046     		mov	r0, r6
+ 154              	.LVL16:
+  15:Core/Src/motor.c ****         HAL_GPIO_WritePin(GPIOC, GPIO_PIN_8, GPIO_PIN_RESET); // A电机反转
+ 155              		.loc 1 15 9 view .LVU32
+ 156 0068 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 157              	.LVL17:
+  16:Core/Src/motor.c ****     }
+ 158              		.loc 1 16 9 is_stmt 1 view .LVU33
+ 159 006c 0022     		movs	r2, #0
+ 160 006e 4FF48071 		mov	r1, #256
+ 161 0072 3046     		mov	r0, r6
+ 162 0074 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 163              	.LVL18:
+ 164 0078 D5E7     		b	.L6
+ 165              	.LVL19:
+ 166              	.L7:
+  25:Core/Src/motor.c ****         HAL_GPIO_WritePin(GPIOC, GPIO_PIN_8, GPIO_PIN_RESET); // A电机停止
+ 167              		.loc 1 25 9 view .LVU34
+ 168 007a 134E     		ldr	r6, .L14
+ 169 007c 0022     		movs	r2, #0
+ 170 007e 4FF40071 		mov	r1, #512
+ 171              	.LVL20:
+  25:Core/Src/motor.c ****         HAL_GPIO_WritePin(GPIOC, GPIO_PIN_8, GPIO_PIN_RESET); // A电机停止
+ 172              		.loc 1 25 9 is_stmt 0 view .LVU35
+ 173 0082 3046     		mov	r0, r6
+ 174              	.LVL21:
+  25:Core/Src/motor.c ****         HAL_GPIO_WritePin(GPIOC, GPIO_PIN_8, GPIO_PIN_RESET); // A电机停止
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccrHmDcY.s 			page 5
+
+
+ 175              		.loc 1 25 9 view .LVU36
+ 176 0084 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 177              	.LVL22:
+  26:Core/Src/motor.c ****         
+ 178              		.loc 1 26 9 is_stmt 1 view .LVU37
+ 179 0088 0022     		movs	r2, #0
+ 180 008a 4FF48071 		mov	r1, #256
+ 181 008e 3046     		mov	r0, r6
+ 182 0090 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 183              	.LVL23:
+ 184 0094 C7E7     		b	.L6
+ 185              	.L13:
+  33:Core/Src/motor.c ****         HAL_GPIO_WritePin(GPIOC, GPIO_PIN_6, GPIO_PIN_RESET); // B电机反转
+ 186              		.loc 1 33 9 view .LVU38
+ 187 0096 0C4D     		ldr	r5, .L14
+ 188              	.LVL24:
+  33:Core/Src/motor.c ****         HAL_GPIO_WritePin(GPIOC, GPIO_PIN_6, GPIO_PIN_RESET); // B电机反转
+ 189              		.loc 1 33 9 is_stmt 0 view .LVU39
+ 190 0098 0122     		movs	r2, #1
+ 191 009a 8021     		movs	r1, #128
+ 192 009c 2846     		mov	r0, r5
+ 193 009e FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 194              	.LVL25:
+  34:Core/Src/motor.c ****     }
+ 195              		.loc 1 34 9 is_stmt 1 view .LVU40
+ 196 00a2 0022     		movs	r2, #0
+ 197 00a4 4021     		movs	r1, #64
+ 198 00a6 2846     		mov	r0, r5
+ 199 00a8 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 200              	.LVL26:
+ 201 00ac D0E7     		b	.L9
+ 202              	.LVL27:
+ 203              	.L10:
+  43:Core/Src/motor.c ****         HAL_GPIO_WritePin(GPIOC, GPIO_PIN_6, GPIO_PIN_RESET); // B电机停止
+ 204              		.loc 1 43 9 view .LVU41
+ 205 00ae 064D     		ldr	r5, .L14
+ 206              	.LVL28:
+  43:Core/Src/motor.c ****         HAL_GPIO_WritePin(GPIOC, GPIO_PIN_6, GPIO_PIN_RESET); // B电机停止
+ 207              		.loc 1 43 9 is_stmt 0 view .LVU42
+ 208 00b0 0022     		movs	r2, #0
+ 209 00b2 8021     		movs	r1, #128
+ 210 00b4 2846     		mov	r0, r5
+ 211 00b6 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 212              	.LVL29:
+  44:Core/Src/motor.c ****     } 
+ 213              		.loc 1 44 9 is_stmt 1 view .LVU43
+ 214 00ba 0022     		movs	r2, #0
+ 215 00bc 4021     		movs	r1, #64
+ 216 00be 2846     		mov	r0, r5
+ 217 00c0 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 218              	.LVL30:
+ 219 00c4 C4E7     		b	.L9
+ 220              	.L15:
+ 221 00c6 00BF     		.align	2
+ 222              	.L14:
+ 223 00c8 00080258 		.word	1476528128
+ 224 00cc 00000000 		.word	htim1
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccrHmDcY.s 			page 6
+
+
+ 225              		.cfi_endproc
+ 226              	.LFE145:
+ 228              		.text
+ 229              	.Letext0:
+ 230              		.file 2 "/Users/zhy/Tools/xpack-arm-none-eabi-gcc-14.2.1-1.1/arm-none-eabi/include/machine/_defaul
+ 231              		.file 3 "/Users/zhy/Tools/xpack-arm-none-eabi-gcc-14.2.1-1.1/arm-none-eabi/include/sys/_stdint.h"
+ 232              		.file 4 "Drivers/CMSIS/Device/ST/STM32H7xx/Include/stm32h743xx.h"
+ 233              		.file 5 "Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_def.h"
+ 234              		.file 6 "Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_gpio.h"
+ 235              		.file 7 "Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_dma.h"
+ 236              		.file 8 "Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_tim.h"
+ARM GAS  /var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccrHmDcY.s 			page 7
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 motor.c
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccrHmDcY.s:20     .text.abd:00000000 $t
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccrHmDcY.s:26     .text.abd:00000000 abd
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccrHmDcY.s:55     .text.load:00000000 $t
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccrHmDcY.s:61     .text.load:00000000 load
+/var/folders/g1/j12m_ky910s3_sv7d4yrsdn00000gn/T//ccrHmDcY.s:223    .text.load:000000c8 $d
+
+UNDEFINED SYMBOLS
+HAL_GPIO_WritePin
+htim1
